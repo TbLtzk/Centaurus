@@ -15,7 +15,7 @@ The First Stellar Wallet for Android!
 I am a complete newbee to HTML/JS, Ionic, so 
 * just contribute new code
 * peer review and improve existing code
-* Donate to `gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP` (need 25$ for upload to Playstore)
+* Donate to our Stellar-Address `gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP` (need 25$ for upload to Playstore)
 
 ## Getting Started
 
