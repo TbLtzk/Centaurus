@@ -33,6 +33,7 @@ While the simple mode is a good way to get started, you will soon want to see th
 * Open file './www/index.html' with your browser. What you see is close to what you have in the app.
 * Modify the html views in './www/templates/' or the JS files in './www/js/'. Watch your changes immediatly by refreshing the page in the browser. 
 * You might also want to add some JS libs to './www/lib/'.
+* See [www/Readme.md](https://github.com/klopper/Centaurus/blob/master/www/README.md)
 
 ### Advanced (Android)
 
