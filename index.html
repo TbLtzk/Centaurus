@@ -1,48 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Centaurus by klopper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>Centaurus by klopper</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">Centaurus</h1>
-        <p class="header">First Stellar Wallet for Android</p>
+    <header>
+      <div class="inner">
+        <h1>Centaurus</h1>
+        <h2>First Stellar Wallet for Android</h2>
+        <a href="https://github.com/klopper/Centaurus" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/klopper/Centaurus/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/klopper/Centaurus/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/klopper/Centaurus">View On GitHub</a></li>
-        </ul>
-
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/klopper">klopper</a></p>
-
-
-      </header>
-      <section>
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a name="centaurus" class="anchor" href="#centaurus"><span class="octicon octicon-link"></span></a>Centaurus</h1>
 
-<p>The First Stellar Wallet for Android!</p>
+<h2>
+<a name="the-first-stellar-wallet-for-android" class="anchor" href="#the-first-stellar-wallet-for-android"><span class="octicon octicon-link"></span></a>The First Stellar Wallet for Android!</h2>
+
+<p>Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
+The next step to get there is a functional app for sending and receiving payments (starting with STR, only)</p>
+
+<p>The app is built using AngularJS, Cordova and the Ionic Framework. We first focus on android, but as Ionic is a platform agnostic tool, feel free to try it on the platform you like.</p>
 
 <h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>Display Account Balance</li>
-<li>Send STR (paste Address or scan QR-code)</li>
+<li>Display account balance and recent transaction</li>
+<li>Send STR (paste address or scan QR-code)</li>
 <li>Receive STR (generate QR-code)</li>
-<li>...</li>
+<li>Lock sending by local password</li>
 </ul><h2>
 <a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span></a>Contribute</h2>
 
@@ -51,11 +55,42 @@
 <ul>
 <li>just contribute new code</li>
 <li>peer review and improve existing code</li>
-<li>Donate to <code>gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP</code> (need 25$ for upload to Playstore)</li>
+<li>Donate to our Stellar-Address <code>gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP</code> (need 25$ for upload to Playstore)</li>
 </ul><h2>
-<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a name="levels-of-contribution" class="anchor" href="#levels-of-contribution"><span class="octicon octicon-link"></span></a>Levels of Contribution</h2>
 
-<p>This app is built using AngularJS, Cordova and the Ionic Framework. More information coming soon</p>
+<p>There is a simple way for contribution as long as you don't develop on phone specific issues. </p>
+
+<p>While the simple mode is a good way to get started, you will soon want to see this on your own device. Or check the layout on several emulated devices or whatever.</p>
+
+<h3>
+<a name="simple" class="anchor" href="#simple"><span class="octicon octicon-link"></span></a>Simple</h3>
+
+<ul>
+<li>
+<a href="https://github.com/klopper/Centaurus">Fork project</a> as usual.</li>
+<li>Open file './www/index.html' with your browser. What you see is close to what you have in the app.</li>
+<li>Modify the html views in './www/templates/' or the JS files in './www/js/'. Watch your changes immediatly by refreshing the page in the browser. </li>
+<li>You might also want to add some JS libs to './www/lib/'.</li>
+</ul><h3>
+<a name="advanced-android" class="anchor" href="#advanced-android"><span class="octicon octicon-link"></span></a>Advanced (Android)</h3>
+
+<ul>
+<li>
+<a href="http://ionicframework.com/getting-started/">Install Ionic</a>. The <a href="http://learn.ionicframework.com/videos/windows-android/">video tutorial for Windows users</a> is quite comprehensive</li>
+<li>
+<a href="https://github.com/klopper/Centaurus">Fork project</a> as usual.</li>
+<li>Make sure your device is visible to your computer. You can check this by running <code>adb devices</code>. More information coming soon.</li>
+<li>Navigate to your Centaurus root folder in the command line, use ionic to add android platform</li>
+<li>Build, deploy and run the app. Be Happy!</li>
+</ul><div class="highlight highlight-bash"><pre>ionic platform android
+ionic run android
+</pre></div>
+
+<h3>
+<a name="advanced-other-platforms" class="anchor" href="#advanced-other-platforms"><span class="octicon octicon-link"></span></a>Advanced (other platforms)</h3>
+
+<p>No experience yet, so let us know.</p>
 
 <h2>
 <a name="links" class="anchor" href="#links"><span class="octicon octicon-link"></span></a>Links</h2>
@@ -65,12 +100,25 @@
 <li><a href="https://www.stellar.org/blog/introducing-stellar/">Stellar</a></li>
 <li>...</li>
 </ul>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/klopper/Centaurus/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/klopper/Centaurus/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/klopper/Centaurus"></a> is maintained by <a href="https://github.com/klopper">klopper</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+
+  
   </body>
 </html>
