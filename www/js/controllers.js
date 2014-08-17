@@ -15,5 +15,9 @@ new QRCode(document.getElementById("QRCODE")
 })
 
 .controller('AboutCtrl', function($scope) {
+
+  $scope.GotoLink = function (url) {
+    window.open(url,'_system');
+  }
 })
 ;
