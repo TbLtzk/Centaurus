@@ -30,7 +30,7 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Remote', function(Settings) {
+.factory('Remote', function() {
 var Remote = stellar.Remote; 
 
 var remote = new Remote({
@@ -55,16 +55,27 @@ return {
   }
 })
 
-.factory('Settings', function() {
-  
-  var defaultKeys = { address: 'gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP', secret:'mySecret' };
+.factory('Settings', function(Remote) {  
+  var Request = stellar.Request;
   
   var keysString = window.localStorage['keys'];
   var keys;
   if(!keysString){
-    keys = defaultKeys;
-    window.localStorage['keys'] = JSON.stringify(keys);
-	keys.mode = 'created';
+  var defaultKeys = { address: 'gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP', secret:'mySecret' };
+  var remote = Remote.get();
+   remote.connect(function() {
+	  var request = new Request(remote,'create_keys').callback(function(res,success,error){
+		defaultKeys.address = success.account_id;
+		defaultKeys.secret=success.master_seed;
+		
+		keys = defaultKeys;
+		window.localStorage['keys'] = JSON.stringify(keys);
+		keys.mode = 'created';
+	  })
+  
+	request.request();
+    
+	});
   }
   else {
     keys = JSON.parse(keysString);
