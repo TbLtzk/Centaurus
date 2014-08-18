@@ -3,13 +3,13 @@
 ## The First Stellar Wallet for Android!
 
 Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
-The next step to get there is a functional app for sending and receiving payments (starting with STR, only)
+The next step to get there is a functional app for sending and receiving payments (starting with STR, only).
 
 The app is built using AngularJS, Cordova and the Ionic Framework. We first focus on android, but as Ionic is a platform agnostic tool, feel free to try it on the platform you like.
 
 ## Features
 
-* Display account balance and recent transaction
+* Display account balance and recent transactions
 * Send STR (paste address or scan QR-code)
 * Receive STR (generate QR-code)
 * Lock sending by local password
