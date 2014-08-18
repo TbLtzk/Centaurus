@@ -4,7 +4,8 @@ angular.module('starter.controllers', [])
   $scope.account = Account.get();
 })
 
-.controller('SendCtrl', function($scope) {
+.controller('SendCtrl', function($scope, Account) {
+  $scope.available = Account.get().balance - Account.get().reserve;
 })
 
 .controller('ReceiveCtrl', function($scope, Account) {
