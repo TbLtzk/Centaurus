@@ -1,7 +1,10 @@
 angular.module('starter.controllers', [])
-
-.controller('WalletCtrl', function($scope, Account) {
-  $scope.account = Account.get();
+.controller('WalletCtrl', function($scope, Account) {  
+  $scope.$on('accountInfoLoaded', function(event){  
+	$scope.account = Account.get();		
+	$scope.$apply();
+  });
+  $scope.account = Account.get();	
 })
 
 .controller('SendCtrl', function($scope, Account) {
