@@ -1,7 +1,6 @@
 angular.module('starter.services', [])
 
 .factory('Account', function($rootScope, Settings, Remote) {
-  
   var keys = Settings.getKeys();
   var account = { address: keys.address, balance: 0, reserve:20, devInfo: keys };
   
@@ -11,8 +10,7 @@ angular.module('starter.services', [])
 	  var request = remote.requestAccountInfo(keys.address, function(err, res) {
 		if (err){
 			console.error('Could not retrieve account info:')
-			console.error(res.remote.error_message)
-			console.error(res)
+			console.error(err)
 		}
 		else {
 			console.log('accountInfoLoaded');	
@@ -36,7 +34,7 @@ angular.module('starter.services', [])
   }
 })
 
-.factory('Remote', function(Settings) {
+.factory('Remote', function() {
 var Remote = stellar.Remote; 
 
 var remote = new Remote({
@@ -54,9 +52,6 @@ var remote = new Remote({
   ]
 });
 
-var keys = Settings.getKeys();
-remote.set_secret(keys.address, keys.secret);
-
 remote.connect(function() {
   console.log('remote connected')
 });
@@ -68,24 +63,41 @@ return {
   }
 })
 
-.factory('Settings', function() {
-  
-  var defaultKeys = { address: 'gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP', secret:'mySecret' }; // live network
-  
+.factory('Settings', function(Remote) {  
+  var Request = stellar.Request;
+  var remote = Remote.get();
+
   var keysString = window.localStorage['keys'];
+
+  // override for use in test network (funded)
+  var testKeys = { address: 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY', secret:'s3qgYLVJQJL2eLZ54TB9msjmpRHXQBdQrmG9WbD6yVCx6NrFMYU'}; 
+  keysString = JSON.stringify(testKeys);
+  
   var keys;
   if(!keysString){
-    keys = defaultKeys;
-    window.localStorage['keys'] = JSON.stringify(keys);
-	keys.mode = 'created';
+  var defaultKeys = { address: 'gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP', secret:'mySecret' };
+   remote.connect(function() {
+	  var request = new Request(remote,'create_keys').callback(function(res,success,error){
+		defaultKeys.address = success.account_id;
+		defaultKeys.secret=success.master_seed;
+		
+		keys = defaultKeys;
+
+		window.localStorage['keys'] = JSON.stringify(keys);
+		keys.mode = 'created';
+
+		remote.set_secret(keys.address, keys.secret);
+		})
+  
+	request.request();
+    
+	});
   }
   else {
     keys = JSON.parse(keysString);
 	keys.mode = 'loaded';
-  }  
-
-  // override for use in test network
-  var keys = { address: 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY', secret:'s3qgYLVJQJL2eLZ54TB9msjmpRHXQBdQrmG9WbD6yVCx6NrFMYU', mode: 'test'}; 
+	remote.set_secret(keys.address, keys.secret);
+ }  
 
   return {
     getKeys: function() {
