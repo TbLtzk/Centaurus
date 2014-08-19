@@ -1,6 +1,15 @@
 <ion-view title="Send">
-  <ion-content class="has-header">
-    <h5>You have {{available}} STR available for sending.</h5>
-	<h3>Coming soon!</h3>
+  <ion-content class="has-header" padding="10">
+  <div class="list list">
+    <label class="item item-input">
+      <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address">
+    </label>
+    <label class="item item-input">
+      <input ng-model="paymentData.amount" type="text" placeholder="Amount ({{available}} STR available)">
+    </label>
+     <button ng-click="sendPayment()" class="button button-block button-positive">
+      Send Stellars now!
+    </button> 
+  </div>
   </ion-content>
 </ion-view>

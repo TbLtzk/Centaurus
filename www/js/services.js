@@ -71,6 +71,7 @@ return {
 
   // override for use in test network (funded)
   var testKeys = { address: 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY', secret:'s3qgYLVJQJL2eLZ54TB9msjmpRHXQBdQrmG9WbD6yVCx6NrFMYU'}; 
+  var testKeysAlternative = { address: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL', secret:'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'}; 
   keysString = JSON.stringify(testKeys);
   
   var keys;

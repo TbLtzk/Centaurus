@@ -7,8 +7,34 @@ angular.module('starter.controllers', [])
   $scope.account = Account.get();	
 })
 
-.controller('SendCtrl', function($scope, Account) {
-  $scope.available = Account.get().balance - Account.get().reserve;
+.controller('SendCtrl', function($scope, Account, Remote) {
+  var account = Account.get();
+
+  $scope.paymentData = { destinationAddress: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL', amount: '1', currency:'STR' }   
+  
+  $scope.available = account.balance - account.reserve;
+  $scope.account = account;
+  
+  $scope.sendPayment = function(){
+	var Amount = stellar.Amount;
+	
+	var remote = Remote.get();
+	var transaction = remote.transaction();
+	var amountApi = Amount.from_human($scope.paymentData.amount + $scope.paymentData.currency);
+	
+	transaction.payment({ from: account.address, to: $scope.paymentData.destinationAddress, amount: amountApi });
+	
+	transaction.submit(function(err, res){
+	  // TODO: some visible feedback (and block UI until finished)
+      if(err){
+        console.error('Payment ' + JSON.stringify( $scope.paymentData ) + ' failed:');
+        console.error(err);
+      }
+      else {
+        console.log('Payment ' + JSON.stringify( $scope.paymentData ) + ' succesful!');
+      }	  
+	});
+  };
 })
 
 .controller('ReceiveCtrl', function($scope, Account) {
