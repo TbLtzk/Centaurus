@@ -57,7 +57,7 @@ angular.module('starter.services', [])
 			trusted : true,
 			local_signing : true,
 			local_fee : true,
-			fee_cushion : 1.5,
+			fee_cushion : 1,
 			servers : [{
 					host : 'test.stellar.org',
 					port : 9001,
