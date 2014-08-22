@@ -7,7 +7,7 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 })
 
-.controller('SendCtrl', function ($scope, Account, Remote) {
+.controller('SendCtrl', function ($scope, Account, Remote, Settings) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -24,27 +24,17 @@ angular.module('starter.controllers', [])
 	$scope.account = account;
 
 	$scope.sendPayment = function () {
-		var Amount = stellar.Amount;
-
-		var remote = Remote.get();
-		var transaction = remote.transaction();
-		var amountApi = Amount.from_human($scope.paymentData.amount + $scope.paymentData.currency);
-
-		transaction.payment({
-			from : account.address,
-			to : $scope.paymentData.destinationAddress,
-			amount : amountApi
-		});
-
-		transaction.submit(function (err, res) {
-			// TODO: some visible feedback (and block UI until finished)
-			if (err) {
-				console.error('Payment ' + JSON.stringify($scope.paymentData) + ' failed:');
-				console.error(err);
-			} else {
-				console.log('Payment ' + JSON.stringify($scope.paymentData) + ' succesful!');
-			}
-		});
+		var data = {
+		  command: 'submit',
+		  tx_json : {
+			TransactionType : 'Payment',
+			Account : account.address,
+			Destination : $scope.paymentData.destinationAddress,
+			Amount : $scope.paymentData.amount * 1000000,			
+		  },
+		  secret : Settings.getKeys().secret
+		};
+		Remote.send(data);	
 	};
 })
 
