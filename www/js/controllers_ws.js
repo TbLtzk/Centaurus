@@ -7,23 +7,22 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 })
 
-.controller('SendCtrl', function ($scope, Account, Remote, Settings) {
+.controller('SendCtrl', function ($scope, $ionicLoading, Account, Remote, Settings) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
+		$scope.available = account.balance - account.reserve;
+		$scope.account = account;
 		$scope.$apply();
 	});
-
-	$scope.paymentData = {
-		destinationAddress : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
-		amount : '1',
-		currency : 'STR'
-	}
 
 	$scope.available = account.balance - account.reserve;
 	$scope.account = account;
 
 	$scope.sendPayment = function () {
+		$ionicLoading.show({
+			template : "To the moon..."
+		});
 		var data = {
 		  command: 'submit',
 		  tx_json : {
@@ -35,6 +34,14 @@ angular.module('starter.controllers', [])
 		  secret : Settings.getKeys().secret
 		};
 		Remote.send(data);	
+	};
+	
+	$scope.donate = function() {
+		$scope.paymentData = {
+			destinationAddress : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
+			amount : 0.03 * account.balance,
+			currency : 'STR'
+		}
 	};
 })
 

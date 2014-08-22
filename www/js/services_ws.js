@@ -44,6 +44,7 @@ angular.module('starter.services', [])
 		else if( msg.transaction.Account === keys.address) {
 		  console.log( 'payment sent: ' + msg.transaction.Amount/1000000 + ' STR' );
 		  account.balance -= msg.transaction.Amount/1000000;
+		  $ionicLoading.hide();
 		}
 	  }
 	  else if (msg.status === 'success' && msg.type === 'response' && msg.result){		 
@@ -64,7 +65,8 @@ angular.module('starter.services', [])
 		  console.log(newKeys.account_id + ': ' + newKeys.master_seed);
 		  Settings.setKeys(newKeys.account_id, newKeys.master_seed);
 		}
-	  }		 		
+	  }
+	  $ionicLoading.hide();
 	  $rootScope.$broadcast('accountInfoLoaded');
 	};
 
@@ -106,7 +108,7 @@ angular.module('starter.services', [])
 		address : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
-	keysString = JSON.stringify(testKeysAlternative);
+	// keysString = JSON.stringify(testKeysAlternative);
 
 	var settings = this;
 	var keys;
