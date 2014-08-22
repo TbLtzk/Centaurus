@@ -106,7 +106,7 @@ angular.module('starter.services', [])
 		address : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
-	keysString = JSON.stringify(testKeysAlternative);
+	// keysString = JSON.stringify(testKeysAlternative);
 
 	var settings = this;
 	var keys;
