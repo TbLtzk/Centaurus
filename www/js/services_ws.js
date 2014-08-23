@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.factory('Account', function ($rootScope, $ionicLoading, Settings, Remote) {
+.factory('Account', function ($rootScope, $ionicLoading, $ionicPopup, $timeout, Settings, Remote) {
 	var keys;
 	var account;
 	account = {
@@ -36,6 +36,12 @@ angular.module('starter.services', [])
     ws.onmessage = function (event) {
 	  var msg=JSON.parse(event.data);
 	  console.log( msg );
+	  if(msg.status === 'error' && msg.error != 'actNotFound' && msg.error != 'srcActNotFound') {
+		$ionicLoading.hide();
+		$ionicPopup.alert({
+			title: msg.error_message
+		});
+	  }
 	  if(msg.engine_result_code === 0 && msg.type === 'transaction') {		
 		if( msg.transaction.Destination === keys.address) {
 		  console.log( 'payment received: ' + msg.transaction.Amount/1000000 + ' STR' );
@@ -44,7 +50,12 @@ angular.module('starter.services', [])
 		else if( msg.transaction.Account === keys.address) {
 		  console.log( 'payment sent: ' + msg.transaction.Amount/1000000 + ' STR' );
 		  account.balance -= msg.transaction.Amount/1000000;
-		  $ionicLoading.hide();
+		  $ionicLoading.show({
+			template : 'Payment successful!'
+		  });
+		  $timeout(function() {
+			$ionicLoading.hide();
+		  }, 1000);
 		}
 	  }
 	  else if (msg.status === 'success' && msg.type === 'response' && msg.result){		 
@@ -66,7 +77,9 @@ angular.module('starter.services', [])
 		  Settings.setKeys(newKeys.account_id, newKeys.master_seed);
 		}
 	  }
-	  $ionicLoading.hide();
+	  $timeout(function() {
+		$ionicLoading.hide();
+	  }, 7000);
 	  $rootScope.$broadcast('accountInfoLoaded');
 	};
 
@@ -109,6 +122,7 @@ angular.module('starter.services', [])
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
 
+	// keysString = JSON.stringify(testKeysAlternative);
 	var settings = this;
 	var keys;
 	
@@ -133,7 +147,7 @@ angular.module('starter.services', [])
 			Remote.get().send( JSON.stringify( data ) );
 			
 			// // mock with specific address
-			// var mock = testKeysAlternative;
+			// var mock = testKeys;
 			// setKeysFunc(mock.address, mock.secret);
 			
 		} else {

@@ -18,20 +18,26 @@ angular.module('starter.controllers', [])
 
 	$scope.available = account.balance - account.reserve;
 	$scope.account = account;
-
+	$scope.paymentData = {
+		destinationAddress : '',
+		amount : null,
+		currency : 'STR'
+	}
+	
 	$scope.sendPayment = function () {
 		$ionicLoading.show({
 			template : "To the moon..."
 		});
+		var keys = Settings.getKeys();
 		var data = {
 		  command: 'submit',
 		  tx_json : {
 			TransactionType : 'Payment',
-			Account : account.address,
+			Account : keys.address,
 			Destination : $scope.paymentData.destinationAddress,
 			Amount : $scope.paymentData.amount * 1000000,			
 		  },
-		  secret : Settings.getKeys().secret
+		  secret : keys.secret
 		};
 		Remote.send(data);	
 	};
