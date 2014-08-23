@@ -108,27 +108,33 @@ angular.module('starter.services', [])
 		address : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
-	// keysString = JSON.stringify(testKeysAlternative);
 
 	var settings = this;
 	var keys;
-	var defaultKeys = {
-		address : 'gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP',
-		secret : 'mySecret'
-	};
-	defaultKeys = testKeys;
-
+	
 	settings.onKeysAvailable = function()
 	{
        console.log('keys available not defined yet');	
 	}
 
+	var setKeysFunc = function (addr, s) {
+		  keys = {address: addr, secret: s};
+		  window.localStorage['keys'] = JSON.stringify(keys);
+		  keys.mode = 'created';
+		  settings.onKeysAvailable();
+		};
+
 	settings.init = function () {			
 		if (!keysString) {
+		    // real api call
 			var data = {
 			  command: 'create_keys'
 			};	 
 			Remote.get().send( JSON.stringify( data ) );
+			
+			// // mock with specific address
+			// var mock = testKeysAlternative;
+			// setKeysFunc(mock.address, mock.secret);
 			
 		} else {
 			keys = JSON.parse(keysString);
@@ -143,14 +149,28 @@ angular.module('starter.services', [])
 		},
 		
 		setKeys : function (addr, s) {
-		  keys = {address: addr, secret: s};
-		  window.localStorage['keys'] = JSON.stringify(keys);
-		  keys.mode = 'created';
-		  settings.onKeysAvailable();
+		   setKeysFunc(addr, s);
 		},
 		
 		get : function () {
 			return settings;
 		}
 	}
-});
+})
+
+.factory('QR', function () {
+
+  return {
+    scan: function(success, fail) {
+	  // real scan on device
+      cordova.plugins.barcodeScanner.scan(
+        function (result) { success(result); },
+        function (error) { fail(error); }
+      );
+	  
+	  // // mock scan for dev purposes
+	  // var mockResult = { cancelled: false, text:'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL' };
+	  // success(mockResult);
+    }
+  };
+})

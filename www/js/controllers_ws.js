@@ -7,7 +7,7 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 })
 
-.controller('SendCtrl', function ($scope, $ionicLoading, Account, Remote, Settings) {
+.controller('SendCtrl', function ($scope, $ionicLoading, Account, Remote, Settings, QR) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -34,6 +34,22 @@ angular.module('starter.controllers', [])
 		  secret : Settings.getKeys().secret
 		};
 		Remote.send(data);	
+	};
+	
+	$scope.scanCode = function () {
+		QR.scan(
+		  function (result) {
+			  if(!result.cancelled){
+				$scope.paymentData = {
+					destinationAddress : result.text,
+					currency : 'STR'
+				}
+			  }
+		  }, 
+		  function (error) {
+			  alert("Scanning failed: " + error);
+		  }
+	    );
 	};
 	
 	$scope.donate = function() {
