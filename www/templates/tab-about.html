@@ -1,29 +1,62 @@
 ﻿<ion-view title="Centaurus">
-  <ion-content class="has-header padding">
-    Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
-	The next step to get there is a functional app for sending and receiving payments (starting with STR, only)
-
-	<p>	
-		<list>
-		  <li>Display balance (STR)</li>	  
-		  <li>Send by manually pasting an adress</li>	  
-		  <li>Send by scanning a QR-code</li>	  
-		  <li>Generate a QR-code for receiving</li>	  
-		  <li>Display recent transactions</li>
-		  <li>Lock sending by local password</li>	  
-		</list>
+<ion-content class="has-header padding">
+<div class="list card">
+  <div class="item item-divider">
+    Centaurus Stellar Wallet
+  </div>
+  <div class="item item-body">
+    <font size="4">Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
+	The next step to get there is a functional app for sending and receiving payments (starting with STR, only).</font>
+  </div>
+  <div class="item item-divider">
+    Features
+  </div>
+  <div class="item item-body">
+	<list>
+	  <li>Display balance (STR)</li>	  
+	  <li>Send by manually pasting an adress</li>	  
+	  <li>Send by scanning a QR-code</li>	  
+	  <li>Generate a QR-code for receiving</li>	  
+	  <li>Coming soon: Display recent transactions</li>
+	</list>
+  </div>
+  <div class="item item-divider">
+    Getting Started
+  </div>
+  <div class="item item-body">
+	<list>
+	  <li>Go to the receive tab and share your address with a friend who already has Stellars.</li>	  
+	  <li>If you have a facebook account, you're lucky. Go to launch.stellar.org, create an account. 
+	  Authenticate with Facebook and get Stellars for free, worth about 10$.</li>
+	  <li>Browse stellartalk.org and find more alternatives</li>
+	</list>
+  </div>
+  <div class="item item-divider">
+    Known Issues
+  </div>
+  <div class="item item-body">
+	First of all you should be aware, that this app is in a very early stage and errors are still likely to occur. 
+	Don't hold more Stellars in this app than you need for every day purpose and you can afford to loose in worst case.
+	<p>
+	<list>
+	  <li>There is currently no backup functionality. If you lose your phone, uninstall the app, or clear the app data, your remaining Stellars are lost forever!</li>	  
+	  <li>Connectivity may fail for multiple reasons. In this case you cannot do anything with the app. Your address remains displayed as "loading".</li>
+	  <li>Stellar Names are not supported.</li>
+	  <li>You cannot use an existing address. It's always created on first use</li>
+	</list>
 	</p>
-	<hline>
-	<p>	
-		<list>
-		  <!-- hyperlinks to external sites are problematic. Both versions, I tried (see below) open the link 
-		     in the embedded browser, not in the system browser. Even worse, the navigate back function does not work, so you are locked!-->
-		  <!-- <li><a ng-click="GotoLink('http://klopper.github.io/Centaurus')" style="color:blue">Centaurus on GitHub</a></li>-->
-		  <!-- <li><a href="http://klopper.github.io/Centaurus" target="_system">Centaurus on github</a></li> -->
-		  <li>http://klopper.github.io/Centaurus</li>
-		  <li>Questions and feedback appreciated: <a href="mailto:centaurus@xcoins.com">centaurus@xcoins.com</a></li>
-		</list>
-	</p>	
-	
-  </ion-content>
+  </div>
+  <div class="item item-divider">
+    Contact
+  </div>
+  <div class="item item-body">
+	<list>
+	  <!-- hyperlinks to external sites are problematic. Both versions, I tried (see below) open the link 
+		 in the embedded browser, not in the system browser. Even worse, the navigate back function does not work, so you are locked!-->
+	  <!-- <li><a ng-click="GotoLink('http://klopper.github.io/Centaurus')" style="color:blue">Centaurus on GitHub</a></li>-->
+	  <li>http://klopper.github.io/Centaurus</li>
+	  <li>Questions and feedback appreciated: <a href="mailto:centaurus@xcoins.com">centaurus@xcoins.com</a></li>
+	</list>
+  </div>
+</ion-content>
 </ion-view>

@@ -1,10 +1,12 @@
 {
 "test":
         {
-        "websocket" : "test.stellar.org"
+        "websocket" : "test.stellar.org",
+        "testHint" : " (T)"
         },
 "live":
         {
-        "websocket" : "live.stellar.org"
+        "websocket" : "live.stellar.org",
+        "testHint" : ""
         }
 }

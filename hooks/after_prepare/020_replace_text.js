@@ -32,6 +32,9 @@ if (rootdir) {
         // android
         "platforms/android/assets/www/index.html",
         "platforms/android/assets/www/js/services_ws.js",
+        "platforms/android/assets/www/templates/tab-receive.html",
+        "platforms/android/assets/www/templates/tab-wallet.html",
+        "platforms/android/assets/www/templates/tab-send.html",
         // ios
         "platforms/ios/www/index.html",
         "platforms/ios/www/js/services_ws.js",
@@ -40,7 +43,8 @@ if (rootdir) {
         var fullfilename = path.join(rootdir, val);
         if (fs.existsSync(fullfilename)) {
             // CONFIGURE HERE
-            // with the names of the token values. For example, below we are looking for the token /*REP*/ 'api.example.com' /*REP*/ and will replace that token
+            // with the names of the token values. For example, below we are looking for the token ' (T)' (brackets have to be escaped)
+            replace_string_in_file(fullfilename, " \\(T\\)", configobj[target].testHint);
             replace_string_in_file(fullfilename, "test.stellar.org", configobj[target].websocket);
             // ... any other configuration
         } else {

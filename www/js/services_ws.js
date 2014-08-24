@@ -61,7 +61,7 @@ angular.module('starter.services', [])
 	  else if (msg.status === 'success' && msg.type === 'response' && msg.result){		 
 		if(msg.result.account_data) {
 		  var newData = msg.result.account_data;
-		  account.balance = newData.Balance / 1000000;
+		  account.balance = Math.round(newData.Balance / 1000000);
 		}
 		// else if(msg.result.transaction)
 		// { 		

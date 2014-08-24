@@ -1,6 +1,7 @@
-<ion-view title="Send">
+<ion-view title="Send (T)">
   <ion-content class="has-header" padding="10">
-  <div class="list list">
+  <div class="list card">
+  <div class="item item-body">
     <label class="item item-input">
       <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address">
     </label>
@@ -10,12 +11,17 @@
      <button on-tap="sendPayment()" class="button button-block button-positive">
       Send Stellars now!
     </button> 
-     <button on-tap="scanCode()" class="button ">
-      Scan code
+	</div>
+  <div class="item item-body">
+     <button on-tap="scanCode()" class="button button-block">
+		 <i class="icon ion-qr-scanner"></i> 
+		  Scan code
     </button> 
-     <button on-tap="donate()" class="button ">
-      Like this app and want to keep it free?
+     <button on-tap="donate()" class="button button-block">
+		 <i class="icon ion-star"></i> 
+		 <font size="2">Like this app? Donate!</font>
     </button> 
+  </div">
   </div>
   </ion-content>
 </ion-view>

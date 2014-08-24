@@ -60,8 +60,8 @@ angular.module('starter.controllers', [])
 	
 	$scope.donate = function() {
 		$scope.paymentData = {
-			destinationAddress : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
-			amount : 0.03 * account.balance,
+			destinationAddress : 'gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D',
+			amount : Math.floor(0.03 * account.balance),
 			currency : 'STR'
 		}
 	};
@@ -69,7 +69,7 @@ angular.module('starter.controllers', [])
 
 .controller('ReceiveCtrl', function ($scope, Account) {
 	$scope.$on('accountInfoLoaded', function (event) {
-		account = Account.get();
+		$scope.account = Account.get();
 		$scope.$apply();
 	});
 	$scope.account = Account.get();
@@ -78,7 +78,9 @@ angular.module('starter.controllers', [])
 		height : 128,
 		text : Account.get().address
 	});
-
+	$scope.share = function(){
+		window.location.href = 'mailto:?subject=My%20Stellar%20Address&body=You%20can%20send%20me%20Stellars%20to%20the%20address%20'+ $scope.account.address + '.'
+	}
 })
 
 .controller('AboutCtrl', function ($scope) {
