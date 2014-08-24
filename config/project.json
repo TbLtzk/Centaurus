@@ -1,0 +1,10 @@
+{
+"test":
+        {
+        "websocket" : "test.stellar.org"
+        },
+"live":
+        {
+        "websocket" : "live.stellar.org"
+        }
+}
