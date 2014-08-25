@@ -50,6 +50,7 @@ angular.module('starter.controllers', [])
 					destinationAddress : result.text,
 					currency : 'STR'
 				}
+				$scope.$apply();
 			  }
 		  }, 
 		  function (error) {
@@ -61,7 +62,7 @@ angular.module('starter.controllers', [])
 	$scope.donate = function() {
 		$scope.paymentData = {
 			destinationAddress : 'gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D',
-			amount : Math.floor(0.03 * account.balance),
+			amount : Math.floor(0.02 * account.balance),
 			currency : 'STR'
 		}
 	};
