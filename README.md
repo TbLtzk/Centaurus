@@ -17,9 +17,10 @@ The app is built using AngularJS, Cordova and the Ionic Framework. We first focu
 ## Contribute
 
 I am a complete newbee to HTML/JS, Ionic, so 
-* just contribute new code
-* peer review and improve existing code
-* Donate to our Stellar-Address `gEux6NhrybVLuvgaYrgThTk4d3Kmd3s4NP` (need 25$ for upload to Playstore)
+* Use the app and report any bugs
+* Just contribute new code
+* Peer review and improve existing code
+* Donate to our Stellar-Address `gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D`
 
 ## Levels of Contribution
 
