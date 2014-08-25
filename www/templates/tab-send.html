@@ -6,7 +6,7 @@
       <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address">
     </label>
     <label class="item item-input">
-      <input ng-model="paymentData.amount" type="text" placeholder="Amount ({{available}} STR available)">
+      <input ng-model="paymentData.amount" type="number" placeholder="Amount ({{available}} STR available)">
     </label>
      <button on-tap="sendPayment()" class="button button-block button-positive">
       Send Stellars now!
