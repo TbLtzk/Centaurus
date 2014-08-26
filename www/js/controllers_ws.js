@@ -23,43 +23,42 @@ angular.module('starter.controllers', [])
 		amount : null,
 		currency : 'STR'
 	}
-	
+
 	$scope.sendPayment = function () {
 		$ionicLoading.show({
 			template : "To the moon..."
 		});
 		var keys = Settings.getKeys();
 		var data = {
-		  command: 'submit',
-		  tx_json : {
-			TransactionType : 'Payment',
-			Account : keys.address,
-			Destination : $scope.paymentData.destinationAddress,
-			Amount : $scope.paymentData.amount * 1000000,			
-		  },
-		  secret : keys.secret
+			command : 'submit',
+			tx_json : {
+				TransactionType : 'Payment',
+				Account : keys.address,
+				Destination : $scope.paymentData.destinationAddress,
+				Amount : $scope.paymentData.amount * 1000000,
+			},
+			secret : keys.secret
 		};
-		Remote.send(data);	
+		Remote.send(data);
 	};
-	
+
 	$scope.scanCode = function () {
 		QR.scan(
-		  function (result) {
-			  if(!result.cancelled){
+			function (result) {
+			if (!result.cancelled) {
 				$scope.paymentData = {
 					destinationAddress : result.text,
 					currency : 'STR'
 				}
 				$scope.$apply();
-			  }
-		  }, 
-		  function (error) {
-			  alert("Scanning failed: " + error);
-		  }
-	    );
+			}
+		},
+			function (error) {
+			alert("Scanning failed: " + error);
+		});
 	};
-	
-	$scope.donate = function() {
+
+	$scope.donate = function () {
 		$scope.paymentData = {
 			destinationAddress : 'gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D',
 			amount : Math.floor(0.02 * account.balance),
@@ -79,8 +78,8 @@ angular.module('starter.controllers', [])
 		height : 128,
 		text : Account.get().address
 	});
-	$scope.share = function(){
-		window.location.href = 'mailto:?subject=My%20Stellar%20Address&body=You%20can%20send%20me%20Stellars%20to%20the%20address%20'+ $scope.account.address + '.'
+	$scope.share = function () {
+		window.location.href = 'mailto:?subject=My%20Stellar%20Address&body=You%20can%20send%20me%20Stellars%20to%20the%20address%20' + $scope.account.address + '.'
 	}
 })
 
