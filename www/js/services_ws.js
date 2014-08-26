@@ -91,7 +91,7 @@ angular.module('starter.services', [])
 })
 
 .factory('Remote', function () {
-    var ws = new WebSocket('ws://test.stellar.org:9001');
+    var ws = new WebSocket('wss://test.stellar.org:9001');
 
 	return {
 		get : function () {
