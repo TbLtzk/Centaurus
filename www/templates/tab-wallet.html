@@ -11,8 +11,17 @@
     Recent Transactions
   </div>
   <div class="item item-body">
-    Coming Soon...
-  </div>
+  <ion-scroll style="height: 324px;">
+    <ion-list ng-repeat="item in account.transactions">
+		<ion-item class="" ng-if="item.Account === account.address">		
+		You sent {{item.Amount / 1000000}} {{item.Currency ? item.Currency : 'STR'}} to {{item.Destination}}		
+		</ion-item>
+		<ion-item ng-if="!(item.Account === account.address)">		
+		You recieved {{item.Amount / 1000000}} {{item.Currency ? item.Currency : 'STR'}} from {{item.Account}}
+		</ion-item>
+	</ion-list>
+	</ion-scroll>
+  </div> 
 </div>
 </ion-content>
 </ion-view>

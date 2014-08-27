@@ -7,7 +7,8 @@ angular.module('starter.services', [])
 		address : 'loading',
 		balance : 0,
 		reserve : 20,
-		devInfo : keys
+		devInfo : keys,
+		transactions:[]
 	};
 
 	var ws = Remote.get();
@@ -22,6 +23,14 @@ angular.module('starter.services', [])
 			};
 			ws.send(JSON.stringify(data));
 
+			//initial transactions
+			var data = {
+				command : 'account_tx',
+				account : keys.address,
+				limit: 30
+			};
+			ws.send(JSON.stringify(data));
+			
 			// subscribe for updates
 			data = {
 				command : 'subscribe',
@@ -46,6 +55,7 @@ angular.module('starter.services', [])
 			if (msg.transaction.Destination === keys.address) {
 				console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
 				account.balance += msg.transaction.Amount / 1000000;
+				
 			} else if (msg.transaction.Account === keys.address) {
 				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
 				account.balance -= msg.transaction.Amount / 1000000;
@@ -56,6 +66,7 @@ angular.module('starter.services', [])
 					$ionicLoading.hide();
 				}, 1000);
 			}
+			account.transactions.unshift(msg.transaction);
 		} else if (msg.status === 'success' && msg.type === 'response' && msg.result) {
 			if (msg.result.account_data) {
 				var newData = msg.result.account_data;
@@ -72,6 +83,13 @@ angular.module('starter.services', [])
 				var newKeys = msg.result;
 				console.log(newKeys.account_id + ': ' + newKeys.master_seed);
 				Settings.setKeys(newKeys.account_id, newKeys.master_seed);
+			}
+			else if (msg.result.transactions) {
+				var transactions = msg.result.transactions;
+				for (index = 0; index < transactions.length; ++index) {
+					account.transactions.push(transactions[index].tx);
+				}
+				
 			}
 		}
 		$timeout(function () {
