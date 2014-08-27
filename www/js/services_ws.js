@@ -92,9 +92,6 @@ angular.module('starter.services', [])
 				
 			}
 		}
-		$timeout(function () {
-			$ionicLoading.hide();
-		}, 7000);
 		$rootScope.$broadcast('accountInfoLoaded');
 	};
 

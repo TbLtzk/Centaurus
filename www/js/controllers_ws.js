@@ -28,6 +28,9 @@ angular.module('starter.controllers', [])
 		$ionicLoading.show({
 			template : "To the moon..."
 		});
+		$timeout(function () {
+			$ionicLoading.hide();
+		}, 7000);
 		var keys = Settings.getKeys();
 		var data = {
 			command : 'submit',
