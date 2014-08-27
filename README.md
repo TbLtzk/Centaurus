@@ -40,6 +40,7 @@ While the simple mode is a good way to get started, you will soon want to see th
 
 * [Install Ionic](http://ionicframework.com/getting-started/). The [video tutorial for Windows users](http://learn.ionicframework.com/videos/windows-android/) is quite comprehensive
 * [Fork project](https://github.com/klopper/Centaurus) as usual.
+* make a copy of configTemplate.xml and name it config.xml
 * Make sure your device is visible to your computer. You can check this by running ```adb devices```. More information coming soon.
 * Navigate to your Centaurus root folder in the command line, use ionic to add android platform
 * Build, deploy and run the app. Be Happy!
