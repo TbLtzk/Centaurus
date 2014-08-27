@@ -4,11 +4,12 @@
 
 // add your plugins to this list--either the identifier, the filesystem location or the URL
 var pluginlist = [
-    "com.ionic.keyboard",
-    "com.knowledgecode.cordova.websocket",
+    "https://github.com/driftyco/ionic-plugins-keyboard.git",
+    "https://github.com/knowledgecode/WebSocket-for-Android.git",
     "com.phonegap.plugins.barcodescanner",
     "org.apache.cordova.console",
-    "org.apache.cordova.device"
+    "org.apache.cordova.device",
+	"org.apache.cordova.inappbrowser"
 ];
 
 // no need to configure below
