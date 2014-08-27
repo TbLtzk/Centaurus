@@ -8,7 +8,7 @@ angular.module('starter.services', [])
 		balance : 0,
 		reserve : 20,
 		devInfo : keys,
-		transactions:[]
+		transactions : []
 	};
 
 	var ws = Remote.get();
@@ -27,10 +27,10 @@ angular.module('starter.services', [])
 			var data = {
 				command : 'account_tx',
 				account : keys.address,
-				limit: 30
+				limit : 30
 			};
 			ws.send(JSON.stringify(data));
-			
+
 			// subscribe for updates
 			data = {
 				command : 'subscribe',
@@ -52,19 +52,30 @@ angular.module('starter.services', [])
 			});
 		}
 		if (msg.engine_result_code === 0 && msg.type === 'transaction') {
-			if (msg.transaction.Destination === keys.address) {
-				console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance += msg.transaction.Amount / 1000000;
-				
-			} else if (msg.transaction.Account === keys.address) {
-				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance -= msg.transaction.Amount / 1000000;
-				$ionicLoading.show({
-					template : 'Payment successful!'
-				});
-				$timeout(function () {
-					$ionicLoading.hide();
-				}, 1000);
+			if (msg.transaction.TransactionType === 'Payment') {
+				if (msg.transaction.Destination === keys.address) {
+					if (!msg.transaction.Amount.issuer) {
+						console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
+						account.balance += msg.transaction.Amount / 1000000;
+					} else {
+						console.log('payment received: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
+					}
+
+				} else if (msg.transaction.Account === keys.address) {
+					if (!msg.transaction.Amount.issuer) {
+						console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
+						account.balance -= msg.transaction.Amount / 1000000;
+					} else {
+						console.log('payment sent: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
+					}
+					$ionicLoading.show({
+						template : 'Payment successful!'
+					});
+					$timeout(function () {
+						$ionicLoading.hide();
+					}, 1000);
+				}
+
 			}
 			account.transactions.unshift(msg.transaction);
 		} else if (msg.status === 'success' && msg.type === 'response' && msg.result) {
@@ -83,13 +94,12 @@ angular.module('starter.services', [])
 				var newKeys = msg.result;
 				console.log(newKeys.account_id + ': ' + newKeys.master_seed);
 				Settings.setKeys(newKeys.account_id, newKeys.master_seed);
-			}
-			else if (msg.result.transactions) {
+			} else if (msg.result.transactions) {
 				var transactions = msg.result.transactions;
 				for (index = 0; index < transactions.length; ++index) {
 					account.transactions.push(transactions[index].tx);
 				}
-				
+
 			}
 		}
 		$timeout(function () {

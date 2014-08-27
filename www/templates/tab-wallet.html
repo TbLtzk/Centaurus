@@ -13,11 +13,17 @@
   <div class="item item-body">
    <ion-scroll style="height: 324px;">
     <ion-list ng-repeat="item in account.transactions">
-     <ion-item class="" ng-if="item.Account === account.address">		
-      You sent {{item.Amount / 1000000}} {{item.Currency ? item.Currency : 'STR'}} to {{item.Destination}}		
+	<ion-item class="" ng-if="item.Account === account.address && item.TransactionType === 'TrustSet'">		
+      You now trust {{item.LimitAmount.issuer}} over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.LimitAmount.currency : 'Unknown'}}		
      </ion-item>
-     <ion-item ng-if="!(item.Account === account.address)">		
-      You recieved {{item.Amount / 1000000}} {{item.Currency ? item.Currency : 'STR'}} from {{item.Account}}
+     <ion-item ng-if="!(item.Account === account.address) && item.TransactionType === 'TrustSet'">		
+      {{item.Account}} now trusts you over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.Amount.currency : 'Unknown'}}
+     </ion-item>
+     <ion-item class="" ng-if="item.Account === account.address && item.TransactionType === 'Payment'">		
+      You sent {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000) }} {{item.Amount.currency ? item.Amount.currency : 'STR'}} to {{item.Destination}}		
+     </ion-item>
+     <ion-item ng-if="!(item.Account === account.address) && item.TransactionType === 'Payment'">		
+      You recieved {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'STR'}} from {{item.Account}}
      </ion-item>
     </ion-list>
    </ion-scroll>
