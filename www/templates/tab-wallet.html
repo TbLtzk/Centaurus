@@ -23,7 +23,7 @@
       You sent {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000) }} {{item.Amount.currency ? item.Amount.currency : 'STR'}} to {{item.Destination}}		
      </ion-item>
      <ion-item ng-if="!(item.Account === account.address) && item.TransactionType === 'Payment'">		
-      You recieved {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'STR'}} from {{item.Account}}
+      You received {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'STR'}} from {{item.Account}}
      </ion-item>
     </ion-list>
    </ion-scroll>

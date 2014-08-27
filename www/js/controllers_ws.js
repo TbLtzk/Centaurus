@@ -7,7 +7,7 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 })
 
-.controller('SendCtrl', function ($scope, $ionicLoading, Account, Remote, Settings, QR) {
+.controller('SendCtrl', function ($scope, $ionicLoading, $timeout, Account, Remote, Settings, QR) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
