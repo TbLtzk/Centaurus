@@ -27,6 +27,12 @@
     <script src="js/app.js"></script>
     <script src="js/controllers_ws.js"></script>
     <script src="js/services_ws.js"></script>
+	<script>
+		function openExternal(elem) {
+			window.open(elem.href, "_system");
+			return false; // Prevent execution of the default onClick handler 
+		}
+	</script>
   </head>
   <body ng-app="starter" animation="slide-left-right-ios7">
     <!-- 

@@ -86,9 +86,5 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('AboutCtrl', function ($scope) {
-
-	$scope.GotoLink = function (url) {
-		window.open(url, '_system');
-	}
+.controller('AboutCtrl', function ($scope) {	
 });
