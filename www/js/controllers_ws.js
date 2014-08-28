@@ -7,7 +7,7 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 })
 
-.controller('SendCtrl', function ($scope, $ionicLoading, $timeout, Account, Remote, Settings, QR) {
+.controller('SendCtrl', function ($scope, UIHelper, Account, Remote, Settings, QR) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -25,12 +25,7 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.sendPayment = function () {
-		$ionicLoading.show({
-			template : "To the moon..."
-		});
-		$timeout(function () {
-			$ionicLoading.hide();
-		}, 7000);
+		UIHelper.blockScreen("To the moon...", 8);
 		var keys = Settings.getKeys();
 		var data = {
 			command : 'submit',
