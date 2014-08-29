@@ -11,7 +11,6 @@ angular.module('starter.services', [])
 		transactions : []
 	};
 
-	var ws = Remote.get();
 	Remote.init(function () {
 		Settings.get().onKeysAvailable = function () {
 			keys = Settings.getKeys();
@@ -21,7 +20,7 @@ angular.module('starter.services', [])
 				command : 'account_info',
 				account : keys.address
 			};
-			ws.send(JSON.stringify(data));
+			Remote.send(data);
 
 			//initial transactions
 			var data = {
@@ -29,14 +28,14 @@ angular.module('starter.services', [])
 				account : keys.address,
 				limit : 30
 			};
-			ws.send(JSON.stringify(data));
+			Remote.send(data);
 
 			// subscribe for updates
 			data = {
 				command : 'subscribe',
 				accounts : [keys.address]
 			};
-			ws.send(JSON.stringify(data));
+			Remote.send(data);
 		};
 
 		Settings.get().init();
@@ -119,7 +118,7 @@ angular.module('starter.services', [])
 		}
 		return true;
 	};
-	var errorCallback = function(msg) {
+	var errorCallback = function(msg) {		
 		UIHelper.showAlert(msg.error_message);
 	};	
 	messageHandlers.add(errorFilter, errorCallback);
@@ -150,16 +149,28 @@ angular.module('starter.services', [])
 			return ws;
 		},
 		init : function (callback) {
-			ws.onopen = function () {
-				console.log('ws connection open');
-				callback();
+			try	{
+				ws.onopen = function () {
+					console.log('ws connection open');
+					callback();
+				}
+				ws.onerror = function () {
+					UIHelper.showAlert('Network connection failed');
+				}
 			}
-			ws.onerror = function () {
-				UIHelper.showAlert('Network connection failed');
+			catch(ex){
+				log.error('Network initialization failed', ex.message);
+				UIHelper.showAlert(ex.message);
 			}
 		},
 		send : function (data) {
-			ws.send(JSON.stringify(data));
+			try	{
+				ws.send(JSON.stringify(data));
+			}
+			catch(ex){
+				log.error('Network communication failed', ex.message);
+				UIHelper.showAlert(ex.message);
+			}
 		},
 		addMessageHandler: messageHandlers.add
 	}
