@@ -14,6 +14,8 @@ The app is built using AngularJS, Cordova and the Ionic Framework. We first focu
 * Receive STR (generate QR-code)
 * Lock sending by local password
 
+## Get it from [Google Play](https://play.google.com/store/apps/details?id=de.xcoins.centaurus)
+
 ## Contribute
 
 I am a complete newbee to HTML/JS, Ionic, so 
