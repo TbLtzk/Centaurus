@@ -1,13 +1,36 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, Account) {
+.controller('WalletCtrl', function ($scope, $cordovaFile, UIHelper, Account, Settings) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
 	});
 	$scope.account = Account.get();
+	
+	$scope.shareKeys = function () {
+	    backupString = btoa(JSON.stringify(Settings.getKeys()));
+		body = 'centaurus:backup001' + backupString;
+		window.location.href = 'mailto:?subject=My%20Stellar%20Keys&body=' + body;
+	};
+	
+	// function exportKeys is currently not used: file access does not work yet
+	$scope.exportKeys = function() {
+	  // request the persistent file system
+	  onSuccess = function(fileSystem) {
+		  // parameters: filePath, replace (boolean)
+		  $cordovaFile.createFile('test.txt', true).then(function(result) {
+			  UIHelper.showAlert(JSON.stringify(result));
+		  }, function(err) {
+			  UIHelper.showAlert(JSON.stringify(err));
+		  });
+	  };
+	  onError = function(err) {
+			UIHelper.showAlert(JSON.stringify(err));
+	  };
+	  window.requestFileSystem(window.PERSISTENT, 100000, onSuccess, onError);
+	};
 })
 
-.controller('SendCtrl', function ($scope, UIHelper, Account, Remote, Settings, QR) {
+.controller('SendCtrl', function ($scope, UIHelper, Account, Remote, Settings, QR, Commands) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -39,21 +62,34 @@ angular.module('starter.controllers', [])
 		};
 		Remote.send(data);
 	};
-
+	
 	$scope.scanCode = function () {
+	
+		// var text = 'centaurus:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==';
+		// var cmd = Commands.parse(text);					
+		// if(cmd.isCommand){
+			// Commands.execute(cmd.rawCommand);
+		// }
 		QR.scan(
 			function (result) {
-			if (!result.cancelled) {
-				$scope.paymentData = {
-					destinationAddress : result.text,
-					currency : 'STR'
+				if (!result.cancelled) {
+					var cmd = Commands.parse(result.text);					
+					if(cmd.isCommand){
+						Commands.execute(cmd.rawCommand);
+					}
+					else{
+						$scope.paymentData = {
+							destinationAddress : result.text,
+							currency : 'STR'
+						}
+						$scope.$apply();
+					}
 				}
-				$scope.$apply();
-			}
-		},
+			},
 			function (error) {
-			alert("Scanning failed: " + error);
-		});
+				UIHelper.showAlert("Scanning failed: " + error);
+			}
+		);
 	};
 
 	$scope.donate = function () {

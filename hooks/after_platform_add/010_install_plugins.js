@@ -9,6 +9,7 @@ var pluginlist = [
     "com.phonegap.plugins.barcodescanner",
     "org.apache.cordova.console",
     "org.apache.cordova.device",
+	"org.apache.cordova.file",
 	"org.apache.cordova.inappbrowser"
 ];
 

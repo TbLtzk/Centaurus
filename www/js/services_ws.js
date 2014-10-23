@@ -7,7 +7,6 @@ angular.module('starter.services', [])
 		address : 'loading',
 		balance : 0,
 		reserve : 20,
-		devInfo : keys,
 		transactions : []
 	};
 
@@ -257,6 +256,65 @@ angular.module('starter.services', [])
 			// // mock scan for dev purposes
 			// var mockResult = { cancelled: false, text:'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL' };
 			// success(mockResult);
+		}
+	};
+})
+
+.factory('Commands', function (UIHelper, Settings) {
+
+	if (typeof String.prototype.startsWith != 'function') {
+		String.prototype.startsWith = function (str){
+			return this.slice(0, str.length) == str;
+		};
+	}
+	
+	var knownCommands = [];
+	knownCommands.add = function(commandName, callback){
+		knownCommands.push( { name: commandName, callback: callback } );
+	};
+	
+	var backupCallback = function(content){
+			var unmasked = atob(content);
+			var newKeys = JSON.parse(unmasked);
+			var oldKeys = Settings.getKeys();
+			
+			if(oldKeys.address == newKeys.address && oldKeys.secret == newKeys.secret) {
+				UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
+			}
+			else {
+				message = 'Todo: confirm dialog and overwrite.\naddress:' + keys.address + '\nsecret:'+ keys.secret;
+				UIHelper.showAlert(message);
+			}
+			
+			return true;
+	}
+	knownCommands.add('backup001', backupCallback);
+
+	return {
+		parse : function (input) {
+			var result = {
+				isCommand : false,
+				rawCommand: ''
+			}
+			if(input.startsWith('centaurus:')){
+				result.isCommand =  true;
+				result.rawCommand = input.substring(10);
+			}
+			return result;
+		},
+		
+		execute : function (rawCommand) {
+			var result = {
+				success : false,
+				commandName : 'unknownCommand'
+			}			
+			for (var i=0; i < knownCommands.length; i++) {
+				var command = knownCommands[i];
+				if(rawCommand.startsWith(command.name)) {
+					result.commandName = command.name;
+					result.success = command.callback(rawCommand.substring(command.name.length));					
+				}
+			}
 		}
 	};
 })
