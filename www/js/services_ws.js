@@ -282,7 +282,7 @@ angular.module('starter.services', [])
 				UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
 			}
 			else {
-				message = 'Todo: confirm dialog and overwrite.\naddress:' + keys.address + '\nsecret:'+ keys.secret;
+				var message = 'Todo: confirm dialog and overwrite.\naddress:' + newKeys.address + '\nsecret:' + newKeys.secret;
 				UIHelper.showAlert(message);
 			}
 			
