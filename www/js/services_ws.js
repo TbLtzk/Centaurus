@@ -260,7 +260,7 @@ angular.module('starter.services', [])
 	};
 })
 
-.factory('Commands', function (UIHelper, Settings) {
+.factory('Commands', function (UIHelper, Settings, Account) {
 
 	if (typeof String.prototype.startsWith != 'function') {
 		String.prototype.startsWith = function (str){
@@ -282,8 +282,21 @@ angular.module('starter.services', [])
 				UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
 			}
 			else {
-				var message = 'Todo: confirm dialog and overwrite.\naddress:' + newKeys.address + '\nsecret:' + newKeys.secret;
-				UIHelper.showAlert(message);
+				var doOverwrite = function(){
+					Settings.setKeys(newKeys.address, newKeys.secret);
+					UIHelper.showAlert('The keys have been restored');
+				};
+
+				if(Account.get().balance > 0) {
+					UIHelper.confirmAndRun(
+						'Overwrite Keys', 
+						'This will overwrite your existing keys. If you don not have a backup, the remaining funds on the old address are lost!',
+						doOverwrite
+					);
+				}
+				else{
+					doOverwrite();
+				}
 			}
 			
 			return true;
@@ -321,11 +334,23 @@ angular.module('starter.services', [])
 
 .factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout){
 	return {
-		showAlert : function(text){
+		showAlert : function(caption){
 			$ionicLoading.hide();
 			$ionicPopup.alert({
-				title : text
+				title : caption
 			})
+		},
+		confirmAndRun : function(caption, text, onConfirm){
+			$ionicLoading.hide();
+			var popup = $ionicPopup.confirm({
+				title : caption,
+				template : text
+			});
+			popup.then(function(res){
+				if(res){
+					onConfirm();
+				}
+			});
 		},
 		blockScreen: function(text, timeoutSec){
 			$ionicLoading.show({
