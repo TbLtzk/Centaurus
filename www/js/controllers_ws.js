@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, $cordovaFile, UIHelper, Account, Settings) {
+.controller('WalletCtrl', function ($scope, $ionicPopup, UIHelper, Account, Commands, Settings) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
@@ -11,22 +11,37 @@ angular.module('starter.controllers', [])
 		body = 'centaurus:backup001' + backupString;
 		window.location.href = 'mailto:?subject=My%20Stellar%20Keys&body=' + body;
 	};
-	
-	// function exportKeys is currently not used: file access does not work yet
-	$scope.exportKeys = function() {
-	  // request the persistent file system
-	  onSuccess = function(fileSystem) {
-		  // parameters: filePath, replace (boolean)
-		  $cordovaFile.createFile('test.txt', true).then(function(result) {
-			  UIHelper.showAlert(JSON.stringify(result));
-		  }, function(err) {
-			  UIHelper.showAlert(JSON.stringify(err));
-		  });
-	  };
-	  onError = function(err) {
-			UIHelper.showAlert(JSON.stringify(err));
-	  };
-	  window.requestFileSystem(window.PERSISTENT, 100000, onSuccess, onError);
+
+	$scope.importKeys = function () {
+	  $scope.data = {}
+	  var myPopup = $ionicPopup.show({
+		templateUrl: 'templates/importKeys.html',
+		title: 'Enter your wallet backup string',
+		subTitle: 'or plain key pair',
+		scope: $scope,
+		buttons: [
+		  { text: 'Cancel' },
+		  {
+			text: '<b>Import</b>',
+			type: 'button-positive',
+			onTap: function(e) {
+				var cmd = Commands.parse($scope.data.backupCommandString);					
+				if(cmd.isCommand){
+					return Commands.execute(cmd.rawCommand);
+				}
+				else if($scope.data.address && $scope.data.secret)
+				{
+					// TODO: validate address and secret
+					return Commands.importAddressAndSecret($scope.data.address, $scope.data.secret);
+				}
+				else{
+					UIHelper.showAlert('not a valid backup string or key pair!');
+					e.preventDefault();
+				}
+			}
+		  },
+		]
+	  });
 	};
 })
 

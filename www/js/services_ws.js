@@ -273,33 +273,37 @@ angular.module('starter.services', [])
 		knownCommands.push( { name: commandName, callback: callback } );
 	};
 	
+	var importKeys = function(newKeys){
+		var oldKeys = Settings.getKeys();
+		
+		if(oldKeys.address == newKeys.address && oldKeys.secret == newKeys.secret) {
+			UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
+		}
+		else {
+			var doOverwrite = function(){
+				Settings.setKeys(newKeys.address, newKeys.secret);
+				UIHelper.showAlert('The keys have been restored');
+			};
+
+			if(Account.get().balance > 0) {
+				UIHelper.confirmAndRun(
+					'Overwrite Keys', 
+					'This will overwrite your existing keys. If you do not have a backup, the remaining funds on the old address are lost!',
+					doOverwrite
+				);
+			}
+			else{
+				doOverwrite();
+			}
+		}
+		return true;
+	}
+	
 	var backupCallback = function(content){
 			var unmasked = atob(content);
 			var newKeys = JSON.parse(unmasked);
-			var oldKeys = Settings.getKeys();
 			
-			if(oldKeys.address == newKeys.address && oldKeys.secret == newKeys.secret) {
-				UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
-			}
-			else {
-				var doOverwrite = function(){
-					Settings.setKeys(newKeys.address, newKeys.secret);
-					UIHelper.showAlert('The keys have been restored');
-				};
-
-				if(Account.get().balance > 0) {
-					UIHelper.confirmAndRun(
-						'Overwrite Keys', 
-						'This will overwrite your existing keys. If you don not have a backup, the remaining funds on the old address are lost!',
-						doOverwrite
-					);
-				}
-				else{
-					doOverwrite();
-				}
-			}
-			
-			return true;
+			return importKeys(newKeys);
 	}
 	knownCommands.add('backup001', backupCallback);
 
@@ -309,7 +313,8 @@ angular.module('starter.services', [])
 				isCommand : false,
 				rawCommand: ''
 			}
-			if(input.startsWith('centaurus:')){
+				
+			if(input && input.startsWith('centaurus:')){
 				result.isCommand =  true;
 				result.rawCommand = input.substring(10);
 			}
@@ -328,7 +333,15 @@ angular.module('starter.services', [])
 					result.success = command.callback(rawCommand.substring(command.name.length));					
 				}
 			}
-		}
+		},
+		
+		importAddressAndSecret : function (addr, s){
+			var newKeys = {
+				address : addr,
+				secret : s
+			};
+			return importKeys(newKeys);
+		}		
 	};
 })
 

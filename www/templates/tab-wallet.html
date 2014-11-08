@@ -4,11 +4,20 @@
   <div class="item item-divider">
     Your Wallet
  </div>
-  <div class="item item-button-right">
+  <div class="item item-body">
+    <div>
     You have <font size="5">{{account.balance}}</font> (STR).
-	<button class="button button-positive" on-tap="shareKeys()">
-	  <i class="icon ion-share"></i>
-	</button>
+    <div>
+	<div class="button-bar">
+		<button class="button button-block" on-tap="importKeys()">
+			 <i class="icon ion-archive"></i> 
+			  Import
+		</button> 
+		<button class="button button-block" on-tap="shareKeys()">
+			<i class="icon ion-share"></i>
+			  Export
+		</button>
+	</div>
   </div>
   <div class="item item-divider">
     Recent Transactions
