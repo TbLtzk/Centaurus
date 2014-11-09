@@ -9,7 +9,7 @@ angular.module('starter.controllers', [])
 	$scope.shareKeys = function () {
 	    backupString = btoa(JSON.stringify(Settings.getKeys()));
 		body = 'centaurus:backup001' + backupString;
-		window.location.href = 'mailto:?subject=My%20Stellar%20Keys&body=' + body;
+		UIHelper.shareText('My Stellar Keys', body);
 	};
 
 	$scope.importKeys = function () {
@@ -117,7 +117,7 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('ReceiveCtrl', function ($scope, Account) {
+.controller('ReceiveCtrl', function ($scope, Account, UIHelper) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
@@ -129,7 +129,7 @@ angular.module('starter.controllers', [])
 		text : Account.get().address
 	});
 	$scope.share = function () {
-		window.location.href = 'mailto:?subject=My%20Stellar%20Address&body=You%20can%20send%20me%20Stellars%20to%20the%20address%20' + $scope.account.address + '.'
+		UIHelper.shareText('My Stellar Address', 'You can send me Stellars to the address ' + $scope.account.address + '.\n\nCentaurus - Stellar Wallet for Android!');
 	}
 })
 

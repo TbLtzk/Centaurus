@@ -372,6 +372,16 @@ angular.module('starter.services', [])
 			$timeout(function () {
 				$ionicLoading.hide();
 			}, timeoutSec * 1000);
+		},
+		shareText: function(caption, text){
+			if(window.plugins){
+				window.plugins.socialsharing.share(text, caption);
+			}
+			else{
+				var subject = caption.replace(' ', '%20').replace('\n', '%0A');
+				var body = text.replace(' ', '%20').replace('\n', '%0A');
+				window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+			}
 		}
 	};
 })
