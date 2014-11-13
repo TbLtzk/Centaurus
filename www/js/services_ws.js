@@ -244,18 +244,22 @@ angular.module('starter.services', [])
 
 	return {
 		scan : function (success, fail) {
-			// real scan on device
-			cordova.plugins.barcodeScanner.scan(
-				function (result) {
-				success(result);
-			},
-				function (error) {
-				fail(error);
-			});
-
-			// // mock scan for dev purposes
-			// var mockResult = { cancelled: false, text:'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL' };
-			// success(mockResult);
+			if(cordova && cordova.plugins){
+				// real scan on device
+				cordova.plugins.barcodeScanner.scan(
+					function (result) {
+					success(result);
+				},
+					function (error) {
+					if(fail)
+						fail(error);
+				});
+			}
+			else{
+				// mock scan for dev purposes
+				var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
+				success(mockResult);
+			}
 		}
 	};
 })
@@ -313,10 +317,14 @@ angular.module('starter.services', [])
 				isCommand : false,
 				rawCommand: ''
 			}
+			if(!input)
+				return result;
 				
-			if(input && input.startsWith('centaurus:')){
+			var normalized = input.replace('\\:', ':');
+				
+			if(normalized.startsWith('centaurus:')){
 				result.isCommand =  true;
-				result.rawCommand = input.substring(10);
+				result.rawCommand = normalized.substring(10);
 			}
 			return result;
 		},

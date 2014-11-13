@@ -3,6 +3,10 @@
     <label class="item item-input">
       <input ng-model="data.backupCommandString" type="text" placeholder="Backup string"/>
     </label>
+    <button on-tap="scanCommand()" class="button button-block">
+		 <i class="icon ion-qr-scanner"></i> 
+		  Scan
+    </button> 
   </div>
   <div class="item item-body">
     <label class="item item-input">
@@ -11,5 +15,5 @@
     <label class="item item-input">
       <input ng-model="data.secret" type="text" placeholder="Plain secret"/>
     </label>
-  </div">
+  </div>
 </div>

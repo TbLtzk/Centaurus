@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, $ionicPopup, UIHelper, Account, Commands, Settings) {
+.controller('WalletCtrl', function ($scope, $ionicPopup, UIHelper, Account, QR, Commands, Settings) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
@@ -11,10 +11,30 @@ angular.module('starter.controllers', [])
 		body = 'centaurus:backup001' + backupString;
 		UIHelper.shareText('My Stellar Keys', body);
 	};
+	
+	$scope.scanCommand = function(){
+		QR.scan(
+			function (result) {
+				if (!result.cancelled) {
+					
+					var cmd = Commands.parse(result.text);					
+					if(cmd.isCommand){
+						Commands.execute(cmd.rawCommand);
+						$scope.myPopup.close();
+					}
+					else
+						UIHelper.showAlert('Not a valid backup qr code');
+				}
+			},
+			function (error) {
+				UIHelper.showAlert("Scanning failed: " + error);
+			}
+		);
+	}
 
 	$scope.importKeys = function () {
-	  $scope.data = {}
-	  var myPopup = $ionicPopup.show({
+	  $scope.data = {}	  
+	  $scope.myPopup = $ionicPopup.show({
 		templateUrl: 'templates/importKeys.html',
 		title: 'Enter your wallet backup string',
 		subTitle: 'or plain key pair',
@@ -35,7 +55,7 @@ angular.module('starter.controllers', [])
 					return Commands.importAddressAndSecret($scope.data.address, $scope.data.secret);
 				}
 				else{
-					UIHelper.showAlert('not a valid backup string or key pair!');
+					UIHelper.showAlert('Not a valid backup string or key pair!');
 					e.preventDefault();
 				}
 			}
