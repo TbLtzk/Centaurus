@@ -7,9 +7,24 @@ angular.module('starter.controllers', [])
 	$scope.account = Account.get();
 	
 	$scope.shareKeys = function () {
-	    backupString = btoa(JSON.stringify(Settings.getKeys()));
-		body = 'centaurus:backup001' + backupString;
-		UIHelper.shareText('My Stellar Keys', body);
+		var onPassword = function(pwd){
+			var plain = JSON.stringify(Settings.getKeys());
+			var backupString = CryptoJS.AES.encrypt(plain, pwd);
+
+			body = 'centaurus:backup002' + backupString;
+			UIHelper.shareText('My Stellar Keys', body);
+		};
+		UIHelper.promptForPassword(function(pwd){
+			if(pwd == ''){
+				UIHelper.confirmAndRun('Unencrypted Backup', 
+					'You are about to create an unencrypted backup. Anyone with access to the backup can access your funds, so keep it safe!',
+					function(){
+						onPassword(pwd);
+					});
+			}
+			else
+				onPassword(pwd);
+		});
 	};
 	
 	$scope.scanCommand = function(){

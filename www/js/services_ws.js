@@ -244,7 +244,7 @@ angular.module('starter.services', [])
 
 	return {
 		scan : function (success, fail) {
-			if(cordova && cordova.plugins){
+			if(window.cordova && window.cordova.plugins.barcodeScanner){
 				// real scan on device
 				cordova.plugins.barcodeScanner.scan(
 					function (result) {
@@ -257,7 +257,8 @@ angular.module('starter.services', [])
 			}
 			else{
 				// mock scan for dev purposes
-				var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
+				// var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
+				var mockResult = { cancelled: false, text:'centaurus:backup002U2FsdGVkX19bT0JGYqwm2wury18LSzFqVrwMTQeeJIRAC3ViWL6ZWsQy/+v9xh7wbNFBUU8RvtdDJI9pTVgtRe46cSpot+WrJKqACJK7JUe55xRGTqiJK0V8biLMB314zPs645+OMUPS10Ald79sLwIvxIEKtT6BVTjGvaCVwBcSDgU79iZzHb0HL1EICvNc' };
 				success(mockResult);
 			}
 		}
@@ -304,12 +305,25 @@ angular.module('starter.services', [])
 	}
 	
 	var backupCallback = function(content){
-			var unmasked = atob(content);
-			var newKeys = JSON.parse(unmasked);
-			
-			return importKeys(newKeys);
-	}
+		var unmasked = atob(content);
+		var newKeys = JSON.parse(unmasked);
+		
+		return importKeys(newKeys);
+	};
 	knownCommands.add('backup001', backupCallback);
+
+	var backupCallback2 = function(content){
+		UIHelper.promptForPassword(function(pwd){
+			var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
+			if(decrypted == ''){
+				UIHelper.showAlert('Incorrect password!');
+				return false;
+			}
+			var newKeys = JSON.parse(decrypted);			
+			return importKeys(newKeys);		
+		});
+	};
+	knownCommands.add('backup002', backupCallback2);
 
 	return {
 		parse : function (input) {
@@ -360,6 +374,17 @@ angular.module('starter.services', [])
 			$ionicPopup.alert({
 				title : caption
 			})
+		},
+		promptForPassword : function(onOk){
+			$ionicPopup.prompt({
+				title: 'Enter Password',
+				inputType: 'password',
+				inputPlaceholder: 'Your password'
+			}).then(function(res) {
+				if(res || res == ''){
+					onOk(res)
+				}
+			});			
 		},
 		confirmAndRun : function(caption, text, onConfirm){
 			$ionicLoading.hide();
