@@ -1,44 +1,15 @@
 angular.module('starter.services', [])
 
 .factory('Account', function ($rootScope, UIHelper, Settings, Remote) {
-	var keys;
 	var account;
+	var keysChanged = false;
+	var connectionChanged = false;
 	account = {
 		address : 'loading',
 		balance : 0,
 		reserve : 20,
 		transactions : []
 	};
-
-	Remote.init(function () {
-		Settings.get().onKeysAvailable = function () {
-			keys = Settings.getKeys();
-			account.address = keys.address;
-			// initial balance
-			var data = {
-				command : 'account_info',
-				account : keys.address
-			};
-			Remote.send(data);
-
-			//initial transactions
-			var data = {
-				command : 'account_tx',
-				account : keys.address,
-				limit : 30
-			};
-			Remote.send(data);
-
-			// subscribe for updates
-			data = {
-				command : 'subscribe',
-				accounts : [keys.address]
-			};
-			Remote.send(data);
-		};
-
-		Settings.get().init();
-	});
 
 	var transactionFilter = function(msg){
 		return (msg.engine_result_code == 0 && msg.type === 'transaction');
@@ -53,7 +24,7 @@ angular.module('starter.services', [])
 		return (transactionFilter(msg) && msg.transaction.TransactionType === 'Payment')
 	};
 	var paymentCallback = function(msg){
-		if (msg.transaction.Destination === keys.address) {
+		if (msg.transaction.Destination === account.address) {
 			if (!msg.transaction.Amount.issuer) {
 				console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
 				account.balance += msg.transaction.Amount / 1000000;
@@ -61,7 +32,7 @@ angular.module('starter.services', [])
 				console.log('payment received: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
 			}
 		} 
-		else if (msg.transaction.Account === keys.address) {
+		else if (msg.transaction.Account === account.address) {
 			if (!msg.transaction.Amount.issuer) {
 				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
 				account.balance -= msg.transaction.Amount / 1000000;
@@ -94,16 +65,104 @@ angular.module('starter.services', [])
 		$rootScope.$broadcast('accountInfoLoaded');
 	};
 	Remote.addMessageHandler(successFilter, successCallback);
+	
+	var attachToKeys = function(){
+		var keys = Settings.getKeys();
+		account.address = keys.address;
+		// initial balance
+		var data = {
+			command : 'account_info',
+			account : keys.address
+		};
+		Remote.send(data);
 
-	return {
-		get : function () {
+		//initial transactions
+		var data = {
+			command : 'account_tx',
+			account : keys.address,
+			limit : 30
+		};
+		Remote.send(data);
+
+		// subscribe for updates
+		data = {
+			command : 'subscribe',
+			accounts : [keys.address]
+		};
+		Remote.send(data);		
+	};
+	
+	Settings.get().onKeysAvailable = function () {
+		if(Remote.isConnected())
+			attachToKeys();
+		else
+			keysChanged = true;
+	};
+
+	var healthCheck = function(){
+		var keys = Settings.getKeys();
+		if(!keys)
+			Settings.get().init();
+		if(!Remote.isConnected())
+		{
+			Remote.init();
+			connectionChanged = true;
+		}
+		if((keysChanged || connectionChanged) && Remote.isConnected())
+		{
+			attachToKeys();
+			keysChanged = false;
+			connectionChanged = false;
+		}
+	}
+	
+	healthCheck();
+	setInterval(healthCheck, 3000);
+
+	return {	
+		get : function () {			
 			return account;
 		}
 	}
 })
 
 .factory('Remote', function (UIHelper) {
-	var ws = new WebSocket('wss://test.stellar.org:9001');
+	var createWebsocket = function(){
+		try	{	
+			if (!("WebSocket" in window))
+			{
+				UIHelper.showAlert("ws NOT supported!");
+				return null;
+			}
+			var ws = new WebSocket('wss://test.stellar.org:9001');
+			
+			ws.onmessage = function(event){
+				// UIHelper.showAlert(event.data);
+				console.log(event.data)
+				var msg = JSON.parse(event.data);
+				for (var i=0; i < messageHandlers.length; i++) {
+					var handler = messageHandlers[i];
+					if(handler.filter(msg)) {
+						handler.callback(msg);
+					}
+				}
+			};
+
+			ws.onerror = function () {
+				UIHelper.blockScreen('Network error occurred!', 3000);
+			};
+			ws.onclose = function () {
+				console.log('ws connection closed');
+			};
+			
+			return ws;
+		}
+		catch(ex){
+			console.log('Network initialization failed', ex.message);
+			UIHelper.showAlert(ex.message);
+		}
+	};
+  		
 	var messageHandlers = [];
 	messageHandlers.add = function(filter, callback){
 		messageHandlers.push( { filter: filter, callback: callback } );
@@ -131,44 +190,22 @@ angular.module('starter.services', [])
 	};	
 	messageHandlers.add(engineErrorFilter, engineErrorCallback);
 	
+	var ws = createWebsocket();
 	
-	ws.onmessage = function(event){
-		console.log(event.data)
-		var msg = JSON.parse(event.data);
-		for (var i=0; i < messageHandlers.length; i++) {
-			var handler = messageHandlers[i];
-			if(handler.filter(msg)) {
-				handler.callback(msg);
-			}
-		}
-	};
-
 	return {
-		get : function () {
-			return ws;
+		isConnected : function(){
+			return ws != null && ws.readyState == 1;
 		},
-		init : function (callback) {
-			try	{
-				ws.onopen = function () {
-					console.log('ws connection open');
-					callback();
-				}
-				ws.onerror = function () {
-					UIHelper.showAlert('Network connection failed');
-				}
-			}
-			catch(ex){
-				log.error('Network initialization failed', ex.message);
-				UIHelper.showAlert(ex.message);
-			}
+		init : function(){
+			ws = createWebsocket();
 		},
 		send : function (data) {
 			try	{
-				ws.send(JSON.stringify(data));
+				if(this.isConnected())
+					ws.send(JSON.stringify(data));
 			}
 			catch(ex){
-				log.error('Network communication failed', ex.message);
-				UIHelper.showAlert(ex.message);
+				UIHelper.showAlert('Network communication failed: ' + ex.message);
 			}
 		},
 		addMessageHandler: messageHandlers.add
@@ -212,7 +249,7 @@ angular.module('starter.services', [])
 			var data = {
 				command : 'create_keys'
 			};
-			Remote.get().send(JSON.stringify(data));
+			Remote.send(data);
 
 			// // mock with specific address
 			// var mock = testKeys;
@@ -258,14 +295,14 @@ angular.module('starter.services', [])
 			else{
 				// mock scan for dev purposes
 				// var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
-				var mockResult = { cancelled: false, text:'centaurus:backup002U2FsdGVkX19bT0JGYqwm2wury18LSzFqVrwMTQeeJIRAC3ViWL6ZWsQy/+v9xh7wbNFBUU8RvtdDJI9pTVgtRe46cSpot+WrJKqACJK7JUe55xRGTqiJK0V8biLMB314zPs645+OMUPS10Ald79sLwIvxIEKtT6BVTjGvaCVwBcSDgU79iZzHb0HL1EICvNc' };
+				var mockResult = { cancelled: false, text:'centaurus:backup002U2FsdGVkX1/5hzm8n1PkW0fsYLMJHK4rfh8t2gXuJ0nc+2u3KgoFaT38xJDJ1DNcKDpp+8QiIbTCL1DJNZXOBd1JqNSYDKXwXICKL07Pjs4wd3ukDoDuAOS7nTbg0pbYRCcbvZNUgzCxD3iYiZJvV8kVjgNzF4DwsTuCknhFmuNqxA1NPEKdTq/H23KDzreLGs6X9eyNlpcuVSxBajxaHA==' };
 				success(mockResult);
 			}
 		}
 	};
 })
 
-.factory('Commands', function (UIHelper, Settings, Account) {
+.factory('Commands', function (UIHelper, Settings, Account) {	
 
 	if (typeof String.prototype.startsWith != 'function') {
 		String.prototype.startsWith = function (str){
@@ -314,13 +351,15 @@ angular.module('starter.services', [])
 
 	var backupCallback2 = function(content){
 		UIHelper.promptForPassword(function(pwd){
-			var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
-			if(decrypted == ''){
-				UIHelper.showAlert('Incorrect password!');
-				return false;
+			try{
+				var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
+				var newKeys = JSON.parse(decrypted);			
+				return importKeys(newKeys);		
+			} catch(ex) {
+				console.log(ex.message);
 			}
-			var newKeys = JSON.parse(decrypted);			
-			return importKeys(newKeys);		
+			UIHelper.showAlert('Incorrect password!');
+			return false;			
 		});
 	};
 	knownCommands.add('backup002', backupCallback2);
@@ -370,6 +409,7 @@ angular.module('starter.services', [])
 .factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout){
 	return {
 		showAlert : function(caption){
+			console.log(caption);
 			$ionicLoading.hide();
 			$ionicPopup.alert({
 				title : caption
