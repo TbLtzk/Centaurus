@@ -8,7 +8,8 @@ angular.module('starter.services', [])
 		address : 'loading',
 		balance : 0,
 		reserve : 20,
-		transactions : []
+		transactions : [],
+		otherCurrencies: [],
 	};
 
 	var transactionFilter = function(msg){
@@ -52,9 +53,27 @@ angular.module('starter.services', [])
 			var newData = msg.result.account_data;
 			account.balance = Math.round(newData.Balance / 1000000);
 		}
+		else if (msg.result.lines) {
+			var lines = msg.result.lines;
+			var map = {}
+			for (index = 0; index < lines.length; ++index) {
+				var currentLine = lines[index];
+				if(map[currentLine.currency] == undefined)
+					map[currentLine.currency] = 0;
+				map[currentLine.currency] += parseFloat(currentLine.balance);
+			}
+			for(var key in map) {
+				if(map.hasOwnProperty(key)) {
+					account.otherCurrencies.push({currency:key, amount:map[key]})
+				}
+			}
+			for(index = 0; index < account.otherCurrencies.length; ++index) {
+				var entry = account.otherCurrencies[index];
+				console.log(entry.currency + ': ' + entry.amount);
+			}
+		}
 		else if (msg.result.master_seed) {
 			var newKeys = msg.result;
-			console.log(newKeys.account_id + ': ' + newKeys.master_seed);
 			Settings.setKeys(newKeys.account_id, newKeys.master_seed);
 		} else if (msg.result.transactions) {
 			var transactions = msg.result.transactions;
@@ -71,9 +90,16 @@ angular.module('starter.services', [])
 	var attachToKeys = function(){
 		var keys = Settings.getKeys();
 		account.address = keys.address;
-		// initial balance
+		// initial balance (STR)
 		var data = {
 			command : 'account_info',
+			account : keys.address
+		};
+		Remote.send(data);
+
+		// initial balance (Other Currencies)
+		var data = {
+			command : 'account_lines',
 			account : keys.address
 		};
 		Remote.send(data);
