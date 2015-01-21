@@ -98,15 +98,21 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.sendPayment = function () {
+		if($scope.paymentData.amount > account.balance)
+		{
+			UIHelper.showAlert('Insufficient Funds');
+			return;
+		}
 		UIHelper.blockScreen("To the moon...", 8);
 		var keys = Settings.getKeys();
+		var amountString = ($scope.paymentData.amount * 1000000).toString();
 		var data = {
 			command : 'submit',
 			tx_json : {
 				TransactionType : 'Payment',
 				Account : keys.address,
 				Destination : $scope.paymentData.destinationAddress,
-				Amount : $scope.paymentData.amount * 1000000,
+				Amount : amountString,
 			},
 			secret : keys.secret
 		};
