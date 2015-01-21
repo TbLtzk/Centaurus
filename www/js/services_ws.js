@@ -59,7 +59,9 @@ angular.module('starter.services', [])
 		} else if (msg.result.transactions) {
 			var transactions = msg.result.transactions;
 			for (index = 0; index < transactions.length; ++index) {
-				account.transactions.push(transactions[index].tx);
+				var currentTrx = transactions[index];
+				if(currentTrx.meta && currentTrx.meta.TransactionResult === 'tesSUCCESS')
+					account.transactions.push(currentTrx.tx);
 			}
 		}
 		$rootScope.$broadcast('accountInfoLoaded');
