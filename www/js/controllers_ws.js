@@ -174,5 +174,13 @@ angular.module('starter.controllers', [])
 	}
 })
 
+.controller('TransactionsCtrl', function ($scope, Account) {	
+	$scope.$on('accountInfoLoaded', function (event) {
+		$scope.account = Account.get();
+		$scope.$apply();
+	});
+	$scope.account = Account.get();
+})
+
 .controller('AboutCtrl', function ($scope) {	
 });

@@ -253,7 +253,8 @@ angular.module('starter.services', [])
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
 
-	// keysString = JSON.stringify(testKeysAlternative);
+//    keysString = JSON.stringify(testKeysAlternative);
+//    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
 

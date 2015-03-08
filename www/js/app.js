@@ -66,6 +66,16 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
 		}
 	})
 
+	.state('tab.transactions', {
+		url : '/transactions',
+		views : {
+			'tab-transactions' : {
+				templateUrl : 'templates/tab-transactions.html',
+				controller : 'TransactionsCtrl'
+			}
+		}
+	})
+
 	.state('tab.about', {
 		url : '/about',
 		views : {
@@ -75,16 +85,6 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
 			}
 		}
 	})
-
-	// .state('tab.friend-detail', {
-	// url: '/friend/:friendId',
-	// views: {
-	// 'tab-friends': {
-	// templateUrl: 'templates/friend-detail.html',
-	// controller: 'FriendDetailCtrl'
-	// }
-	// }
-	// })
 ;
 
 	// if none of the above states are matched, use this as the fallback
