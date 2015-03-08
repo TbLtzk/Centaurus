@@ -40,7 +40,7 @@ angular.module('starter.services', [])
 			} else {
 				console.log('payment sent: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
 			}
-			UIHelper.blockScreen('Payment successful!', 1);
+			UIHelper.blockScreen('Payment successful!', 2);
 		}
 	};	
 	Remote.addMessageHandler(paymentFilter, paymentCallback);
@@ -62,6 +62,7 @@ angular.module('starter.services', [])
 					map[currentLine.currency] = 0;
 				map[currentLine.currency] += parseFloat(currentLine.balance);
 			}
+            account.otherCurrencies.length = 0;
 			for(var key in map) {
 				if(map.hasOwnProperty(key)) {
 					account.otherCurrencies.push({currency:key, amount:map[key]})
@@ -177,7 +178,7 @@ angular.module('starter.services', [])
 			};
 
 			ws.onerror = function () {
-				UIHelper.blockScreen('Network error occurred!', 3000);
+				UIHelper.blockScreen('Network error occurred!', 5);
 			};
 			ws.onclose = function () {
 				console.log('ws connection closed');

@@ -1,7 +1,6 @@
 <ion-view title="Recent Transactions (T)">
 <ion-content class="has-header">
-   <ion-scroll style="height: 360px;">
-     <ion-list padding="0px" ng-repeat="item in account.transactions">
+     <ion-list ng-repeat="item in account.transactions">
 	 <ion-item class="narrow" ng-if="item.Account === account.address && item.TransactionType === 'TrustSet'">       
         <i class="icon ion-checkmark-circled"></i>
         You now trust <font size="-2">{{item.LimitAmount.issuer}}</font> over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.LimitAmount.currency : 'Unknown'}}		
@@ -23,6 +22,5 @@
          </font>
      </ion-item>
     </ion-list>
-   </ion-scroll>
 </ion-content>
 </ion-view>
