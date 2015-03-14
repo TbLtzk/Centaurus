@@ -98,24 +98,32 @@ angular.module('starter.controllers', [])
 	}
 
 	$scope.sendPayment = function () {
-		if($scope.paymentData.amount > account.balance)
-		{
-			UIHelper.showAlert('Insufficient Funds');
-			return;
-		}
-		UIHelper.blockScreen("To the moon...", 8);
 		var keys = Settings.getKeys();
-		var amountString = ($scope.paymentData.amount * 1000000).toString();
 		var data = {
 			command : 'submit',
 			tx_json : {
 				TransactionType : 'Payment',
 				Account : keys.address,
 				Destination : $scope.paymentData.destinationAddress,
-				Amount : amountString,
+				Amount : '',
 			},
 			secret : keys.secret
 		};
+        if($scope.paymentData.currency == 'STR') {
+            if($scope.paymentData.amount > account.balance) {
+                UIHelper.showAlert('Insufficient Funds');
+                return;
+            }
+            data.tx_json.Amount = ($scope.paymentData.amount*1000000).toString();
+        }
+        else {
+            data.tx_json.Amount = { 
+                currency : $scope.paymentData.currency, 
+                value : amountString,
+                issuer : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY'
+            };
+        }
+		UIHelper.blockScreen("To the moon...", 12);
 		Remote.send(data);
 	};
 	
@@ -131,16 +139,13 @@ angular.module('starter.controllers', [])
 			function (result) {
 				if (!result.cancelled) {
 					var cmd = Commands.parse(result.text);					
-					if(cmd.isCommand){
+					if(cmd.isCommand) {
 						Commands.execute(cmd.rawCommand);
 					}
-					else{
-						$scope.paymentData = {
-							destinationAddress : result.text,
-							currency : 'STR'
-						}
-						$scope.$apply();
-					}
+					else {
+                        $scope.paymentData.destinationAddress = result.text;
+                    }
+                    $scope.$apply();					
 				}
 			},
 			function (error) {
@@ -152,7 +157,7 @@ angular.module('starter.controllers', [])
 	$scope.donate = function () {
 		$scope.paymentData = {
 			destinationAddress : 'gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D',
-			amount : Math.floor(0.02 * account.balance),
+			amount : Math.floor(0.01 * account.balance),
 			currency : 'STR'
 		}
 	};

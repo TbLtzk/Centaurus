@@ -9,8 +9,21 @@ angular.module('starter.services', [])
 		balance : 0,
 		reserve : 20,
 		transactions : [],
-		otherCurrencies: [],
+		otherCurrencies: []
 	};
+
+    var addToBalance = function(currency, amount){
+        for(var index = 0; index < account.otherCurrencies.length; ++index) {
+            var entry = account.otherCurrencies[index];
+            if(entry.currency == currency)
+            {
+                entry.amount += amount;
+                return;
+            }
+        }
+        // no entry for currency exists -> add new entry
+        account.otherCurrencies.push({currency:currency, amount:amount});             
+    };
 
 	var transactionFilter = function(msg){
 		return (msg.engine_result_code == 0 && msg.type === 'transaction');
@@ -28,20 +41,23 @@ angular.module('starter.services', [])
 		if (msg.transaction.Destination === account.address) {
 			if (!msg.transaction.Amount.issuer) {
 				console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance += msg.transaction.Amount / 1000000;
+				account.balance += parseFloat(msg.transaction.Amount) / 1000000;
 			} else {
 				console.log('payment received: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
+                addToBalance(msg.transaction.Amount.currency, parseFloat(msg.transaction.Amount.value));
 			}
 		} 
 		else if (msg.transaction.Account === account.address) {
 			if (!msg.transaction.Amount.issuer) {
 				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance -= msg.transaction.Amount / 1000000;
+				account.balance -= parseFloat(msg.transaction.Amount) / 1000000;
 			} else {
 				console.log('payment sent: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
+                addToBalance(msg.transaction.Amount.currency, -parseFloat(msg.transaction.Amount.value));
 			}
 			UIHelper.blockScreen('Payment successful!', 2);
 		}
+		$rootScope.$broadcast('accountInfoLoaded');
 	};	
 	Remote.addMessageHandler(paymentFilter, paymentCallback);
 
@@ -51,27 +67,15 @@ angular.module('starter.services', [])
 	var successCallback = function(msg){
 		if (msg.result.account_data) {
 			var newData = msg.result.account_data;
-			account.balance = Math.round(newData.Balance / 1000000);
+			account.balance = Math.round(parseFloat(newData.Balance) / 1000000);
 		}
 		else if (msg.result.lines) {
-			var lines = msg.result.lines;
-			var map = {}
-			for (index = 0; index < lines.length; ++index) {
-				var currentLine = lines[index];
-				if(map[currentLine.currency] == undefined)
-					map[currentLine.currency] = 0;
-				map[currentLine.currency] += parseFloat(currentLine.balance);
-			}
             account.otherCurrencies.length = 0;
-			for(var key in map) {
-				if(map.hasOwnProperty(key)) {
-					account.otherCurrencies.push({currency:key, amount:map[key]})
-				}
-			}
-			for(index = 0; index < account.otherCurrencies.length; ++index) {
-				var entry = account.otherCurrencies[index];
-				console.log(entry.currency + ': ' + entry.amount);
-			}
+			var lines = msg.result.lines;
+            for (index = 0; index < lines.length; ++index) {
+                var currentLine = lines[index];
+                addToBalance(currentLine.currency, parseFloat(currentLine.balance));
+            }
 		}
 		else if (msg.result.master_seed) {
 			var newKeys = msg.result;
@@ -254,7 +258,7 @@ angular.module('starter.services', [])
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
 
-//    keysString = JSON.stringify(testKeysAlternative);
+//    keysString = JSON.stringify(testKeys);
 //    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
@@ -325,7 +329,7 @@ angular.module('starter.services', [])
 			else{
 				// mock scan for dev purposes
 				// var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
-				var mockResult = { cancelled: false, text:'centaurus:backup002U2FsdGVkX1/5hzm8n1PkW0fsYLMJHK4rfh8t2gXuJ0nc+2u3KgoFaT38xJDJ1DNcKDpp+8QiIbTCL1DJNZXOBd1JqNSYDKXwXICKL07Pjs4wd3ukDoDuAOS7nTbg0pbYRCcbvZNUgzCxD3iYiZJvV8kVjgNzF4DwsTuCknhFmuNqxA1NPEKdTq/H23KDzreLGs6X9eyNlpcuVSxBajxaHA==' };
+				var mockResult = { cancelled: false, text:'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL' };
 				success(mockResult);
 			}
 		}
