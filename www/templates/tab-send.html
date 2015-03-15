@@ -3,26 +3,22 @@
 		<label class="item item-input">
             <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address"/>
 		</label>
-<!--
-        <div class="row no-padding">
-		<label class="item item-input col-67">            
-            <input ng-model="paymentData.amount" type="number"/>
-		</label>
--->
 		<label class="item item-input">       
             <div class="row no-padding">
-            <input ng-model="paymentData.amount" type="number" placeholder="0"/>
-            <select class="my-select" ng-model="paymentData.currency">
-                <option>STR</option>
-                <option>EUR</option>
-            </select>
+                <input ng-model="paymentData.amount" type="number" placeholder="0"/>
+<!--
+                <select class="my-select" ng-model="paymentData.currency">
+                    <option>STR</option>
+                    <option>EUR</option>
+                </select>
+-->
+                <div class="no padding">{{paymentData.currency}}</div>
             </div>
 		</label>
-<!--        </div>-->
 		<label class="item item-input" ng-if="showDestinationTag">
             <input ng-model="paymentData.destinationTag" type="number"/>
 		</label>
-<!--        <div on-tap="showDestinationTag =! showDestinationTag">Destination Tag</div>-->
+        <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">Destination Tag</a>
         <button on-tap="sendPayment()" class="button button-block button-positive">
 		  Send now!
 		</button> 
