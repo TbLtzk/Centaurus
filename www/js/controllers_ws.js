@@ -91,8 +91,10 @@ angular.module('starter.controllers', [])
 
 	$scope.available = account.balance - account.reserve;
 	$scope.account = account;
+    $scope.showDestinationTag = false;
 	$scope.paymentData = {
 		destinationAddress : '',
+        destinationTag : null,
 		amount : null,
 		currency : 'STR'
 	}
@@ -109,6 +111,8 @@ angular.module('starter.controllers', [])
 			},
 			secret : keys.secret
 		};
+        if($scope.paymentData.destinationTag)
+            data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
         if($scope.paymentData.currency == 'STR') {
             if($scope.paymentData.amount > account.balance) {
                 UIHelper.showAlert('Insufficient Funds');
@@ -119,12 +123,13 @@ angular.module('starter.controllers', [])
         else {
             data.tx_json.Amount = { 
                 currency : $scope.paymentData.currency, 
-                value : amountString,
+                value : $scope.paymentData.amount,
                 issuer : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY'
             };
         }
 		UIHelper.blockScreen("To the moon...", 12);
 		Remote.send(data);
+        $scope.paymentData.amount = null;
 	};
 	
 	$scope.scanCode = function () {
