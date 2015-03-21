@@ -82,6 +82,7 @@ angular.module('starter.services', [])
 			Settings.setKeys(newKeys.account_id, newKeys.master_seed);
 		} else if (msg.result.transactions) {
 			var transactions = msg.result.transactions;
+            account.transactions.length = 0;
 			for (index = 0; index < transactions.length; ++index) {
 				var currentTrx = transactions[index];
 				if(currentTrx.meta && currentTrx.meta.TransactionResult === 'tesSUCCESS')

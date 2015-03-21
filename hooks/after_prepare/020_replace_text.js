@@ -35,6 +35,8 @@ if (rootdir) {
         "platforms/android/assets/www/templates/tab-receive.html",
         "platforms/android/assets/www/templates/tab-wallet.html",
         "platforms/android/assets/www/templates/tab-send.html",
+        "platforms/android/assets/www/templates/tab-transactions.html",
+        "platforms/android/assets/www/templates/tab-about.html",
         // ios
         "platforms/ios/www/index.html",
         "platforms/ios/www/js/services_ws.js",
