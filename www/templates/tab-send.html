@@ -2,17 +2,16 @@
     <ion-content class="has-header narrow">
 		<label class="item item-input">
             <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address"/>
-		</label>
+		</label>   
 		<label class="item item-input">       
             <div class="row no-padding">
                 <input ng-model="paymentData.amount" type="number" placeholder="0"/>
-<!--
-                <select class="my-select" ng-model="paymentData.currency">
-                    <option>STR</option>
-                    <option>EUR</option>
+                <select ng-model="paymentData.currency" class="my-select"
+                        ng-if="destinationInfo.acceptedCurrencies.length > 1">
+                    <option ng-repeat="currency in destinationInfo.acceptedCurrencies" ng-value="currency">{{currency}}</option>
                 </select>
--->
-                <div class="no padding">{{paymentData.currency}}</div>
+                <div class="narrow"
+                     ng-if="destinationInfo.acceptedCurrencies.length == 1">{{paymentData.currency}}</div>
             </div>
 		</label>
 		<label class="item item-input" ng-if="showDestinationTag">

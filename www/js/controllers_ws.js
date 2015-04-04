@@ -97,7 +97,47 @@ angular.module('starter.controllers', [])
         destinationTag : null,
 		amount : null,
 		currency : 'STR'
-	}
+	};
+    $scope.destinationInfo = {
+        acceptedCurrencies : ['STR'],
+        acceptedIOUs : []
+    };
+    
+	var trustLinesFilter = function(msg){
+		return (msg.status === 'success' && msg.type === 'response' && msg.result && msg.result.lines && msg.result.account != account.address);
+	};
+	var trustLinesCallback = function(msg){
+		var lines = msg.result.lines;
+        for (index = 0; index < lines.length; ++index) {
+            var currentLine = lines[index];
+            console.log(currentLine.currency)
+            $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
+            var iou = { 
+                currency: currentLine.currency,
+                issuer: currentLine.account
+            };
+            $scope.destinationInfo.acceptedIOUs.push(iou); 
+            $scope.$apply();
+        }
+	};
+    Remote.addMessageHandler(trustLinesFilter, trustLinesCallback);
+    
+    $scope.$watch('paymentData.destinationAddress', function(newAddress) {
+        $scope.destinationInfo.acceptedCurrencies = ['STR'];
+        if(newAddress.length == 3)
+            $scope.destinationInfo.acceptedCurrencies.push(newAddress);
+        else if(newAddress.length == 34)
+        {
+            var data = {
+                command : 'account_lines',
+                account : newAddress
+            };
+            Remote.send(data);
+        }
+        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
+            $scope.paymentData.currency = 'STR';
+    });
+    
 
 	$scope.sendPayment = function () {
 		var keys = Settings.getKeys();
@@ -121,10 +161,19 @@ angular.module('starter.controllers', [])
             data.tx_json.Amount = ($scope.paymentData.amount*1000000).toString();
         }
         else {
+            var issuer = '';
+            for(i=0; i<$scope.destinationInfo.acceptedIOUs.length; i++)
+            {
+                var iou = $scope.destinationInfo.acceptedIOUs[i];
+                if(iou.currency === $scope.paymentData.currency){
+                    issuer = iou.issuer;
+                    break;
+                }                    
+            }
             data.tx_json.Amount = { 
                 currency : $scope.paymentData.currency, 
                 value : $scope.paymentData.amount,
-                issuer : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY'
+                issuer : issuer
             };
         }
 		UIHelper.blockScreen("To the moon...", 12);

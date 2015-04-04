@@ -69,7 +69,7 @@ angular.module('starter.services', [])
 			var newData = msg.result.account_data;
 			account.balance = Math.round(parseFloat(newData.Balance) / 1000000);
 		}
-		else if (msg.result.lines) {
+		else if (msg.result.lines && msg.result.account === account.address) {
             account.otherCurrencies.length = 0;
 			var lines = msg.result.lines;
             for (index = 0; index < lines.length; ++index) {
@@ -80,7 +80,8 @@ angular.module('starter.services', [])
 		else if (msg.result.master_seed) {
 			var newKeys = msg.result;
 			Settings.setKeys(newKeys.account_id, newKeys.master_seed);
-		} else if (msg.result.transactions) {
+		} 
+        else if (msg.result.transactions) {
 			var transactions = msg.result.transactions;
             account.transactions.length = 0;
 			for (index = 0; index < transactions.length; ++index) {
