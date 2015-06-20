@@ -55,7 +55,8 @@ angular.module('starter.services', [])
 				console.log('payment sent: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
                 addToBalance(msg.transaction.Amount.currency, -parseFloat(msg.transaction.Amount.value));
 			}
-			UIHelper.blockScreen('Payment successful!', 2);
+            $rootScope.$broadcast('paymentSuccessful');
+   			UIHelper.blockScreen('Payment successful!', 2);
 		}
 		$rootScope.$broadcast('accountInfoLoaded');
 	};	
@@ -252,7 +253,7 @@ angular.module('starter.services', [])
 
 	// override for use in test network (funded)
 	var testKeys = {
-		address : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY',
+		address : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY', // issuer
 		secret : 's3qgYLVJQJL2eLZ54TB9msjmpRHXQBdQrmG9WbD6yVCx6NrFMYU'
 	};
 	var testKeysAlternative = {

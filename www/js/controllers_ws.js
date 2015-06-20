@@ -99,8 +99,15 @@ angular.module('starter.controllers', [])
 		currency : 'STR'
 	};
     $scope.destinationInfo = {
+        isValidAddress : false,
         acceptedCurrencies : ['STR'],
         acceptedIOUs : []
+    };
+    $scope.transactionContext = {
+        isDirty : false,
+        isValidCurrency : false,
+        alternatives : [],
+        technicalAmount : "0"
     };
     
 	var trustLinesFilter = function(msg){
@@ -110,23 +117,85 @@ angular.module('starter.controllers', [])
 		var lines = msg.result.lines;
         for (index = 0; index < lines.length; ++index) {
             var currentLine = lines[index];
-            console.log(currentLine.currency)
             $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
             var iou = { 
                 currency: currentLine.currency,
                 issuer: currentLine.account
             };
             $scope.destinationInfo.acceptedIOUs.push(iou); 
-            $scope.$apply();
         }
+        $scope.transactionContext.isDirty = true;
+        $scope.$apply();
 	};
     Remote.addMessageHandler(trustLinesFilter, trustLinesCallback);
     
+	var alternativesFilter = function(msg){
+		return (msg.type === 'find_path' && msg.alternatives);
+	};
+	var alternativesCallback = function(msg){
+		$scope.transactionContext.alternatives = msg.alternatives;
+        $scope.$apply();
+	};
+    Remote.addMessageHandler(alternativesFilter, alternativesCallback);
+      
+    $scope.$watch('transactionContext.isDirty', function(isDirty) {
+        if(!isDirty)
+            return;
+        var context = $scope.transactionContext;
+        if(context.currentAlternativeStream)
+        {
+            context.currentAlternativeStream.subcommand = "close";
+            Remote.send(context.currentAlternativeStream);  
+            context.currentAlternativeStream = null;
+        }
+        context.technicalAmount = null;
+        context.alternatives = [];
+        var isCompletePaymentInfo = $scope.destinationInfo.isValidAddress
+            && context.isValidCurrency            
+            && $scope.paymentData.amount > 0
+            && ($scope.paymentData.currency == 'STR' || $scope.destinationInfo.acceptedIOUs.length > 0);        
+        
+        if(isCompletePaymentInfo)
+        {
+            if($scope.paymentData.currency == 'STR') {
+                context.technicalAmount = ($scope.paymentData.amount*1000000).toString();
+            }
+            else {
+                var issuer = '';
+                for(i=0; i<$scope.destinationInfo.acceptedIOUs.length; i++)
+                {
+                    var iou = $scope.destinationInfo.acceptedIOUs[i];
+                    if(iou.currency === $scope.paymentData.currency){
+                        issuer = iou.issuer;
+                        break;
+                    }                    
+                }
+                context.technicalAmount = { 
+                    currency : $scope.paymentData.currency, 
+                    value : $scope.paymentData.amount.toString(),
+                    issuer : issuer
+                };
+            }           
+            
+            var keys = Settings.getKeys();
+            context.currentAlternativeStream = {
+                "command": "find_path",
+                "subcommand": "create",
+                "source_account": keys.address,
+                "destination_account": $scope.paymentData.destinationAddress,
+                "destination_amount": context.technicalAmount
+            };
+            Remote.send(context.currentAlternativeStream);
+        }
+        
+        context.isDirty = false;
+   });
+    
     $scope.$watch('paymentData.destinationAddress', function(newAddress) {
         $scope.destinationInfo.acceptedCurrencies = ['STR'];
-        if(newAddress.length == 3)
-            $scope.destinationInfo.acceptedCurrencies.push(newAddress);
-        else if(newAddress.length == 34)
+        $scope.destinationInfo.acceptedIOUs = [];
+        var isValidAddress = newAddress.length == 34; // TODO: more suffisticated validation
+        if(isValidAddress)
         {
             var data = {
                 command : 'account_lines',
@@ -134,10 +203,27 @@ angular.module('starter.controllers', [])
             };
             Remote.send(data);
         }
-        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
-            $scope.paymentData.currency = 'STR';
+        $scope.destinationInfo.isValidAddress = isValidAddress;
+//        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
+//        {
+//            $scope.paymentData.currency = 'STR';
+//            $scope.paymentData.amount = 0;
+//        }
+        $scope.transactionContext.isDirty = true;
     });
     
+    $scope.$on('paymentSuccessful', function (event) {
+        $scope.paymentData.amount = 0;
+	});
+
+    $scope.$watch('paymentData.currency', function(newCurrency) {
+        $scope.transactionContext.isValidCurrency = newCurrency.length == 3; // TODO: more suffisticated validation
+        $scope.transactionContext.isDirty = true;
+    });
+
+    $scope.$watch('paymentData.amount', function(newAmount) {
+        $scope.transactionContext.isDirty = true;
+    });
 
 	$scope.sendPayment = function () {
 		var keys = Settings.getKeys();
@@ -147,38 +233,19 @@ angular.module('starter.controllers', [])
 				TransactionType : 'Payment',
 				Account : keys.address,
 				Destination : $scope.paymentData.destinationAddress,
-				Amount : '',
+				Amount : $scope.transactionContext.technicalAmount,
 			},
 			secret : keys.secret
 		};
         if($scope.paymentData.destinationTag)
             data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
-        if($scope.paymentData.currency == 'STR') {
-            if($scope.paymentData.amount > account.balance) {
-                UIHelper.showAlert('Insufficient Funds');
-                return;
-            }
-            data.tx_json.Amount = ($scope.paymentData.amount*1000000).toString();
+
+        if($scope.paymentData.currency == 'STR' && $scope.paymentData.amount > account.balance) {
+            UIHelper.showAlert('Insufficient Funds');
+        } else {
+            UIHelper.blockScreen("To the moon...", 12);
+            Remote.send(data);            
         }
-        else {
-            var issuer = '';
-            for(i=0; i<$scope.destinationInfo.acceptedIOUs.length; i++)
-            {
-                var iou = $scope.destinationInfo.acceptedIOUs[i];
-                if(iou.currency === $scope.paymentData.currency){
-                    issuer = iou.issuer;
-                    break;
-                }                    
-            }
-            data.tx_json.Amount = { 
-                currency : $scope.paymentData.currency, 
-                value : $scope.paymentData.amount,
-                issuer : issuer
-            };
-        }
-		UIHelper.blockScreen("To the moon...", 12);
-		Remote.send(data);
-        $scope.paymentData.amount = null;
 	};
 	
 	$scope.scanCode = function () {

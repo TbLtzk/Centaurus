@@ -6,18 +6,23 @@
 		<label class="item item-input">       
             <div class="row no-padding">
                 <input ng-model="paymentData.amount" type="number" placeholder="0"/>
-                <select ng-model="paymentData.currency" class="my-select"
-                        ng-if="destinationInfo.acceptedCurrencies.length > 1">
-                    <option ng-repeat="currency in destinationInfo.acceptedCurrencies" ng-value="currency">{{currency}}</option>
-                </select>
                 <div class="narrow"
                      ng-if="destinationInfo.acceptedCurrencies.length == 1">{{paymentData.currency}}</div>
             </div>
+		</label>
+		<label class="item item-input" ng-if="destinationInfo.acceptedCurrencies.length > 1">       
+            <input ng-model="paymentData.currency" type="text" placeholder="Currency"/>
+<!--
+                <select class="my-select" ng-model="paymentData.currency">
+                    <option ng-repeat="currency in destinationInfo.acceptedCurrencies" ng-value="currency">{{currency}}</option>
+                </select>
+-->
 		</label>
 		<label class="item item-input" ng-if="showDestinationTag">
             <input ng-model="paymentData.destinationTag" type="number"/>
 		</label>
         <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">Destination Tag</a>
+<!--        {{transactionContext.alternatives.length}} Alternativen-->
         <button on-tap="sendPayment()" class="button button-block button-positive">
 		  Send now!
 		</button> 
