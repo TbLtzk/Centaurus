@@ -11,7 +11,7 @@
             </div>
 		</label>
 		<label class="item item-input" ng-if="destinationInfo.acceptedCurrencies.length > 1">       
-            <input ng-model="paymentData.currency" type="text" placeholder="Currency"/>
+            <input ng-model="paymentData.currency" type="text" style="text-transform:uppercase;" placeholder="Currency"/>
 <!--
                 <select class="my-select" ng-model="paymentData.currency">
                     <option ng-repeat="currency in destinationInfo.acceptedCurrencies" ng-value="currency">{{currency}}</option>

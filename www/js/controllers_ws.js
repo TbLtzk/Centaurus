@@ -217,8 +217,12 @@ angular.module('starter.controllers', [])
 	});
 
     $scope.$watch('paymentData.currency', function(newCurrency) {
-        $scope.transactionContext.isValidCurrency = newCurrency.length == 3; // TODO: more suffisticated validation
-        $scope.transactionContext.isDirty = true;
+        if(newCurrency.toUpperCase() != $scope.paymentData.currency)
+            $scope.paymentData.currency = newCurrency.toUpperCase();
+        else {
+            $scope.transactionContext.isValidCurrency = newCurrency.length == 3; // TODO: more suffisticated validation
+            $scope.transactionContext.isDirty = true;
+        }
     });
 
     $scope.$watch('paymentData.amount', function(newAmount) {
