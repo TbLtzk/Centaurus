@@ -48,6 +48,8 @@ angular.module('starter.services', [])
 			}
 		} 
 		else if (msg.transaction.Account === account.address) {
+            if(msg.transaction.SendMax)
+                msg.transaction.Amount = msg.transaction.SendMax; // Hack to treat cross currency payments approximately
 			if (!msg.transaction.Amount.issuer) {
 				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
 				account.balance -= parseFloat(msg.transaction.Amount) / 1000000;
@@ -88,7 +90,11 @@ angular.module('starter.services', [])
 			for (index = 0; index < transactions.length; ++index) {
 				var currentTrx = transactions[index];
 				if(currentTrx.meta && currentTrx.meta.TransactionResult === 'tesSUCCESS')
+                {                    
+                    if(currentTrx.tx.SendMax)
+                        currentTrx.tx.Amount = currentTrx.tx.SendMax; // Hack to treat cross currency payments approximately
 					account.transactions.push(currentTrx.tx);
+                }
 			}
 		}
 		$rootScope.$broadcast('accountInfoLoaded');
@@ -237,8 +243,11 @@ angular.module('starter.services', [])
 		},
 		send : function (data) {
 			try	{
-				if(this.isConnected())
-					ws.send(JSON.stringify(data));
+				if(this.isConnected()) {
+                    var msg = JSON.stringify(data);
+                    console.log(msg);
+					ws.send(msg);
+                }
 			}
 			catch(ex){
 				UIHelper.showAlert('Network communication failed: ' + ex.message);

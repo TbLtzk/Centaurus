@@ -5,7 +5,7 @@
     </ion-item>
     <ion-list ng-repeat="item in account.otherCurrencies">
 	    <ion-item class="">
-            <font size="+2">{{item.amount}}</font> ({{item.currency}})
+            <font size="+2">{{item.amount.toFixed(2)}}</font> ({{item.currency}})
         </ion-item>
     </ion-list>
 	<div class="button-bar">

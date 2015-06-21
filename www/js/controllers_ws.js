@@ -80,7 +80,7 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('SendCtrl', function ($scope, UIHelper, Account, Remote, Settings, QR, Commands) {
+.controller('SendCtrl', function ($scope, $ionicActionSheet, UIHelper, Account, Remote, Settings, QR, Commands) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -230,6 +230,7 @@ angular.module('starter.controllers', [])
     });
 
 	$scope.sendPayment = function () {
+        var context = $scope.transactionContext;
 		var keys = Settings.getKeys();
 		var data = {
 			command : 'submit',
@@ -237,19 +238,66 @@ angular.module('starter.controllers', [])
 				TransactionType : 'Payment',
 				Account : keys.address,
 				Destination : $scope.paymentData.destinationAddress,
-				Amount : $scope.transactionContext.technicalAmount,
+				Amount : context.technicalAmount,
 			},
 			secret : keys.secret
 		};
         if($scope.paymentData.destinationTag)
             data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
 
-        if($scope.paymentData.currency == 'STR' && $scope.paymentData.amount > account.balance) {
-            UIHelper.showAlert('Insufficient Funds');
-        } else {
+        var actualSendAction = function() {
             UIHelper.blockScreen("To the moon...", 12);
-            Remote.send(data);            
+            Remote.send(data);                       
         }
+
+        if($scope.paymentData.destinationAddress.length == 0)
+            UIHelper.showAlert('Destination address must not be empty.');
+        else if(!$scope.destinationInfo.isValidAddress)
+            UIHelper.showAlert('"' + $scope.paymentData.destinationAddress + '" is not a valid destination address.');
+        else if($scope.paymentData.amount < 0)
+            UIHelper.showAlert('Negative amount is not allowed.');
+        else if($scope.paymentData.amount == 0 || $scope.paymentData.amount == null)
+            UIHelper.showAlert('Amount must be greater than 0.');
+        else if(!context.isValidCurrency)
+            UIHelper.showAlert('"' + $scope.paymentData.currency + '" is not a valid currency.');
+        else if($scope.paymentData.currency == 'STR' && $scope.paymentData.amount > account.balance)
+            UIHelper.showAlert('Insufficient Funds');
+        else if(context.technicalAmount == null)
+            UIHelper.showAlert('Payment not possible. Does the recipient accept the specified currency?');
+        else if(context.alternatives.length > 0) {            
+            var sheet = {
+                 buttons: [],
+                 titleText: 'You can send',
+                 buttonClicked: function(index) {
+                     var choice = context.alternatives[index];
+                     if(choice.paths_computed && choice.paths_computed.length > 0)
+                     {
+                         data.tx_json.Paths = choice.paths_computed;
+                         data.tx_json.SendMax = choice.source_amount;
+                     }
+                     actualSendAction();
+                     return true;
+                 }
+            };
+            for (i=0; i<context.alternatives.length; i++)
+            {
+                var alternative = context.alternatives[i];
+                var source_amount = alternative.source_amount;
+                var amount = source_amount.value;
+                var currency = source_amount.currency;
+                var issuer = source_amount.issuer;
+                if(currency == null)
+                {
+                    currency = 'STR';
+                    amount = (source_amount.valueOf() / 1000000).toString();
+                }
+                var button = { text : amount + ' ' + currency };
+                sheet.buttons.push(button);
+            }
+            $ionicActionSheet.show(sheet); 
+        }
+        else 
+            actualSendAction();        
 	};
 	
 	$scope.scanCode = function () {
