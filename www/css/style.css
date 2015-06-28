@@ -9,3 +9,17 @@
     border: 0px !important;
     font-size: +2 !important;
 }
+.align-right {
+  text-align: right !important;
+}
+
+ion-popover-view.fit {
+  height: auto !important;
+}
+
+ion-popover-view.fit ion-content {
+  position: relative !important;
+}
+.platform-android ion-popover-view.fit {
+  margin-top: 10px !important;
+}

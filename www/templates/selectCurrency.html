@@ -1,0 +1,11 @@
+<ion-popover-view class="fit">
+    <ion-content>
+<!--      <div class="item">Destination Currency</div>-->
+        <ion-radio ng-repeat="currency in destinationInfo.acceptedCurrencies" class="item"
+                   ng-model="paymentData.currency"
+                   ng-value="currency"
+                   on-tap="currencyPopover.hide()">
+            {{currency}}
+        </ion-radio>
+    </ion-content>
+</ion-popover-view>

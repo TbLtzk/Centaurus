@@ -80,7 +80,7 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('SendCtrl', function ($scope, $ionicActionSheet, UIHelper, Account, Remote, Settings, QR, Commands) {
+.controller('SendCtrl', function ($scope, $ionicActionSheet, $ionicPopover, UIHelper, Account, Remote, Settings, QR, Commands) {
 	var account = Account.get();
 	$scope.$on('accountInfoLoaded', function (event) {
 		account = Account.get();
@@ -137,7 +137,17 @@ angular.module('starter.controllers', [])
         $scope.$apply();
 	};
     Remote.addMessageHandler(alternativesFilter, alternativesCallback);
-      
+
+    $ionicPopover.fromTemplateUrl('templates/selectCurrency.html', {
+        scope: $scope
+    }).then(function(popover) {
+        $scope.currencyPopover = popover;
+    });
+    
+    $scope.$on('$destroy', function() {
+        $scope.currencyPopover.remove();
+    });
+    
     $scope.$watch('transactionContext.isDirty', function(isDirty) {
         if(!isDirty)
             return;
