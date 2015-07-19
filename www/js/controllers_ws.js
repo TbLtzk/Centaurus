@@ -117,7 +117,9 @@ angular.module('starter.controllers', [])
 		var lines = msg.result.lines;
         for (index = 0; index < lines.length; ++index) {
             var currentLine = lines[index];
-            $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
+            var isNewCurrency = $scope.destinationInfo.acceptedCurrencies.indexOf(currentLine.currency) == -1;
+            if(isNewCurrency)
+                $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
             var iou = { 
                 currency: currentLine.currency,
                 issuer: currentLine.account
