@@ -5,7 +5,7 @@
     </label>
     <div class="row no-padding">
       <label class="item item-input" style="width:80%">
-        <input placeholder="0" type="number" />
+        <input ng-model="paymentData.amount" placeholder="0" type="number" />
       </label>
       <label class="item align-right" ng-if="destinationInfo.acceptedCurrencies.length > 1" style="width:22%; padding:12px">
         <a href="javascript:void(0)" on-tap="currencyPopover.show($event);">

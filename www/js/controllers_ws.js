@@ -109,6 +109,7 @@ angular.module('starter.controllers', [])
         alternatives : [],
         technicalAmount : "0"
     };
+    $scope.popoverItemCount = 2;
     
 	var trustLinesFilter = function(msg){
 		return (msg.status === 'success' && msg.type === 'response' && msg.result && msg.result.lines && msg.result.account != account.address);
@@ -117,6 +118,8 @@ angular.module('starter.controllers', [])
 		var lines = msg.result.lines;
         for (index = 0; index < lines.length; ++index) {
             var currentLine = lines[index];
+            if(currentLine.limit <= 0)
+                continue;
             var isNewCurrency = $scope.destinationInfo.acceptedCurrencies.indexOf(currentLine.currency) == -1;
             if(isNewCurrency)
                 $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
@@ -127,6 +130,7 @@ angular.module('starter.controllers', [])
             $scope.destinationInfo.acceptedIOUs.push(iou); 
         }
         $scope.transactionContext.isDirty = true;
+        $scope.popoverItemCount = Math.min($scope.destinationInfo.acceptedCurrencies.length, 5);
         $scope.$apply();
 	};
     Remote.addMessageHandler(trustLinesFilter, trustLinesCallback);
