@@ -1,4 +1,4 @@
-angular.module('starter.services', [])
+angular.module('starter.services', ['starter.services.basic'])
 
 .factory('Account', function ($rootScope, UIHelper, Settings, Remote) {
 	var account;
@@ -109,14 +109,28 @@ angular.module('starter.services', [])
 			command : 'account_info',
 			account : keys.address
 		};
-		Remote.send(data);
+//		Remote.send(data);
+        Remote.getServer().accounts()
+        .address(keys.address)
+        .call()
+        .then(function (acc) {
+            console.log(JSON.stringify(acc.balances));
+            account.balance = parseFloat(acc.balances[0].balance);
+            $rootScope.$broadcast('accountInfoLoaded');
+        })
+        .catch(StellarSdk.NotFoundError, function (err) {
+            console.log("account not found");
+        })
+        .catch(function (err) {
+           console.log(err.stack || err);
+        })
 
 		// initial balance (Other Currencies)
 		var data = {
 			command : 'account_lines',
 			account : keys.address
 		};
-		Remote.send(data);
+//		Remote.send(data);
 
 		//initial transactions
 		var data = {
@@ -124,14 +138,14 @@ angular.module('starter.services', [])
 			account : keys.address,
 			limit : 30
 		};
-		Remote.send(data);
+//		Remote.send(data);
 
 		// subscribe for updates
 		data = {
 			command : 'subscribe',
 			accounts : [keys.address]
 		};
-		Remote.send(data);		
+//		Remote.send(data);		
 	};
 	
 	Settings.get().onKeysAvailable = function () {
@@ -168,110 +182,21 @@ angular.module('starter.services', [])
 	}
 })
 
-.factory('Remote', function (UIHelper) {
-	var createWebsocket = function(){
-		try	{	
-			if (!("WebSocket" in window))
-			{
-				UIHelper.showAlert("ws NOT supported!");
-				return null;
-			}
-			var ws = new WebSocket('wss://test.stellar.org:9001');
-			
-			ws.onmessage = function(event){
-				// UIHelper.showAlert(event.data);
-				console.log(event.data)
-				var msg = JSON.parse(event.data);
-				for (var i=0; i < messageHandlers.length; i++) {
-					var handler = messageHandlers[i];
-					if(handler.filter(msg)) {
-						handler.callback(msg);
-					}
-				}
-			};
-
-			ws.onerror = function () {
-				UIHelper.blockScreen('Network error occurred!', 5);
-			};
-			ws.onclose = function () {
-				console.log('ws connection closed');
-			};
-			
-			return ws;
-		}
-		catch(ex){
-			console.log('Network initialization failed', ex.message);
-			UIHelper.showAlert(ex.message);
-		}
-	};
-  		
-	var messageHandlers = [];
-	messageHandlers.add = function(filter, callback){
-		messageHandlers.push( { filter: filter, callback: callback } );
-	};
-	
-	var ignoreErrors = ['actNotFound', 'srcActNotFound'];	
-	var errorFilter = function(msg) {
-		if(msg.status !== 'error') return false; 		
-		for(var i=0; i < ignoreErrors.length; i++){
-			if(msg.error === ignoreErrors[i]) return false;
-		}
-		return true;
-	};
-	var errorCallback = function(msg) {		
-		UIHelper.showAlert(msg.error_message);
-	};	
-	messageHandlers.add(errorFilter, errorCallback);
-	
-	var engineErrorFilter = function(msg) {
-		if(!msg.result) return false;
-		return (msg.result.engine_result_code && msg.result.engine_result_code != 0);
-	};
-	var engineErrorCallback = function(msg) {
-		UIHelper.showAlert(msg.result.engine_result_message);
-	};	
-	messageHandlers.add(engineErrorFilter, engineErrorCallback);
-	
-	var ws = createWebsocket();
-	
-	return {
-		isConnected : function(){
-			return ws != null && ws.readyState == 1;
-		},
-		init : function(){
-			ws = createWebsocket();
-		},
-		send : function (data) {
-			try	{
-				if(this.isConnected()) {
-                    var msg = JSON.stringify(data);
-                    console.log(msg);
-					ws.send(msg);
-                }
-			}
-			catch(ex){
-				UIHelper.showAlert('Network communication failed: ' + ex.message);
-			}
-		},
-		addMessageHandler: messageHandlers.add
-	}
-})
-
 .factory('Settings', function (Remote) {
 	var keysString = window.localStorage['keys'];
 
 	// override for use in test network (funded)
 	var testKeys = {
-		address : 'gHBsnApP6wutZweigvyADvxHmwKZVkAFwY', // issuer
-		secret : 's3qgYLVJQJL2eLZ54TB9msjmpRHXQBdQrmG9WbD6yVCx6NrFMYU'
+		address : 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4', // klopper
+		secret : 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
 	};
 	var testKeysAlternative = {
 		address : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
 		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
 	};
 
-//    keysString = JSON.stringify(testKeys);
-//    window.localStorage['keys'] = keysString;
+    keysString = JSON.stringify(testKeys);
+    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
 
@@ -449,58 +374,5 @@ angular.module('starter.services', [])
 			};
 			return importKeys(newKeys);
 		}		
-	};
-})
-
-.factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout){
-	return {
-		showAlert : function(caption){
-			console.log(caption);
-			$ionicLoading.hide();
-			$ionicPopup.alert({
-				title : caption
-			})
-		},
-		promptForPassword : function(onOk){
-			$ionicPopup.prompt({
-				title: 'Enter Password',
-				inputType: 'password',
-				inputPlaceholder: 'Your password'
-			}).then(function(res) {
-				if(res || res == ''){
-					onOk(res)
-				}
-			});			
-		},
-		confirmAndRun : function(caption, text, onConfirm){
-			$ionicLoading.hide();
-			var popup = $ionicPopup.confirm({
-				title : caption,
-				template : text
-			});
-			popup.then(function(res){
-				if(res){
-					onConfirm();
-				}
-			});
-		},
-		blockScreen: function(text, timeoutSec){
-			$ionicLoading.show({
-				template : text
-			});
-			$timeout(function () {
-				$ionicLoading.hide();
-			}, timeoutSec * 1000);
-		},
-		shareText: function(caption, text){
-			if(window.plugins){
-				window.plugins.socialsharing.share(text, caption);
-			}
-			else{
-				var subject = caption.replace(' ', '%20').replace('\n', '%0A');
-				var body = text.replace(' ', '%20').replace('\n', '%0A');
-				window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-			}
-		}
 	};
 })

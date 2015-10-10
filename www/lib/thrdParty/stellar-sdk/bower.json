@@ -1,0 +1,13 @@
+{
+  "name": "stellar-sdk",
+  "homepage": "https://github.com/stellar/bower-js-stellar-sdk",
+  "authors": [
+    "Stellar Development Foundation"
+  ],
+  "description": "Main Stellar client library for the Javascript language",
+  "main": "./stellar-sdk.min.js",
+  "keywords": [
+    "stellar"
+  ],
+  "license": "Apache 2.0"
+}
