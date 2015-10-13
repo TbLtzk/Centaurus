@@ -1,5 +1,9 @@
+.vs/
+bin/
+bld/
 node_modules/
-config.xml
-logcat.txt
 platforms/
 plugins/
+Centaurus.jsproj.user
+config.xml
+logcat.txt
