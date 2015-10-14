@@ -54,41 +54,6 @@ angular.module('starter.services.basic', [])
 })
 
 .factory('Remote', function (UIHelper) {
-	var createWebsocket = function(){
-		try	{	
-			if (!("WebSocket" in window))
-			{
-				UIHelper.showAlert("ws NOT supported!");
-				return null;
-			}
-			var ws = new WebSocket('wss://test.stellar.org:9001');
-			
-			ws.onmessage = function(event){
-				// UIHelper.showAlert(event.data);
-				console.log(event.data)
-				var msg = JSON.parse(event.data);
-				for (var i=0; i < messageHandlers.length; i++) {
-					var handler = messageHandlers[i];
-					if(handler.filter(msg)) {
-						handler.callback(msg);
-					}
-				}
-			};
-
-			ws.onerror = function () {
-				UIHelper.blockScreen('Network error occurred!', 5);
-			};
-			ws.onclose = function () {
-				console.log('ws connection closed');
-			};
-			
-			return ws;
-		}
-		catch(ex){
-			console.log('Network initialization failed', ex.message);
-			UIHelper.showAlert(ex.message);
-		}
-	};
     var server = new StellarSdk.Server({hostname:'horizon-testnet.stellar.org', secure: true, port: 443});
   		
 	var messageHandlers = [];
@@ -117,9 +82,7 @@ angular.module('starter.services.basic', [])
 		UIHelper.showAlert(msg.result.engine_result_message);
 	};	
 	messageHandlers.add(engineErrorFilter, engineErrorCallback);
-	
-	var ws = createWebsocket();
-	
+		
 	return {
         getServer : function(){
             return server;
@@ -128,7 +91,6 @@ angular.module('starter.services.basic', [])
 			return true;
 		},
 		init : function(){
-			ws = createWebsocket();
 		},
 		send : function (data) {
 			try	{
@@ -147,7 +109,7 @@ angular.module('starter.services.basic', [])
 })
 
 .factory('Settings', function (Remote) {
-	var keysString = window.localStorage['keys'];
+ 	var keysString = window.localStorage['keysXLM'];
 
 	// override for use in test network (funded)
 	var testKeys = {
@@ -155,12 +117,12 @@ angular.module('starter.services.basic', [])
 		secret : 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
 	};
 	var testKeysAlternative = {
-		address : 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
-		secret : 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
+		address : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y', // centaurus
+		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
 	};
 
     keysString = JSON.stringify(testKeys);
-    window.localStorage['keys'] = keysString;
+//    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
 
@@ -173,22 +135,19 @@ angular.module('starter.services.basic', [])
 			address : addr,
 			secret : s
 		};
-		window.localStorage['keys'] = JSON.stringify(keys);
+		window.localStorage['keysXLM'] = JSON.stringify(keys);
 		keys.mode = 'created';
 		settings.onKeysAvailable();
 	};
 
 	settings.init = function () {
 		if (!keysString) {
-			// real api call
-			var data = {
-				command : 'create_keys'
-			};
-			Remote.send(data);
+            var keyPair = StellarSdk.Keypair.random();
+            setKeysFunc(keyPair.address(), keyPair.seed());
 
-			// // mock with specific address
-			// var mock = testKeys;
-			// setKeysFunc(mock.address, mock.secret);
+//            // mock with specific address (remain in local storage)
+//			 var mock = testKeys;
+//			 setKeysFunc(mock.address, mock.secret);
 
 		} else {
 			keys = JSON.parse(keysString);

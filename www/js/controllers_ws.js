@@ -169,12 +169,12 @@ angular.module('starter.controllers', [])
         var isCompletePaymentInfo = $scope.destinationInfo.isValidAddress
             && context.isValidCurrency            
             && $scope.paymentData.amount > 0
-            && ($scope.paymentData.currency == 'STR' || $scope.destinationInfo.acceptedIOUs.length > 0);        
+            && ($scope.paymentData.currency == 'XLM' || $scope.destinationInfo.acceptedIOUs.length > 0);        
         
         if(isCompletePaymentInfo)
         {
-            if($scope.paymentData.currency == 'STR') {
-                context.technicalAmount = ($scope.paymentData.amount*1000000).toString();
+            if($scope.paymentData.currency == 'XLM') {
+                context.technicalAmount = ($scope.paymentData.amount).toString();
             }
             else {
                 var issuer = '';
@@ -201,23 +201,23 @@ angular.module('starter.controllers', [])
                 "destination_account": $scope.paymentData.destinationAddress,
                 "destination_amount": context.technicalAmount
             };
-            Remote.send(context.currentAlternativeStream);
+//            Remote.send(context.currentAlternativeStream);
         }
         
         context.isDirty = false;
    });
     
     $scope.$watch('paymentData.destinationAddress', function(newAddress) {
-        $scope.destinationInfo.acceptedCurrencies = ['STR'];
+        $scope.destinationInfo.acceptedCurrencies = ['XLM'];
         $scope.destinationInfo.acceptedIOUs = [];
-        var isValidAddress = newAddress.length == 34; // TODO: more suffisticated validation
+        var isValidAddress = newAddress.length == 56; // TODO: more suffisticated validation
         if(isValidAddress)
         {
             var data = {
                 command : 'account_lines',
                 account : newAddress
             };
-            Remote.send(data);
+//            Remote.send(data);
         }
         $scope.destinationInfo.isValidAddress = isValidAddress;
 //        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
@@ -263,7 +263,25 @@ angular.module('starter.controllers', [])
 
         var actualSendAction = function() {
             UIHelper.blockScreen("To the moon...", 12);
-            Remote.send(data);                       
+            Remote.getServer().loadAccount(keys.address)
+                .then(function (account) {
+                    // build the transaction
+                    var transaction = new StellarSdk.TransactionBuilder(account)
+                        .addOperation(StellarSdk.Operation.payment({
+                            destination: $scope.paymentData.destinationAddress,
+                            asset: StellarSdk.Asset.native(),
+                            amount: context.technicalAmount
+                        }))
+                        .addSigner(StellarSdk.Keypair.fromSeed(keys.secret)) // sign the transaction
+                        .build();
+                    return Remote.getServer().submitTransaction(transaction);
+                })
+                .then(function (transactionResult) {
+                    console.log(transactionResult);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                });
         }
 
         if($scope.paymentData.destinationAddress.length == 0)
@@ -345,9 +363,9 @@ angular.module('starter.controllers', [])
 
 	$scope.donate = function () {
 		$scope.paymentData = {
-			destinationAddress : 'gwhiWKCTvS8Mb5kZeGygeiyQKmFTUJfN1D',
+			destinationAddress : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y',
 			amount : Math.floor(0.01 * account.balance),
-			currency : 'STR'
+			currency : 'XLM'
 		}
 	};
 })

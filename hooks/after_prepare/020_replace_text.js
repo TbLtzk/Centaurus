@@ -31,7 +31,8 @@ if (rootdir) {
     var filestoreplace = [
         // android
         "platforms/android/assets/www/index.html",
-        "platforms/android/assets/www/js/services_ws.js",
+        "platforms/android/assets/www/js/services/services.basic.js",
+        "platforms/android/assets/www/js/services/services.js",
         "platforms/android/assets/www/templates/tab-receive.html",
         "platforms/android/assets/www/templates/tab-wallet.html",
         "platforms/android/assets/www/templates/tab-send.html",
