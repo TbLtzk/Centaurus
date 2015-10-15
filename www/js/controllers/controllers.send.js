@@ -15,11 +15,11 @@
         destinationAddress : '',
         destinationTag : null,
         amount : null,
-        currency : 'STR'
+        currency : 'XLM'
     };
     $scope.destinationInfo = {
         isValidAddress : false,
-        acceptedCurrencies : ['STR'],
+        acceptedCurrencies : ['XLM'],
         acceptedIOUs : []
     };
     $scope.transactionContext = {
@@ -209,7 +209,7 @@
             UIHelper.showAlert('Amount must be greater than 0.');
         else if(!context.isValidCurrency)
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" is not a valid currency.');
-        else if($scope.paymentData.currency == 'STR' && $scope.paymentData.amount > account.balance)
+        else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('Insufficient Funds');
         else if(context.technicalAmount == null)
             UIHelper.showAlert('Payment not possible. Does the recipient accept the specified currency?');
@@ -237,7 +237,7 @@
                 var issuer = source_amount.issuer;
                 if(currency == null)
                 {
-                    currency = 'STR';
+                    currency = 'XLM';
                     amount = (source_amount.valueOf() / 1000000).toString();
                 }
                 var button = { text : amount + ' ' + currency };

@@ -13,7 +13,11 @@ angular.module('starter.services', ['starter.services.basic'])
 		otherCurrencies: []
 	};
 
-    var addToBalance = function(currency, amount){
+	var addToBalance = function (currency, amount) {
+	    if (currency === 'native' || currency === 'XLM') {
+	        account.balance += amount;
+	        return;
+	    }
         for(var index = 0; index < account.otherCurrencies.length; ++index) {
             var entry = account.otherCurrencies[index];
             if(entry.currency == currency)
@@ -105,18 +109,14 @@ angular.module('starter.services', ['starter.services.basic'])
 	var attachToKeys = function(){
 		var keys = Settings.getKeys();
 		account.address = keys.address;
-		// initial balance (STR)
-		var data = {
-			command : 'account_info',
-			account : keys.address
-		};
-//		Remote.send(data);
-        Remote.getServer().accounts()
+
+	    // initial balances
+	    Remote.getServer().accounts()
         .address(keys.address)
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
-            account.balance = parseFloat(acc.balances[0].balance);
+            //account.balance = parseFloat(acc.balances[0].balance);
             account.sequence = acc.sequence;
             $rootScope.$broadcast('accountInfoLoaded');
         })
@@ -127,12 +127,42 @@ angular.module('starter.services', ['starter.services.basic'])
            console.log(err.stack || err);
         })
 
-		// initial balance (Other Currencies)
-		var data = {
-			command : 'account_lines',
-			account : keys.address
-		};
-//		Remote.send(data);
+        var txHandler = function (txResponse) {
+            console.log(txResponse);
+        };
+
+        var effectHandler = function (effect) {
+            console.log(effect);
+            if (effect.type === 'account_created')
+                addToBalance('native', parseFloat(effect.starting_balance));
+            else if (effect.type === 'account_debited')
+                addToBalance(effect.asset_type, -parseFloat(effect.amount));
+            else if (effect.type === 'account_credited')
+                addToBalance(effect.asset_type, parseFloat(effect.amount));
+
+            $rootScope.$broadcast('accountInfoLoaded');
+        };
+
+	    //Remote.getServer().transactions()
+        //    .forAccount(keys.address)
+        //    //.cursor(126280)
+        //    .stream({
+        //        onmessage: txHandler
+        //    })
+
+        //var paymentStream = Remote.getServer().payments()
+        //    .forAccount(keys.address)
+        //    //.cursor(126280)
+        //    .stream({
+        //        onmessage: txHandler
+        //    })
+
+        Remote.getServer().effects()
+            .forAccount(keys.address)
+            //.cursor(126280)
+            .stream({
+                onmessage: effectHandler
+            })
 
 		//initial transactions
 		var data = {
@@ -141,13 +171,6 @@ angular.module('starter.services', ['starter.services.basic'])
 			limit : 30
 		};
 //		Remote.send(data);
-
-		// subscribe for updates
-		data = {
-			command : 'subscribe',
-			accounts : [keys.address]
-		};
-//		Remote.send(data);		
 	};
 	
 	Settings.get().onKeysAvailable = function () {

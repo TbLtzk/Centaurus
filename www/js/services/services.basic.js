@@ -121,7 +121,7 @@ angular.module('starter.services.basic', [])
 		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
 	};
 
-    keysString = JSON.stringify(testKeys);
+	keysString = JSON.stringify(testKeys);
 //    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;

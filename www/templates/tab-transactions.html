@@ -12,13 +12,13 @@
      <ion-item class="narrow" ng-if="item.Account === account.address && item.TransactionType === 'Payment'">
          <i class="icon ion-minus"></i>
          <font color="#E02000">
-      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000) }} {{item.Amount.currency ? item.Amount.currency : 'STR'}} <font size="-2">to {{item.Destination}}</font>
+      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000) }} {{item.Amount.currency ? item.Amount.currency : 'XLM'}} <font size="-2">to {{item.Destination}}</font>
          </font>
      </ion-item>
      <ion-item class="narrow" ng-if="!(item.Account === account.address) && item.TransactionType === 'Payment'">		
          <i class="icon ion-plus"></i>
          <font color="#20E000">
-      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'STR'}} <font size="-2">from {{item.Account}}</font>
+      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'XLM'}} <font size="-2">from {{item.Account}}</font>
          </font>
      </ion-item>
     </ion-list>
