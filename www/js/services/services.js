@@ -7,7 +7,8 @@ angular.module('starter.services', ['starter.services.basic'])
 	account = {
 		address : 'loading',
 		balance : 0,
-		reserve : 20,
+		reserve: 20,
+        sequence: 0,
 		transactions : [],
 		otherCurrencies: []
 	};
@@ -114,8 +115,9 @@ angular.module('starter.services', ['starter.services.basic'])
         .address(keys.address)
         .call()
         .then(function (acc) {
-            console.log(JSON.stringify(acc.balances));
+            console.log(JSON.stringify(acc));
             account.balance = parseFloat(acc.balances[0].balance);
+            account.sequence = acc.sequence;
             $rootScope.$broadcast('accountInfoLoaded');
         })
         .catch(StellarSdk.NotFoundError, function (err) {
@@ -178,6 +180,16 @@ angular.module('starter.services', ['starter.services.basic'])
 	return {	
 		get : function () {			
 			return account;
+		},
+
+		buildTransaction: function (operation, bSign) {
+		    var acc = new StellarSdk.Account(account.address, account.sequence);
+		    var transaction = new StellarSdk.TransactionBuilder(acc)
+		        .addOperation(operation)
+                .build();
+		    if (bSign === true)
+		        transaction.sign(Settings.getKeyPair());
+		    return transaction;
 		}
 	}
 })

@@ -161,6 +161,10 @@ angular.module('starter.services.basic', [])
 			return keys;
 		},
 
+		getKeyPair: function() {
+		    return StellarSdk.Keypair.fromSeed(keys.secret);
+		},
+
 		setKeys : function (addr, s) {
 			setKeysFunc(addr, s);
 		},
