@@ -14,7 +14,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	};
 
 	var addToBalance = function (currency, amount) {
-	    if (currency === 'native' || currency === 'XLM') {
+	    if (currency === 'native' || currency === 'XLM' || currency == null) {
 	        account.balance += amount;
 	        return;
 	    }
@@ -128,27 +128,52 @@ angular.module('starter.services', ['starter.services.basic'])
         })
 
         var txHandler = function (txResponse) {
-            console.log(txResponse);
+            var server = Remote.getServer();
+            var effects = server.effects();
+            var effectsCaller = effects.forTransaction(txResponse.id);
+            var test = effectsCaller.call()
+            .then(function(effect){
+                console.log(txResponse);
+            });
         };
 
         var effectHandler = function (effect) {
+//            var server = Remote.getServer();
+//            var operations = server.operations();
+//            var opUrl = effect._links.operation.href;
+//            operations.addQuery(opUrl)
+//            .then(function(op){
+//                console.log(op);
+//            });
             console.log(effect);
-            if (effect.type === 'account_created')
-                addToBalance('native', parseFloat(effect.starting_balance));
-            else if (effect.type === 'account_debited')
+            var isRelevant = false;
+            if (effect.type === 'account_created') {
+                isRelevant = true;
+                addToBalance(effect.asset_type, -parseFloat(effect.starting_balance));
+            }
+            else if (effect.type === 'account_debited') {
+                isRelevant = true;
                 addToBalance(effect.asset_type, -parseFloat(effect.amount));
-            else if (effect.type === 'account_credited')
+            }
+            else if (effect.type === 'account_credited') {
+                isRelevant = true;
                 addToBalance(effect.asset_type, parseFloat(effect.amount));
-
-            $rootScope.$broadcast('accountInfoLoaded');
+            }
+            
+            if(isRelevant){
+                if(effect.asset_type === null || effect.asset_type === 'native')
+                    effect.asset_type = 'XLM'
+                account.transactions.unshift(effect);
+                $rootScope.$broadcast('accountInfoLoaded');        
+            }
         };
 
-	    //Remote.getServer().transactions()
-        //    .forAccount(keys.address)
-        //    //.cursor(126280)
-        //    .stream({
-        //        onmessage: txHandler
-        //    })
+//	    Remote.getServer().transactions()
+//            .forAccount(keys.address)
+//            //.cursor(126280)
+//            .stream({
+//                onmessage: txHandler
+//            })
 
         //var paymentStream = Remote.getServer().payments()
         //    .forAccount(keys.address)

@@ -1,6 +1,7 @@
 <ion-view title="Recent Transactions (T)">
 <ion-content class="has-header">
      <ion-list ng-repeat="item in account.transactions">
+<!--
 	 <ion-item class="narrow" ng-if="item.Account === account.address && item.TransactionType === 'TrustSet'">       
         <i class="icon ion-checkmark-circled"></i>
         You now trust <font size="-2">{{item.LimitAmount.issuer}}</font> over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.LimitAmount.currency : 'Unknown'}}		
@@ -9,16 +10,23 @@
          <i class="icon ion-checkmark-circled"></i>
          <font size="-2">{{item.Account}}</font> now trusts you over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.LimitAmount.currency : 'Unknown'}}
      </ion-item>
-     <ion-item class="narrow" ng-if="item.Account === account.address && item.TransactionType === 'Payment'">
+-->
+     <ion-item class="narrow" ng-if="item.type === 'account_debited'">
          <i class="icon ion-minus"></i>
          <font color="#E02000">
-      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000) }} {{item.Amount.currency ? item.Amount.currency : 'XLM'}} <font size="-2">to {{item.Destination}}</font>
+      {{ item.amount }} {{item.asset_type ? item.asset_type : 'XLM'}} <font size="-2">to {{item.Destination}}</font>
          </font>
      </ion-item>
-     <ion-item class="narrow" ng-if="!(item.Account === account.address) && item.TransactionType === 'Payment'">		
+     <ion-item class="narrow" ng-if="item.type === 'account_credited'">		
          <i class="icon ion-plus"></i>
          <font color="#20E000">
-      {{item.Amount.currency ? item.Amount.value : (item.Amount / 1000000)}} {{item.Amount.currency ? item.Amount.currency : 'XLM'}} <font size="-2">from {{item.Account}}</font>
+      {{ item.amount }} {{item.asset_type ? item.asset_type : 'XLM'}} <font size="-2">from {{item.sender}}</font>
+         </font>
+     </ion-item>
+     <ion-item class="narrow" ng-if="item.type === 'account_created'">		
+         <i class="icon ion-plus"></i>
+         <font color="#20E000">
+      {{ item.starting_balance }} XLM <font size="-2">from {{item.sender}}</font>
          </font>
      </ion-item>
     </ion-list>
