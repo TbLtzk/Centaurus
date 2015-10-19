@@ -138,18 +138,15 @@ angular.module('starter.services', ['starter.services.basic'])
         };
 
         var effectHandler = function (effect) {
-//            var server = Remote.getServer();
-//            var operations = server.operations();
-//            var opUrl = effect._links.operation.href;
-//            operations.addQuery(opUrl)
-//            .then(function(op){
-//                console.log(op);
-//            });
+            //effect.operation()
+            //.then(function(op){
+            //    console.log(op);
+            //});
             console.log(effect);
             var isRelevant = false;
             if (effect.type === 'account_created') {
                 isRelevant = true;
-                addToBalance(effect.asset_type, -parseFloat(effect.starting_balance));
+                addToBalance(effect.asset_type, parseFloat(effect.starting_balance));
             }
             else if (effect.type === 'account_debited') {
                 isRelevant = true;
@@ -184,7 +181,7 @@ angular.module('starter.services', ['starter.services.basic'])
 
         Remote.getServer().effects()
             .forAccount(keys.address)
-            //.cursor(126280)
+            //.cursor(0)
             .stream({
                 onmessage: effectHandler
             })
