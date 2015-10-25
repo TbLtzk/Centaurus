@@ -110,6 +110,7 @@ angular.module('starter.services.basic', [])
 
 .factory('Settings', function (Remote) {
  	var keysString = window.localStorage['keysXLM'];
+    //keysString = null;
 
 	// override for use in test network (funded)
 	var testKeys = {
@@ -121,7 +122,7 @@ angular.module('starter.services.basic', [])
 		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
 	};
 
-	keysString = JSON.stringify(testKeys);
+	//keysString = JSON.stringify(testKeys);
 //    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
@@ -179,7 +180,7 @@ angular.module('starter.services.basic', [])
 
 	return {
 		scan : function (success, fail) {
-			if(window.cordova && window.cordova.plugins.barcodeScanner){
+			if(window.cordova && window.cordova.plugins && window.cordova.plugins.barcodeScanner){
 				// real scan on device
 				cordova.plugins.barcodeScanner.scan(
 					function (result) {
@@ -193,7 +194,7 @@ angular.module('starter.services.basic', [])
 			else{
 				// mock scan for dev purposes
 				// var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
-				var mockResult = { cancelled: false, text:'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL' };
+			    var mockResult = { cancelled: false, text: 'GDPXFOKFCMPKLRYHL7UTFD2JNTLT26GXKT5LS6CAMBP6L2U3SKL3YIIG' }; 
 				success(mockResult);
 			}
 		}

@@ -18,7 +18,8 @@
         currency : 'XLM'
     };
     $scope.destinationInfo = {
-        isValidAddress : false,
+        isValidAddress: false,
+        needFunding : false,
         acceptedCurrencies : ['XLM'],
         acceptedIOUs : []
     };
@@ -132,11 +133,14 @@
         var isValidAddress = newAddress.length == 56; // TODO: more suffisticated validation
         if(isValidAddress)
         {
-            var data = {
-                command : 'account_lines',
-                account : newAddress
-            };
-            //            Remote.send(data);
+            Remote.getServer().loadAccount(newAddress)
+            .then(function (acc) {
+                $scope.destinationInfo.needFunding = false;
+                console.log(acc);
+            })
+            .catch(StellarSdk.NotFoundError, function (err) {
+                $scope.destinationInfo.needFunding = true;
+            });
         }
         $scope.destinationInfo.isValidAddress = isValidAddress;
         //        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
@@ -180,11 +184,21 @@
         if($scope.paymentData.destinationTag)
             data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
 
-        var operation = StellarSdk.Operation.payment({
-            destination: $scope.paymentData.destinationAddress,
-            asset: StellarSdk.Asset.native(),
-            amount: context.technicalAmount
-        });
+
+        var operation;
+        if ($scope.destinationInfo.needFunding) {
+            operation = StellarSdk.Operation.createAccount({
+                destination: $scope.paymentData.destinationAddress,
+                startingBalance: context.technicalAmount
+            });
+        }
+        else {
+            operation = StellarSdk.Operation.payment({
+                destination: $scope.paymentData.destinationAddress,
+                asset: StellarSdk.Asset.native(),
+                amount: context.technicalAmount
+            });
+        }
 
         var actualSendAction = function() {
             UIHelper.blockScreen("To the moon...", 12);
@@ -195,7 +209,10 @@
                 UIHelper.blockScreen('Payment successful!', 2);
             })
             .catch(function (err) {
-                console.error(err);
+                var msg = err.title;
+                if (err.extras && err.extras.result_codes)
+                    msg += ": " + err.extras.result_codes.transaction;
+                UIHelper.showAlert(msg);
             });
         }
 
