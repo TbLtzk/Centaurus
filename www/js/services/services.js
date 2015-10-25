@@ -4,14 +4,19 @@ angular.module('starter.services', ['starter.services.basic'])
 	var account;
 	var keysChanged = false;
 	var connectionChanged = false;
-	account = {
-		address : 'loading',
-		balance : 0,
-		reserve: 20,
-        sequence: 0,
-		transactions : [],
-		otherCurrencies: []
+
+	var resetAccount = function () {
+	    account = {
+	        address: 'loading',
+	        balance: 0,
+	        reserve: 20,
+	        sequence: 0,
+	        transactions: [],
+	        otherCurrencies: []
+	    };
 	};
+
+	resetAccount();
 
 	var addToBalance = function (currency, amount) {
 	    if (currency === 'native' || currency === 'XLM' || currency == null) {
@@ -29,85 +34,10 @@ angular.module('starter.services', ['starter.services.basic'])
         // no entry for currency exists -> add new entry
         account.otherCurrencies.push({currency:currency, amount:amount});             
     };
-
-	var transactionFilter = function(msg){
-		return (msg.engine_result_code == 0 && msg.type === 'transaction');
-	};
-	var transactionCallback = function(msg){
-		account.transactions.unshift(msg.transaction);
-		$rootScope.$broadcast('accountInfoLoaded');
-	}
-	Remote.addMessageHandler(transactionFilter, transactionCallback);
 	
-	var paymentFilter = function(msg){
-		return (transactionFilter(msg) && msg.transaction.TransactionType === 'Payment')
-	};
-	var paymentCallback = function(msg){
-		if (msg.transaction.Destination === account.address) {
-			if (!msg.transaction.Amount.issuer) {
-				console.log('payment received: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance += parseFloat(msg.transaction.Amount) / 1000000;
-			} else {
-				console.log('payment received: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
-                addToBalance(msg.transaction.Amount.currency, parseFloat(msg.transaction.Amount.value));
-			}
-		} 
-		else if (msg.transaction.Account === account.address) {
-            if(msg.transaction.SendMax)
-                msg.transaction.Amount = msg.transaction.SendMax; // Hack to treat cross currency payments approximately
-			if (!msg.transaction.Amount.issuer) {
-				console.log('payment sent: ' + msg.transaction.Amount / 1000000 + ' STR');
-				account.balance -= parseFloat(msg.transaction.Amount) / 1000000;
-			} else {
-				console.log('payment sent: ' + msg.transaction.Amount.value + ' ' + msg.transaction.Amount.currency);
-                addToBalance(msg.transaction.Amount.currency, -parseFloat(msg.transaction.Amount.value));
-			}
-            $rootScope.$broadcast('paymentSuccessful');
-   			UIHelper.blockScreen('Payment successful!', 2);
-		}
-		$rootScope.$broadcast('accountInfoLoaded');
-	};	
-	Remote.addMessageHandler(paymentFilter, paymentCallback);
-
-	var successFilter = function(msg){
-		return (msg.status === 'success' && msg.type === 'response' && msg.result);
-	};
-	var successCallback = function(msg){
-		if (msg.result.account_data) {
-			var newData = msg.result.account_data;
-			account.balance = Math.round(parseFloat(newData.Balance) / 1000000);
-		}
-		else if (msg.result.lines && msg.result.account === account.address) {
-            account.otherCurrencies.length = 0;
-			var lines = msg.result.lines;
-            for (index = 0; index < lines.length; ++index) {
-                var currentLine = lines[index];
-                addToBalance(currentLine.currency, parseFloat(currentLine.balance));
-            }
-		}
-		else if (msg.result.master_seed) {
-			var newKeys = msg.result;
-			Settings.setKeys(newKeys.account_id, newKeys.master_seed);
-		} 
-        else if (msg.result.transactions) {
-			var transactions = msg.result.transactions;
-            account.transactions.length = 0;
-			for (index = 0; index < transactions.length; ++index) {
-				var currentTrx = transactions[index];
-				if(currentTrx.meta && currentTrx.meta.TransactionResult === 'tesSUCCESS')
-                {                    
-                    if(currentTrx.tx.SendMax)
-                        currentTrx.tx.Amount = currentTrx.tx.SendMax; // Hack to treat cross currency payments approximately
-					account.transactions.push(currentTrx.tx);
-                }
-			}
-		}
-		$rootScope.$broadcast('accountInfoLoaded');
-	};
-	Remote.addMessageHandler(successFilter, successCallback);
-	
-	var attachToKeys = function(){
-		var keys = Settings.getKeys();
+	var attachToKeys = function () {
+	    var keys = Settings.getKeys();
+	    resetAccount();
 		account.address = keys.address;
 
 	    // initial balances
@@ -116,7 +46,7 @@ angular.module('starter.services', ['starter.services.basic'])
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
-            //account.balance = parseFloat(acc.balances[0].balance);
+            account.balance = parseFloat(acc.balances[0].balance);
             account.sequence = acc.sequence;
             $rootScope.$broadcast('accountInfoLoaded');
         })
@@ -127,75 +57,72 @@ angular.module('starter.services', ['starter.services.basic'])
            console.log(err.stack || err);
         })
 
-        var txHandler = function (txResponse) {
-            var server = Remote.getServer();
-            var effects = server.effects();
-            var effectsCaller = effects.forTransaction(txResponse.id);
-            var test = effectsCaller.call()
-            .then(function(effect){
-                console.log(txResponse);
-            });
-        };
-
-        var effectHandler = function (effect) {
-//            var server = Remote.getServer();
-//            var operations = server.operations();
-//            var opUrl = effect._links.operation.href;
-//            operations.addQuery(opUrl)
-//            .then(function(op){
-//                console.log(op);
-//            });
-            console.log(effect);
-            var isRelevant = false;
-            if (effect.type === 'account_created') {
-                isRelevant = true;
-                addToBalance(effect.asset_type, -parseFloat(effect.starting_balance));
-            }
-            else if (effect.type === 'account_debited') {
-                isRelevant = true;
+        var applyToBalance = function (effect) {
+            if (effect.type === 'account_created')
+                addToBalance(effect.asset_type, parseFloat(effect.starting_balance));
+            else if (effect.type === 'account_debited')
                 addToBalance(effect.asset_type, -parseFloat(effect.amount));
-            }
-            else if (effect.type === 'account_credited') {
-                isRelevant = true;
-                addToBalance(effect.asset_type, parseFloat(effect.amount));
-            }
-            
-            if(isRelevant){
-                if(effect.asset_type === null || effect.asset_type === 'native')
-                    effect.asset_type = 'XLM'
-                account.transactions.unshift(effect);
-                $rootScope.$broadcast('accountInfoLoaded');        
-            }
+            else if (effect.type === 'account_credited')
+                addToBalance(effect.asset_type, parseFloat(effect.amount));                        
         };
 
-//	    Remote.getServer().transactions()
-//            .forAccount(keys.address)
-//            //.cursor(126280)
-//            .stream({
-//                onmessage: txHandler
-//            })
+        var insertTransaction = function (effect) {
+            try {
+                effect.operation()
+                .then(function (op) {
+                    console.log(op);
+                })
+            }
+            catch(err) {
+                console.log(err);
+            }
 
-        //var paymentStream = Remote.getServer().payments()
-        //    .forAccount(keys.address)
-        //    //.cursor(126280)
-        //    .stream({
-        //        onmessage: txHandler
-        //    })
+            if (effect.asset_type === null || effect.asset_type === 'native')
+                effect.asset_type = 'XLM'
+            account.transactions.unshift(effect);
+        };
+
+        var effectHandler = function (effect, updateBalance) {
+            console.log(effect);
+            var isRelevant =
+                   effect.type === 'account_created'
+                || effect.type === 'account_debited'
+                || effect.type === 'account_credited'
+            ;
+
+            if(isRelevant) {
+                insertTransaction(effect);
+                if (updateBalance)
+                    applyToBalance(effect);
+                $rootScope.$broadcast('accountInfoLoaded');
+            }
+        };
 
         Remote.getServer().effects()
             .forAccount(keys.address)
-            //.cursor(126280)
-            .stream({
-                onmessage: effectHandler
-            })
+            .limit(30)
+            .order('desc')
+            .call()
+            .then(function (effectResults) {
+                var length = effectResults.records ? effectResults.records.length : 0;
+                for (index = length-1; index >= 0; index--) {
+                    var currentEffect = effectResults.records[index];
+                    effectHandler(currentEffect, false);
+                }
 
-		//initial transactions
-		var data = {
-			command : 'account_tx',
-			account : keys.address,
-			limit : 30
-		};
-//		Remote.send(data);
+                var futurePayments = Remote.getServer().effects().forAccount(keys.address);
+                if (length > 0) {
+                    latestPayment = effectResults.records[0];
+                    futurePayments = futurePayments.cursor(latestPayment.paging_token);
+                }
+                futurePayments.stream({
+                    onmessage: function (effect) { effectHandler(effect, true); }
+                });
+
+            })
+            .catch(function (err) {
+                console.log(err)
+            });
 	};
 	
 	Settings.get().onKeysAvailable = function () {
