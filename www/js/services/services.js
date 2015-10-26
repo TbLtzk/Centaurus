@@ -175,9 +175,9 @@ angular.module('starter.services', ['starter.services.basic'])
 			return account;
 		},
 
-		buildTransaction: function (operation, bSign) {
+		buildTransaction: function (operation, memo, bSign) {
 		    var acc = new StellarSdk.Account(account.address, account.sequence);
-		    var transaction = new StellarSdk.TransactionBuilder(acc)
+		    var transaction = new StellarSdk.TransactionBuilder(acc, memo)
 		        .addOperation(operation)
                 .build();
 		    if (bSign === true)

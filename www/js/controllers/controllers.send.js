@@ -200,9 +200,12 @@
             });
         }
 
-        var actualSendAction = function() {
+        var actualSendAction = function () {
             UIHelper.blockScreen("To the moon...", 12);
-            var transaction = Account.buildTransaction(operation, true);
+            var memo;
+            if ($scope.paymentData.destinationTag)
+                memo = StellarSdk.Memo.text($scope.paymentData.destinationTag);
+            var transaction = Account.buildTransaction(operation, memo, true);
             Remote.getServer().submitTransaction(transaction)
             .then(function (transactionResult) {
                 console.log(transactionResult);

@@ -17,7 +17,7 @@
       </label>
     </div>
     <label class="item item-input" ng-if="showDestinationTag">
-      <input ng-model="paymentData.destinationTag" type="number" />
+      <input ng-model="paymentData.destinationTag" type="text" />
     </label>
     <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">Destination Tag</a>
     <button on-tap="sendPayment()" class="button button-block button-positive">
