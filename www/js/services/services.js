@@ -52,6 +52,7 @@ angular.module('starter.services', ['starter.services.basic'])
         })
         .catch(StellarSdk.NotFoundError, function (err) {
             console.log("account not found");
+            Remote.getServer().friendbot(keys.address).call();
         })
         .catch(function (err) {
            console.log(err.stack || err);
@@ -66,20 +67,37 @@ angular.module('starter.services', ['starter.services.basic'])
                 addToBalance(effect.asset_type, parseFloat(effect.amount));                        
         };
 
-        var insertTransaction = function (effect) {
+        var insertTransaction = function (trx, op, effect) {
+            var asset = effect.asset_type;
+            if (asset === null || asset === 'native' || !asset) 
+                asset = 'XLM'
+
+            var displayEffect = {
+                asset_type: asset,
+                amount: effect.amount,
+                debit: effect.type === 'account_debited',
+                sender: op.from,
+                receiver: op.to
+            }
+
+            if (effect.type === 'account_created') {
+                displayEffect.amount = effect.starting_balance;
+                displayEffect.sender = op.funder;
+            }
+
+            account.transactions.unshift(displayEffect);
+        };
+
+        var insertEffect = function (effect) {
             try {
                 effect.operation()
                 .then(function (op) {
-                    console.log(op);
+                    insertTransaction('todo', op, effect);
                 })
             }
             catch(err) {
                 console.log(err);
             }
-
-            if (effect.asset_type === null || effect.asset_type === 'native')
-                effect.asset_type = 'XLM'
-            account.transactions.unshift(effect);
         };
 
         var effectHandler = function (effect, updateBalance) {
@@ -91,7 +109,7 @@ angular.module('starter.services', ['starter.services.basic'])
             ;
 
             if(isRelevant) {
-                insertTransaction(effect);
+                insertEffect(effect);
                 if (updateBalance)
                     applyToBalance(effect);
                 $rootScope.$broadcast('accountInfoLoaded');
