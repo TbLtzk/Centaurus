@@ -46,7 +46,10 @@ angular.module('starter.services', ['starter.services.basic'])
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
-            account.balance = parseFloat(acc.balances[0].balance);
+            for (i = 0; i < acc.balances.length; i++){
+                var bal = acc.balances[i];
+                addToBalance(bal.asset_code, parseFloat(bal.balance));
+            }
             account.sequence = acc.sequence;
             $rootScope.$broadcast('accountInfoLoaded');
         })

@@ -5,6 +5,7 @@ angular.module('starter.controllers', [])
 		$scope.$apply();
 	});
 	$scope.account = Account.get();
+	$scope.Math = window.Math;
     	
 	$scope.shareKeys = function () {
 		var onPassword = function(pwd){
