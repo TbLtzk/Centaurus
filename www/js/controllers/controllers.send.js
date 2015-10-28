@@ -133,10 +133,29 @@
         var isValidAddress = newAddress.length == 56; // TODO: more suffisticated validation
         if(isValidAddress)
         {
-            Remote.getServer().loadAccount(newAddress)
+            Remote.getServer().accounts()
+            .address(newAddress)
+            .call()
             .then(function (acc) {
                 $scope.destinationInfo.needFunding = false;
-                console.log(acc);
+                for (i = 0; i < acc.balances.length; i++) {
+                    var bal = acc.balances[i];
+                    if (!bal.asset_code)
+                        continue;
+                    if (bal.limit <= 0)
+                        continue;
+                    var isNewCurrency = $scope.destinationInfo.acceptedCurrencies.indexOf(bal.asset_code) == -1;
+                    if (isNewCurrency)
+                        $scope.destinationInfo.acceptedCurrencies.push(bal.asset_code);
+                    var iou = {
+                        currency: bal.asset_code,
+                        issuer: bal.issuer
+                    };
+                    $scope.destinationInfo.acceptedIOUs.push(iou);
+                }
+                $scope.transactionContext.isDirty = true;
+                $scope.popoverItemCount = Math.min($scope.destinationInfo.acceptedCurrencies.length, 5);
+                $scope.$apply();
             })
             .catch(StellarSdk.NotFoundError, function (err) {
                 $scope.destinationInfo.needFunding = true;
@@ -212,10 +231,16 @@
                 UIHelper.blockScreen('Payment successful!', 2);
             })
             .catch(function (err) {
-                var msg = err.title;
-                if (err.extras && err.extras.result_codes)
-                    msg += ": " + err.extras.result_codes.transaction;
-                UIHelper.showAlert(msg);
+                if (err.type === 'https://stellar.org/horizon-errors/transaction_failed') {
+                    Account.reload();
+                    UIHelper.showAlert('Out of sync with the network. Please try again');
+                }
+                else {
+                    var msg = err.title;
+                    if (err.extras && err.extras.result_codes)
+                        msg += ': ' + err.extras.result_codes.transaction;
+                    UIHelper.showAlert(msg);
+                }
             });
         }
 

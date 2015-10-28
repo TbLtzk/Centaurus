@@ -4,6 +4,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	var account;
 	var keysChanged = false;
 	var connectionChanged = false;
+	var paymentsEventSource;
 
 	var resetAccount = function () {
 	    account = {
@@ -71,12 +72,14 @@ angular.module('starter.services', ['starter.services.basic'])
         };
 
         var insertTransaction = function (trx, op, effect) {
-            var asset = effect.asset_type;
-            if (asset === null || asset === 'native' || !asset) 
+            var asset = effect.asset_code;
+            if (asset === null || !asset)
                 asset = 'XLM'
+            else
+                asset = effect.asset_code;
 
             var displayEffect = {
-                asset_type: asset,
+                asset_code: asset,
                 amount: effect.amount,
                 debit: effect.type === 'account_debited',
                 sender: op.from,
@@ -95,6 +98,10 @@ angular.module('starter.services', ['starter.services.basic'])
             try {
                 effect.operation()
                 .then(function (op) {
+                    //op.transaction()
+                    //.then(function (trx) {
+                    //    insertTransaction(trx, op, effect);
+                    //});
                     insertTransaction('todo', op, effect);
                 })
             }
@@ -136,7 +143,9 @@ angular.module('starter.services', ['starter.services.basic'])
                     latestPayment = effectResults.records[0];
                     futurePayments = futurePayments.cursor(latestPayment.paging_token);
                 }
-                futurePayments.stream({
+                if (paymentsEventSource)
+                    paymentsEventSource.close();
+                paymentsEventSource = futurePayments.stream({
                     onmessage: function (effect) { effectHandler(effect, true); }
                 });
 
@@ -186,6 +195,10 @@ angular.module('starter.services', ['starter.services.basic'])
 		    if (bSign === true)
 		        transaction.sign(Settings.getKeyPair());
 		    return transaction;
+		},
+        
+		reload: function () {
+		    Settings.get().onKeysAvailable()
 		}
 	}
 })
