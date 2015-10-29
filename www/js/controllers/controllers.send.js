@@ -232,8 +232,13 @@
             })
             .catch(function (err) {
                 if (err.type === 'https://stellar.org/horizon-errors/transaction_failed') {
-                    Account.reload();
-                    UIHelper.showAlert('Out of sync with the network. Please try again');
+                    var errorCode = err.extras && err.extras.result_codes ? err.extras.result_codes.transaction : null;
+                    if (errorCode === "tx_bad_seq") {
+                        Account.reload();
+                        UIHelper.showAlert('Out of sync with the network. Please try again');
+                    }
+                    else
+                        UIHelper.showAlert('Transaction failed: ' + errorCode);
                 }
                 else {
                     var msg = err.title;

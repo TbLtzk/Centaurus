@@ -71,7 +71,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 addToBalance(effect.asset_type, parseFloat(effect.amount));                        
         };
 
-        var insertTransaction = function (trx, op, effect) {
+        var insertTransaction = function (trx, op, effect, fromStream) {
             var asset = effect.asset_code;
             if (asset === null || !asset)
                 asset = 'XLM'
@@ -91,18 +91,20 @@ angular.module('starter.services', ['starter.services.basic'])
                 displayEffect.sender = op.funder;
             }
 
+            if (fromStream && account.address === trx.source_account)
+                account.sequence = trx.source_account_sequence;
+
             account.transactions.unshift(displayEffect);
         };
 
-        var insertEffect = function (effect) {
+        var insertEffect = function (effect, fromStream) {
             try {
                 effect.operation()
                 .then(function (op) {
-                    //op.transaction()
-                    //.then(function (trx) {
-                    //    insertTransaction(trx, op, effect);
-                    //});
-                    insertTransaction('todo', op, effect);
+                    op.transaction()
+                    .then(function (trx) {
+                        insertTransaction(trx, op, effect, fromStream);
+                    });
                 })
             }
             catch(err) {
@@ -110,7 +112,7 @@ angular.module('starter.services', ['starter.services.basic'])
             }
         };
 
-        var effectHandler = function (effect, updateBalance) {
+        var effectHandler = function (effect, fromStream) {
             console.log(effect);
             var isRelevant =
                    effect.type === 'account_created'
@@ -119,8 +121,8 @@ angular.module('starter.services', ['starter.services.basic'])
             ;
 
             if(isRelevant) {
-                insertEffect(effect);
-                if (updateBalance)
+                insertEffect(effect, fromStream);
+                if (fromStream)
                     applyToBalance(effect);
                 $rootScope.$broadcast('accountInfoLoaded');
             }
