@@ -54,7 +54,16 @@ angular.module('starter.services.basic', [])
 })
 
 .factory('Remote', function (UIHelper) {
-    var server = new StellarSdk.Server({hostname:'horizon-testnet.stellar.org', secure: true, port: 443});
+    //var network = 'liveNetwork';
+    var network = 'testNetwork';
+    var hostname = 'horizon.stellar.org'
+
+    if (network = 'liveNetwork') {
+        StellarSdk.Network.usePublicNetwork();
+        hostname = 'horizon.stellar.org'
+    }
+
+    var server = new StellarSdk.Server({ hostname: hostname, secure: true, port: 443 });
   		
 	var messageHandlers = [];
 	messageHandlers.add = function(filter, callback){

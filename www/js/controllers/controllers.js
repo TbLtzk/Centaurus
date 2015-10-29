@@ -79,6 +79,37 @@ angular.module('starter.controllers', [])
 		]
 	  });
 	};
+
+	$scope.upgrade = function () {
+	    //var newKeys = Settings.getKeys();
+	    //var oldKeys = JSON.parse(window.localStorage['keys']);
+
+
+	    var newKeys = {
+	        address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
+	        secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
+	    };
+	    var oldKeys = {
+	        address: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
+	        secret: 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
+	    };
+	    //window.localStorage['keys'] = JSON.stringify(oldKeys);
+
+	    var data = JSON.stringify({
+	        newAddress: newKeys.address
+	    });
+	    var signature = nacl.sign.detached(
+          nacl.util.decodeUTF8(data),
+          nacl.util.decodeBase64(oldKeys.secret)
+        );
+	    signature = nacl.util.encodeBase64(signature);
+        var message = {
+	        data: data,
+	        publicKey: oldKeys.address,
+	        signature: signature
+        };
+
+	}
 })
 
 .controller('ReceiveCtrl', function ($scope, Account, UIHelper) {
