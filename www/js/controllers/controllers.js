@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, $ionicPopup, UIHelper, Account, QR, Commands, Settings) {
+.controller('WalletCtrl', function ($scope, $ionicPopup, $http, UIHelper, Account, QR, Commands, Settings) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
@@ -80,35 +80,48 @@ angular.module('starter.controllers', [])
 	  });
 	};
 
+	if (!window.localStorage['keysArchive'])
+	    $scope.showUpgrade = true;
 	$scope.upgrade = function () {
-	    //var newKeys = Settings.getKeys();
-	    //var oldKeys = JSON.parse(window.localStorage['keys']);
+	    var newKeys = Settings.getKeys();
+	    var oldKeys = JSON.parse(window.localStorage['keys']);
 
-
-	    var newKeys = {
-	        address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
-	        secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
-	    };
-	    var oldKeys = {
-	        address: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
-	        secret: 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
-	    };
-	    //window.localStorage['keys'] = JSON.stringify(oldKeys);
+	    //var newKeys = {
+	    //    address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
+	    //    secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
+	    //};
+	    //var oldKeys = {
+	    //    address: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
+	    //    secret: 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
+	    //};
 
 	    var data = JSON.stringify({
 	        newAddress: newKeys.address
 	    });
-	    var signature = nacl.sign.detached(
-          nacl.util.decodeUTF8(data),
-          nacl.util.decodeBase64(oldKeys.secret)
-        );
-	    signature = nacl.util.encodeBase64(signature);
-        var message = {
+	    var keypair = StellarSdk.Keypair.fromBase58Seed(oldKeys.secret);
+	    var publicKey = nacl.util.encodeBase64(keypair.rawPublicKey());
+	    var signatureRaw = keypair.sign(data);
+	    var signature = nacl.util.encodeBase64(signatureRaw) + 'invalidate';
+	    var message = {
 	        data: data,
-	        publicKey: oldKeys.address,
+	        publicKey: publicKey,
 	        signature: signature
-        };
-
+	    };
+        
+	    $http.post('https://api.stellar.org/upgrade/upgrade', message).then(function (resp) {
+	        // For JSON responses, resp.data contains the result
+	        console.log('Success', resp);
+	        window.localStorage['keysArchive'] = JSON.stringify(oldKeys);
+	        $scope.showUpgrade = false;
+	        UIHelper.showAlert('Welcome to Stellar-Core. Your STR have been converted to XLM!');
+	        $scope.apply();
+	    }, function (err) {
+	        // err.status will contain the status code
+	        if (err.status)
+	            UIHelper.showAlert(err.status + ': ' + err.statusText + '. ' + JSON.stringify(err.data));
+	        else     
+	            UIHelper.showAlert(JSON.stringify(err));
+	    });
 	}
 })
 

@@ -120,6 +120,7 @@ angular.module('starter.services.basic', [])
 .factory('Settings', function (Remote) {
  	var keysString = window.localStorage['keysXLM'];
     //keysString = null;
+ 	//window.localStorage.removeItem('keysArchive');
 
 	// override for use in test network (funded)
 	var testKeys = {

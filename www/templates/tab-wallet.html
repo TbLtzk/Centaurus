@@ -21,7 +21,10 @@
     <div class="item item-divider">
     Announcements
     </div>
-    <div class="item item-body">
+    <div class="item item-body" ng-if="showUpgrade">
+        Stellar Foundation has decided to launch a new consensus network called Stellar-Core.
+        It has a new native currency called Lumen (XLM). You have to upgrade to the new network in order to continue using centraurus and stellar.
+        Your stellars from the old account will be migrated to XLM.
         <button class="button button-block" on-tap="upgrade()">
             <i class="icon ion-archive"></i>
             Upgrade to Stellar-Core
