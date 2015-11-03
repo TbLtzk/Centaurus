@@ -83,6 +83,7 @@ angular.module('starter.controllers', [])
 	if (!window.localStorage['keysArchive'])
 	    $scope.showUpgrade = true;
 	$scope.upgrade = function () {
+        try{
 	    var newKeys = Settings.getKeys();
 	    var oldKeys = JSON.parse(window.localStorage['keys']);
 
@@ -101,7 +102,7 @@ angular.module('starter.controllers', [])
 	    var keypair = StellarSdk.Keypair.fromBase58Seed(oldKeys.secret);
 	    var publicKey = nacl.util.encodeBase64(keypair.rawPublicKey());
 	    var signatureRaw = keypair.sign(data);
-	    var signature = nacl.util.encodeBase64(signatureRaw) + 'invalidate';
+	    var signature = nacl.util.encodeBase64(signatureRaw);
 	    var message = {
 	        data: data,
 	        publicKey: publicKey,
@@ -117,11 +118,14 @@ angular.module('starter.controllers', [])
 	        $scope.apply();
 	    }, function (err) {
 	        // err.status will contain the status code
-	        if (err.status)
-	            UIHelper.showAlert(err.status + ': ' + err.statusText + '. ' + JSON.stringify(err.data));
+	        if (err.data && err.data.message)
+	            UIHelper.showAlert(err.data.message);
 	        else     
 	            UIHelper.showAlert(JSON.stringify(err));
 	    });
+        } catch(err) {
+            UIHelper.showAlert(err.message);
+        }
 	}
 })
 
