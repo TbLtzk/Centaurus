@@ -122,9 +122,10 @@ angular.module('starter.services', ['starter.services.basic'])
 
             if(isRelevant) {
                 insertEffect(effect, fromStream);
-                if (fromStream)
+                if (fromStream) {
                     applyToBalance(effect);
-                $rootScope.$broadcast('accountInfoLoaded');
+                    $rootScope.$broadcast('accountInfoLoaded');
+                }
             }
         };
 
@@ -145,12 +146,12 @@ angular.module('starter.services', ['starter.services.basic'])
                     latestPayment = effectResults.records[0];
                     futurePayments = futurePayments.cursor(latestPayment.paging_token);
                 }
+                $rootScope.$broadcast('accountInfoLoaded');
                 if (paymentsEventSource)
                     paymentsEventSource.close();
                 paymentsEventSource = futurePayments.stream({
                     onmessage: function (effect) { effectHandler(effect, true); }
                 });
-
             })
             .catch(function (err) {
                 console.log(err)

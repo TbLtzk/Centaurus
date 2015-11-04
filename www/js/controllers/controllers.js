@@ -114,7 +114,7 @@ angular.module('starter.controllers', [])
 	        console.log('Success', resp);
 	        window.localStorage['keysArchive'] = JSON.stringify(oldKeys);
 	        $scope.showUpgrade = false;
-	        UIHelper.showAlert('Welcome to Stellar-Core. Your STR have been converted to XLM!');
+	        UIHelper.showAlert('Welcome to Stellar-Core. Your STR will be converted to XLM! You might need to close and reopen Centaurus.');
 	        $scope.apply();
 	    }, function (err) {
 	        // err.status will contain the status code
