@@ -56,9 +56,9 @@ angular.module('starter.services.basic', [])
 .factory('Remote', function (UIHelper) {
     //var network = 'liveNetwork';
     var network = 'testNetwork';
-    var hostname = 'horizon.stellar.org'
+    var hostname = 'horizon-testnet.stellar.org'
 
-    if (network = 'liveNetwork') {
+    if (network === 'liveNetwork') {
         StellarSdk.Network.usePublicNetwork();
         hostname = 'horizon.stellar.org'
     }

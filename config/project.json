@@ -2,11 +2,13 @@
 "test":
         {
         "websocket" : "test.stellar.org",
+        "network": "testNetwork",
         "testHint" : " (T)"
         },
 "live":
         {
         "websocket" : "live.stellar.org",
+        "network": "liveNetwork",
         "testHint" : ""
         }
 }

@@ -49,6 +49,7 @@ if (rootdir) {
             // with the names of the token values. For example, below we are looking for the token ' (T)' (brackets have to be escaped)
             replace_string_in_file(fullfilename, " \\(T\\)", configobj[target].testHint);
             replace_string_in_file(fullfilename, "test.stellar.org", configobj[target].websocket);
+            replace_string_in_file(fullfilename, "testNetwork", configobj[target].network);
             // ... any other configuration
         } else {
             //console.log("missing: "+fullfilename);
