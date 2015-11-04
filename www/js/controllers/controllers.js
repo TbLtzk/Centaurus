@@ -80,7 +80,7 @@ angular.module('starter.controllers', [])
 	  });
 	};
 
-	if (!window.localStorage['keysArchive'])
+	if (window.localStorage['keys'] && !window.localStorage['keysArchive'])
 	    $scope.showUpgrade = true;
 	$scope.upgrade = function () {
         try{
