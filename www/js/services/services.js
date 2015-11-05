@@ -78,8 +78,10 @@ angular.module('starter.services', ['starter.services.basic'])
             else
                 asset = effect.asset_code;
 
+            var date = new Date(trx.created_at)
             var displayEffect = {
-                creationDate : new Date(trx.created_at),
+                creationDate: date,
+                creationTimestamp : date.getTime(),
                 asset_code: asset,
                 amount: effect.amount,
                 debit: effect.type === 'account_debited',
@@ -95,7 +97,19 @@ angular.module('starter.services', ['starter.services.basic'])
             if (fromStream && account.address === trx.source_account)
                 account.sequence = trx.source_account_sequence;
 
-            account.transactions.unshift(displayEffect);
+            if (fromStream)
+                account.transactions.unshift(displayEffect); // assume newest -> push front
+            else {
+                // insert at correct position
+                var i;
+                for (i = 0; i < account.transactions.length; i++) {
+                    if (displayEffect.creationTimestamp > account.transactions[i].creationTimestamp) {
+                        break;
+                    }
+                }
+                account.transactions.splice(i, 0, displayEffect);
+            }
+
             $rootScope.$broadcast('newTransaction');
         };
 

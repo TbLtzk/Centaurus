@@ -113,9 +113,6 @@ angular.module('starter.controllers', [])
 .controller('TransactionsCtrl', function ($scope, Account) {
     var onNewTransactions = function (event) {
         var account = Account.get();
-        account.transactions.sort(function (trx1, trx2) {
-            return trx1.creationDate.getTime() - trx2.creationDate.getTime();
-        });
         $scope.account = account;
         $scope.$apply();
     };
