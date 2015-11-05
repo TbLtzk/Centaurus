@@ -3,10 +3,16 @@
   "private": true,
   "dependencies": {
     "stellar-sdk": "0.2.15",
-    "cryptojslib" : "3.1.2",
+    "cryptojslib": "3.1.2",
     "tweetnacl": "0.11.2"
   },
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.0-beta.11"
+    "ionic": "driftyco/ionic-bower#1.1.0"
+  },
+  "resolutions": {
+    "angular-animate": "1.4.3",
+    "angular": ">= 1.0.8",
+    "angular-sanitize": "1.4.3",
+    "angular-ui-router": "0.2.13"
   }
 }
