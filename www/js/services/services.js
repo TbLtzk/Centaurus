@@ -79,6 +79,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 asset = effect.asset_code;
 
             var displayEffect = {
+                creationDate : new Date(trx.created_at),
                 asset_code: asset,
                 amount: effect.amount,
                 debit: effect.type === 'account_debited',
@@ -95,6 +96,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 account.sequence = trx.source_account_sequence;
 
             account.transactions.unshift(displayEffect);
+            $rootScope.$broadcast('newTransaction');
         };
 
         var insertEffect = function (effect, fromStream) {
@@ -146,7 +148,6 @@ angular.module('starter.services', ['starter.services.basic'])
                     latestPayment = effectResults.records[0];
                     futurePayments = futurePayments.cursor(latestPayment.paging_token);
                 }
-                $rootScope.$broadcast('accountInfoLoaded');
                 if (paymentsEventSource)
                     paymentsEventSource.close();
                 paymentsEventSource = futurePayments.stream({

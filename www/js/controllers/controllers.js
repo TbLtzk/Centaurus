@@ -110,12 +110,18 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('TransactionsCtrl', function ($scope, Account) {	
-	$scope.$on('accountInfoLoaded', function (event) {
-		$scope.account = Account.get();
-		$scope.$apply();
-	});
-	$scope.account = Account.get();
+.controller('TransactionsCtrl', function ($scope, Account) {
+    var onNewTransactions = function (event) {
+        var account = Account.get();
+        account.transactions.sort(function (trx1, trx2) {
+            return trx1.creationDate.getTime() - trx2.creationDate.getTime();
+        });
+        $scope.account = account;
+        $scope.$apply();
+    };
+    $scope.$on('accountInfoLoaded', onNewTransactions);
+    $scope.$on('newTransaction', onNewTransactions);
+    $scope.account = Account.get();
 })
 
 .controller('AboutCtrl', function ($scope) {	
