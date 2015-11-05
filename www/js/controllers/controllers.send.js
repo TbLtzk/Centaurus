@@ -27,33 +27,9 @@
         isDirty : false,
         isValidCurrency : false,
         alternatives : [],
-        technicalAmount : "0"
+        amount: 0
     };
     $scope.popoverItemCount = 2;
-    
-    var trustLinesFilter = function(msg){
-        return (msg.status === 'success' && msg.type === 'response' && msg.result && msg.result.lines && msg.result.account != account.address);
-    };
-    var trustLinesCallback = function(msg){
-        var lines = msg.result.lines;
-        for (index = 0; index < lines.length; ++index) {
-            var currentLine = lines[index];
-            if(currentLine.limit <= 0)
-                continue;
-            var isNewCurrency = $scope.destinationInfo.acceptedCurrencies.indexOf(currentLine.currency) == -1;
-            if(isNewCurrency)
-                $scope.destinationInfo.acceptedCurrencies.push(currentLine.currency);
-            var iou = { 
-                currency: currentLine.currency,
-                issuer: currentLine.account
-            };
-            $scope.destinationInfo.acceptedIOUs.push(iou); 
-        }
-        $scope.transactionContext.isDirty = true;
-        $scope.popoverItemCount = Math.min($scope.destinationInfo.acceptedCurrencies.length, 5);
-        $scope.$apply();
-    };
-    Remote.addMessageHandler(trustLinesFilter, trustLinesCallback);
     
     var alternativesFilter = function(msg){
         return (msg.type === 'find_path' && msg.alternatives);
@@ -77,6 +53,7 @@
     $scope.$watch('transactionContext.isDirty', function(isDirty) {
         if(!isDirty)
             return;
+        try{
         var context = $scope.transactionContext;
         if(context.currentAlternativeStream)
         {
@@ -84,17 +61,18 @@
             //Remote.send(context.currentAlternativeStream);  
             context.currentAlternativeStream = null;
         }
-        context.technicalAmount = null;
+        context.amount = $scope.paymentData.amount;
         context.alternatives = [];
         var isCompletePaymentInfo = $scope.destinationInfo.isValidAddress
             && context.isValidCurrency            
-            && $scope.paymentData.amount > 0
+            && context.amount > 0
             && ($scope.paymentData.currency == 'XLM' || $scope.destinationInfo.acceptedIOUs.length > 0);        
         
         if(isCompletePaymentInfo)
         {
+            var asset;            
             if($scope.paymentData.currency == 'XLM') {
-                context.technicalAmount = ($scope.paymentData.amount).toString();
+                asset = StellarSdk.Asset.native();
             }
             else {
                 var issuer = '';
@@ -106,24 +84,22 @@
                         break;
                     }                    
                 }
-                context.technicalAmount = { 
-                    currency : $scope.paymentData.currency, 
-                    value : $scope.paymentData.amount.toString(),
-                    issuer : issuer
-                };
+                asset = new StellarSdk.Asset($scope.paymentData.currency, issuer);
             }           
             
             var keys = Settings.getKeys();
-            context.currentAlternativeStream = {
-                "command": "find_path",
-                "subcommand": "create",
-                "source_account": keys.address,
-                "destination_account": $scope.paymentData.destinationAddress,
-                "destination_amount": context.technicalAmount
-            };
-            //            Remote.send(context.currentAlternativeStream);
+            Remote.getServer.paths(keys.address, $scope.paymentData.destinationAddress, asset, context.amount)
+                .call()
+                .then(function (response) {
+                    context.alternatives = response.records;
+                })
+            .catch(function (err) {
+                console.log(err);
+            });
         }
-        
+        } catch (err) {
+            console.log(err);
+        };
         context.isDirty = false;
     });
     
@@ -178,7 +154,7 @@
         if(newCurrency.toUpperCase() != $scope.paymentData.currency)
             $scope.paymentData.currency = newCurrency.toUpperCase();
         else {
-            $scope.transactionContext.isValidCurrency = newCurrency.length == 3; // TODO: more suffisticated validation
+            $scope.transactionContext.isValidCurrency = newCurrency.length > 1; // TODO: more suffisticated validation
             $scope.transactionContext.isDirty = true;
         }
     });
@@ -190,32 +166,21 @@
     $scope.sendPayment = function () {
         var context = $scope.transactionContext;
         var keys = Settings.getKeys();
-        var data = {
-            command : 'submit',
-            tx_json : {
-                TransactionType : 'Payment',
-                Account : keys.address,
-                Destination : $scope.paymentData.destinationAddress,
-                Amount : context.technicalAmount,
-            },
-            secret : keys.secret
-        };
         if($scope.paymentData.destinationTag)
             data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
-
 
         var operation;
         if ($scope.destinationInfo.needFunding) {
             operation = StellarSdk.Operation.createAccount({
                 destination: $scope.paymentData.destinationAddress,
-                startingBalance: context.technicalAmount
+                startingBalance: context.amount.toString()
             });
         }
         else {
             operation = StellarSdk.Operation.payment({
                 destination: $scope.paymentData.destinationAddress,
                 asset: StellarSdk.Asset.native(),
-                amount: context.technicalAmount
+                amount: context.amount.toString()
             });
         }
 
@@ -265,7 +230,11 @@
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" is not a valid currency.');
         else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('Insufficient Funds');
-        else if(context.technicalAmount == null)
+        else if ($scope.paymentData.currency != 'XLM')
+            UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
+        else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
+            UIHelper.showAlert('There is no valid path on the network for this payment.');
+        else if (context.amount == null)
             UIHelper.showAlert('Payment not possible. Does the recipient accept the specified currency?');
         else if(context.alternatives.length > 0) {            
             var sheet = {
@@ -273,27 +242,26 @@
                 titleText: 'You can send',
                 buttonClicked: function(index) {
                     var choice = context.alternatives[index];
-                    if(choice.paths_computed && choice.paths_computed.length > 0)
-                    {
-                        data.tx_json.Paths = choice.paths_computed;
-                        data.tx_json.SendMax = choice.source_amount;
-                    }
-                    actualSendAction();
+                    // TODO: build path operation
+                    UIHelper.showAlert(choice);
+                    //if(choice.paths_computed && choice.paths_computed.length > 0)
+                    //{
+                    //}
+                    //actualSendAction();
                     return true;
                 }
             };
             for (i=0; i<context.alternatives.length; i++)
             {
                 var alternative = context.alternatives[i];
-                var source_amount = alternative.source_amount;
-                var amount = source_amount.value;
-                var currency = source_amount.currency;
-                var issuer = source_amount.issuer;
-                if(currency == null)
-                {
-                    currency = 'XLM';
-                    amount = (source_amount.valueOf() / 1000000).toString();
-                }
+                var amount = alternative.source_amount;
+                var currency = alternative.source_asset_code;
+                //var issuer = source_amount.issuer;
+                //if(currency == null)
+                //{
+                //    currency = 'XLM';
+                //    amount = (source_amount.valueOf() / 1000000).toString();
+                //}
                 var button = { text : amount + ' ' + currency };
                 sheet.buttons.push(button);
             }
