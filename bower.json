@@ -7,7 +7,7 @@
     "tweetnacl": "0.11.2"
   },
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.1.0"
+    "ionic": "driftyco/ionic-bower#1.0.0-beta.11"
   },
   "resolutions": {
     "angular-animate": "1.4.3",
