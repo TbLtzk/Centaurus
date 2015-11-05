@@ -204,7 +204,8 @@ angular.module('starter.services.basic', [])
 			else{
 				// mock scan for dev purposes
 				// var mockResult = { cancelled: false, text:'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' };
-			    var mockResult = { cancelled: false, text: 'GDPXFOKFCMPKLRYHL7UTFD2JNTLT26GXKT5LS6CAMBP6L2U3SKL3YIIG' }; 
+			    //var mockResult = { cancelled: false, text: 'GDPXFOKFCMPKLRYHL7UTFD2JNTLT26GXKT5LS6CAMBP6L2U3SKL3YIIG' }; 
+			    var mockResult = { cancelled: false, text: 'centaurus\\:redeemSTR001sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha' };
 				success(mockResult);
 			}
 		}

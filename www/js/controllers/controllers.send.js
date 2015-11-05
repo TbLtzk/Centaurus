@@ -170,9 +170,9 @@
         $scope.transactionContext.isDirty = true;
     });
     
-    $scope.$on('paymentSuccessful', function (event) {
-        $scope.paymentData.amount = 0;
-    });
+    //$scope.$on('paymentSuccessful', function (event) {
+    //    $scope.paymentData.amount = 0;
+    //});
 
     $scope.$watch('paymentData.currency', function(newCurrency) {
         if(newCurrency.toUpperCase() != $scope.paymentData.currency)
@@ -220,7 +220,7 @@
         }
 
         var actualSendAction = function () {
-            UIHelper.blockScreen("To the moon...", 12);
+            UIHelper.blockScreen("To the moon...", 20);
             var memo;
             if ($scope.paymentData.destinationTag)
                 memo = StellarSdk.Memo.text($scope.paymentData.destinationTag);
@@ -228,6 +228,7 @@
             Remote.getServer().submitTransaction(transaction)
             .then(function (transactionResult) {
                 console.log(transactionResult);
+                $scope.paymentData.amount = 0;
                 UIHelper.blockScreen('Payment successful!', 2);
             })
             .catch(function (err) {
@@ -244,7 +245,10 @@
                     var msg = err.title;
                     if (err.extras && err.extras.result_codes)
                         msg += ': ' + err.extras.result_codes.transaction;
-                    UIHelper.showAlert(msg);
+                    if(msg)
+                        UIHelper.showAlert(msg);
+                    else
+                        UIHelper.showAlert('Transaction failed for unknown reason');
                 }
             });
         }

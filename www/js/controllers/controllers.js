@@ -83,49 +83,14 @@ angular.module('starter.controllers', [])
 	if (window.localStorage['keys'] && !window.localStorage['keysArchive'])
 	    $scope.showUpgrade = true;
 	$scope.upgrade = function () {
-        try{
-	    var newKeys = Settings.getKeys();
 	    var oldKeys = JSON.parse(window.localStorage['keys']);
-
-	    //var newKeys = {
-	    //    address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
-	    //    secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
-	    //};
-	    //var oldKeys = {
-	    //    address: 'gEPLboQjouwdRBoVzi8vwLd2SWjZa3xcTL',
-	    //    secret: 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha'
-	    //};
-
-	    var data = JSON.stringify({
-	        newAddress: newKeys.address
-	    });
-	    var keypair = StellarSdk.Keypair.fromBase58Seed(oldKeys.secret);
-	    var publicKey = nacl.util.encodeBase64(keypair.rawPublicKey());
-	    var signatureRaw = keypair.sign(data);
-	    var signature = nacl.util.encodeBase64(signatureRaw);
-	    var message = {
-	        data: data,
-	        publicKey: publicKey,
-	        signature: signature
-	    };
-        
-	    $http.post('https://api.stellar.org/upgrade/upgrade', message).then(function (resp) {
-	        // For JSON responses, resp.data contains the result
-	        console.log('Success', resp);
+	    var onSuccess = function (resp) {
 	        window.localStorage['keysArchive'] = JSON.stringify(oldKeys);
 	        $scope.showUpgrade = false;
 	        UIHelper.showAlert('Welcome to Stellar-Core. Your STR will be converted to XLM! You might need to close and reopen Centaurus.');
 	        $scope.apply();
-	    }, function (err) {
-	        // err.status will contain the status code
-	        if (err.data && err.data.message)
-	            UIHelper.showAlert(err.data.message);
-	        else     
-	            UIHelper.showAlert(JSON.stringify(err));
-	    });
-        } catch(err) {
-            UIHelper.showAlert(err.message);
-        }
+	    };
+	    Commands.upgradeFromStr(oldKeys.secret, onSuccess);
 	}
 })
 

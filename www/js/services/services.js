@@ -206,7 +206,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	}
 })
 
-.factory('Commands', function (UIHelper, Settings, Account) {	
+.factory('Commands', function ($http, UIHelper, Settings, Account) {	
 
 	if (typeof String.prototype.startsWith != 'function') {
 		String.prototype.startsWith = function (str){
@@ -268,6 +268,54 @@ angular.module('starter.services', ['starter.services.basic'])
 	};
 	knownCommands.add('backup002', backupCallback2);
 
+	var redeemStr = function(oldSecret, onSuccess)	{
+        try{
+	        var newKeys = Settings.getKeys();
+
+	        //var newKeys = {
+	        //    address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
+	        //    secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
+	        //};
+            //oldSecret = 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha';
+
+	        var data = JSON.stringify({
+	            newAddress: newKeys.address
+	        });
+	        var keypair = StellarSdk.Keypair.fromBase58Seed(oldSecret);
+	        var publicKey = nacl.util.encodeBase64(keypair.rawPublicKey());
+	        var signatureRaw = keypair.sign(data);
+	        var signature = nacl.util.encodeBase64(signatureRaw);
+	        var message = {
+	            data: data,
+	            publicKey: publicKey,
+	            signature: signature
+	        };
+        
+	        $http.post('https://api.stellar.org/upgrade/upgrade', message).then(function (resp) {
+	            // For JSON responses, resp.data contains the result
+	            console.log('Success', resp);
+	            onSuccess(resp);
+	        }, function (err) {
+	            // err.status will contain the status code
+	            if (err.data && err.data.message)
+	                UIHelper.showAlert(err.data.message);
+	            else     
+	                UIHelper.showAlert(JSON.stringify(err));
+	        });
+	    } catch(err) {
+	        UIHelper.showAlert(err.message);
+	    }       
+	}
+
+	var redeemStrCallback = function (content) {
+	    var oldSecret = content;
+	    var onSuccess = function (resp) {
+	        UIHelper.showAlert('Your STR will be converted to XLM! You might need to close and reopen Centaurus.');
+	    };
+	    redeemStr(oldSecret, onSuccess);
+	};
+	knownCommands.add('redeemSTR001', redeemStrCallback);
+
 	return {
 		parse : function (input) {
 			var result = {
@@ -306,6 +354,8 @@ angular.module('starter.services', ['starter.services.basic'])
 				secret : s
 			};
 			return importKeys(newKeys);
-		}		
+		},
+        
+		upgradeFromStr: redeemStr		
 	};
 })
