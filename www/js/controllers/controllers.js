@@ -12,7 +12,7 @@ angular.module('starter.controllers', [])
 			var plain = JSON.stringify(Settings.getKeys());
 			var backupString = CryptoJS.AES.encrypt(plain, pwd);
 
-			body = 'centaurus:backup002' + backupString;
+			body = 'centaurus:backup003' + backupString;
 			UIHelper.shareText('My Stellar Keys', body);
 		};
 		UIHelper.promptForPassword(function(pwd){

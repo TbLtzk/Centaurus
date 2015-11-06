@@ -259,39 +259,16 @@ angular.module('starter.services', ['starter.services.basic'])
 		}
 		return true;
 	}
-	
-	var backupCallback = function(content){
-		var unmasked = atob(content);
-		var newKeys = JSON.parse(unmasked);
-		
-		return importKeys(newKeys);
-	};
-	knownCommands.add('backup001', backupCallback);
 
-	var backupCallback2 = function(content){
-		UIHelper.promptForPassword(function(pwd){
-			try{
-				var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
-				var newKeys = JSON.parse(decrypted);			
-				return importKeys(newKeys);		
-			} catch(ex) {
-				console.log(ex.message);
-			}
-			UIHelper.showAlert('Incorrect password!');
-			return false;			
-		});
-	};
-	knownCommands.add('backup002', backupCallback2);
-
-	var redeemStr = function(oldSecret, onSuccess)	{
-        try{
+	var redeemStr = function (oldSecret, onSuccess) {
+	    try {
 	        var newKeys = Settings.getKeys();
 
 	        //var newKeys = {
 	        //    address: 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4',
 	        //    secret: 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
 	        //};
-            //oldSecret = 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha';
+	        //oldSecret = 'sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha';
 
 	        var data = JSON.stringify({
 	            newAddress: newKeys.address
@@ -305,21 +282,25 @@ angular.module('starter.services', ['starter.services.basic'])
 	            publicKey: publicKey,
 	            signature: signature
 	        };
-        
+
 	        $http.post('https://api.stellar.org/upgrade/upgrade', message).then(function (resp) {
 	            // For JSON responses, resp.data contains the result
 	            console.log('Success', resp);
-	            onSuccess(resp);
+                if(onSuccess)
+                    onSuccess(resp);
+                return true;
 	        }, function (err) {
 	            // err.status will contain the status code
 	            if (err.data && err.data.message)
 	                UIHelper.showAlert(err.data.message);
-	            else     
+	            else
 	                UIHelper.showAlert(JSON.stringify(err));
+	            return false;
 	        });
-	    } catch(err) {
+	    } catch (err) {
 	        UIHelper.showAlert(err.message);
-	    }       
+	        return false;
+	    }
 	}
 
 	var redeemStrCallback = function (content) {
@@ -327,9 +308,47 @@ angular.module('starter.services', ['starter.services.basic'])
 	    var onSuccess = function (resp) {
 	        UIHelper.showAlert('Your STR will be converted to XLM! You might need to close and reopen Centaurus.');
 	    };
-	    redeemStr(oldSecret, onSuccess);
+	    return redeemStr(oldSecret, onSuccess);
 	};
 	knownCommands.add('redeemSTR001', redeemStrCallback);
+
+	var backupCallback = function(content){
+		var unmasked = atob(content);
+		var newKeys = JSON.parse(unmasked);
+		
+		return redeemStrCallback(newKeys.secret);
+	};
+	knownCommands.add('backup001', backupCallback);
+
+	var backupCallback2 = function(content){
+		UIHelper.promptForPassword(function(pwd){
+			try{
+				var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
+				var newKeys = JSON.parse(decrypted);			
+				return redeemStrCallback(newKeys.secret);
+            } catch (ex) {
+				console.log(ex.message);
+			}
+			UIHelper.showAlert('Incorrect password!');
+			return false;			
+		});
+	};
+	knownCommands.add('backup002', backupCallback2);
+
+	var backupCallback3 = function (content) {
+	    UIHelper.promptForPassword(function (pwd) {
+	        try {
+	            var decrypted = CryptoJS.AES.decrypt(content, pwd).toString(CryptoJS.enc.Utf8);
+	            var newKeys = JSON.parse(decrypted);
+	            return importKeys(newKeys);
+	        } catch (ex) {
+	            console.log(ex.message);
+	        }
+	        UIHelper.showAlert('Incorrect password!');
+	        return false;
+	    });
+	};
+	knownCommands.add('backup003', backupCallback3);
 
 	return {
 		parse : function (input) {
