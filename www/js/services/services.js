@@ -56,7 +56,7 @@ angular.module('starter.services', ['starter.services.basic'])
         })
         .catch(StellarSdk.NotFoundError, function (err) {
             console.log("account not found");
-            Remote.getServer().friendbot(keys.address).call();
+            //Remote.getServer().friendbot(keys.address).call();
         })
         .catch(function (err) {
            console.log(err.stack || err);
@@ -89,9 +89,10 @@ angular.module('starter.services', ['starter.services.basic'])
                 receiver: op.to
             }
 
-            if (effect.type === 'account_created') {
-                displayEffect.amount = effect.starting_balance;
+            if (op.type === 'create_account') {
+                displayEffect.amount = op.starting_balance;
                 displayEffect.sender = op.funder;
+                displayEffect.receiver = op.account;
             }
 
             if (fromStream && account.address === trx.source_account)
@@ -145,7 +146,19 @@ angular.module('starter.services', ['starter.services.basic'])
             }
         };
 
-        Remote.getServer().effects()
+        var attachToPaymentsStream = function (opt_startFrom) {
+            var futurePayments = Remote.getServer().effects().forAccount(keys.address);
+            if (opt_startFrom) {
+                futurePayments = futurePayments.cursor(opt_startFrom);
+            }
+            if (paymentsEventSource)
+                paymentsEventSource.close();
+            paymentsEventSource = futurePayments.stream({
+                onmessage: function (effect) { effectHandler(effect, true); }
+            });
+        };
+
+	    Remote.getServer().effects()
             .forAccount(keys.address)
             .limit(30)
             .order('desc')
@@ -156,19 +169,15 @@ angular.module('starter.services', ['starter.services.basic'])
                     var currentEffect = effectResults.records[index];
                     effectHandler(currentEffect, false);
                 }
-
-                var futurePayments = Remote.getServer().effects().forAccount(keys.address);
+                var startListeningFrom;
                 if (length > 0) {
                     latestPayment = effectResults.records[0];
-                    futurePayments = futurePayments.cursor(latestPayment.paging_token);
+                    startListeningFrom = latestPayment.paging_token;
                 }
-                if (paymentsEventSource)
-                    paymentsEventSource.close();
-                paymentsEventSource = futurePayments.stream({
-                    onmessage: function (effect) { effectHandler(effect, true); }
-                });
+                attachToPaymentsStream(startListeningFrom);
             })
             .catch(function (err) {
+                attachToPaymentsStream();
                 console.log(err)
             });
 	};

@@ -124,15 +124,20 @@ angular.module('starter.services.basic', [])
 
 	// override for use in test network (funded)
 	var testKeys = {
-		address : 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4', // klopper
+		address : 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4', // customer
 		secret : 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
 	};
 	var testKeysAlternative = {
-		address : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y', // centaurus
+		address : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y', // issuer
 		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
 	};
+	//var rand = StellarSdk.Keypair.random();
+	//var testKeyUnfunded = {
+	//    address: rand.address(),
+	//    secret: rand.seed(),
+	//};
 
-	//keysString = JSON.stringify(testKeys);
+	//keysString = JSON.stringify(testKeyUnfunded);
 //    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
