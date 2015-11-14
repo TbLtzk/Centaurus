@@ -80,6 +80,7 @@ angular.module('starter.services', ['starter.services.basic'])
 
             var date = new Date(trx.created_at)
             var displayEffect = {
+                effectId : effect.paging_token,
                 creationDate: date,
                 creationTimestamp : date.getTime(),
                 asset_code: asset,
@@ -98,35 +99,43 @@ angular.module('starter.services', ['starter.services.basic'])
             if (fromStream && account.address === trx.source_account)
                 account.sequence = trx.source_account_sequence;
 
-            if (fromStream)
-                account.transactions.unshift(displayEffect); // assume newest -> push front
-            else {
-                // insert at correct position
-                var i;
-                for (i = 0; i < account.transactions.length; i++) {
-                    if (displayEffect.creationTimestamp > account.transactions[i].creationTimestamp) {
-                        break;
-                    }
+            // insert at correct position
+            var i;
+            for (i = 0; i < account.transactions.length; i++) {
+                var compareEffect = account.transactions[i];
+                if (displayEffect.effectId === compareEffect.effectId)
+                    throw 'transaction already seen: ' + displayEffect.effectId;
+                if (displayEffect.creationTimestamp > compareEffect.creationTimestamp) {
+                    break;
                 }
-                account.transactions.splice(i, 0, displayEffect);
             }
+            account.transactions.splice(i, 0, displayEffect);
 
-            $rootScope.$broadcast('newTransaction');
+            return displayEffect;
         };
 
         var insertEffect = function (effect, fromStream) {
-            try {
-                effect.operation()
-                .then(function (op) {
-                    op.transaction()
-                    .then(function (trx) {
-                        insertTransaction(trx, op, effect, fromStream);
-                    });
-                })
-            }
-            catch(err) {
-                console.log(err);
-            }
+            var promise = new Promise(function(resolve, reject) {
+                try {
+                    effect.operation()
+                    .then(function (op) {
+                        op.transaction()
+                        .then(function (trx) {
+                            try {
+                                var displayEffect = insertTransaction(trx, op, effect, fromStream);
+                                resolve(displayEffect);
+                            }
+                            catch (err) {
+                                reject(err);
+                            }
+                        });
+                    })
+                }
+                catch(err) {
+                    reject(err);
+                }
+            });
+            return promise;
         };
 
         var effectHandler = function (effect, fromStream) {
@@ -138,11 +147,19 @@ angular.module('starter.services', ['starter.services.basic'])
             ;
 
             if(isRelevant) {
-                insertEffect(effect, fromStream);
-                if (fromStream) {
-                    applyToBalance(effect);
-                    $rootScope.$broadcast('accountInfoLoaded');
-                }
+                insertEffect(effect, fromStream)
+                .then(function (displayEffect) {
+                    if (fromStream) {
+                        applyToBalance(effect);
+                        $rootScope.$broadcast('accountInfoLoaded');
+                    }
+                    else {
+                        $rootScope.$broadcast('newTransaction');
+                    }
+                }, function (err) {
+                    console.error(err)
+                });
+
             }
         };
 
@@ -151,8 +168,11 @@ angular.module('starter.services', ['starter.services.basic'])
             if (opt_startFrom) {
                 futurePayments = futurePayments.cursor(opt_startFrom);
             }
-            if (paymentsEventSource)
+            if (paymentsEventSource) {
+                console.log('close open effects stream')
                 paymentsEventSource.close();
+            }
+            console.log('open effects stream with cursor: ' + opt_startFrom)
             paymentsEventSource = futurePayments.stream({
                 onmessage: function (effect) { effectHandler(effect, true); }
             });
@@ -177,7 +197,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 attachToPaymentsStream(startListeningFrom);
             })
             .catch(function (err) {
-                attachToPaymentsStream();
+                attachToPaymentsStream('now');
                 console.log(err)
             });
 	};
