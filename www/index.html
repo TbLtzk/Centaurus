@@ -21,10 +21,12 @@
     <script src="cordova.js"></script>
 
     <!-- thrd party libs -->
+    <script src="lib/angular-translate/angular-translate.min.js"></script>
+    <script scr="lib/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
     <script src="lib/stellar-sdk/stellar-sdk.js"></script>
 	<script src="lib_static/qrcodeit-master/jquery.min.js"></script>
-    <script src="lib_static/qrcodeit-master/qrcode.js"></script>            
-	<script src="lib/cryptojslib/rollups/aes.js"></script>
+    <script src="lib_static/qrcodeit-master/qrcode.js"></script>
+    <script src="lib/cryptojslib/rollups/aes.js"></script>
     <script src="lib/tweetnacl/nacl-fast.min.js"></script>
 
     <!-- your app's js -->
@@ -36,7 +38,7 @@
 	<script>
 		function openExternal(elem) {
 			window.open(elem.href, "_system");
-			return false; // Prevent execution of the default onClick handler 
+			return false; // Prevent execution of the default onClick handler
 		}
 	</script>
   </head>
