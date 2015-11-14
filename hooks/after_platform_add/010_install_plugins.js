@@ -11,6 +11,7 @@ var pluginlist = [
     "org.apache.cordova.console",
     "org.apache.cordova.device",
 	"org.apache.cordova.file",
+    "org.apache.cordova.globalization",
 	"org.apache.cordova.inappbrowser"
 ];
 

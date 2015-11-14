@@ -1,4 +1,4 @@
-<ion-view title="Wallet (T)">
+<ion-view title="{{'tabs_wallet_title' | translate}} (T)">
   <ion-content class="has-header padding">
     <ion-item class="">
         <font size="+2">{{account.balance.toFixed(1)}}</font> (XLM)
@@ -11,7 +11,7 @@
 	<div class="button-bar">
 		<button class="button button-block" on-tap="importKeys()">
 			 <i class="icon ion-archive"></i> 
-			  Import
+			  {{'tabs_wallet_import' | translate}}
 		</button> 
 		<button class="button button-block" on-tap="shareKeys()">
 			<i class="icon ion-share"></i>

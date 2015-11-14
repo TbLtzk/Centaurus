@@ -3,9 +3,10 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'ngCordova', 'starter.services', 'starter.controllers', 'starter.controllers.send'])
+angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
+    , 'starter.services', 'starter.controllers', 'starter.controllers.send'])
 
-.run(function ($ionicPlatform) {
+.run(function ($ionicPlatform, $translate) {
 	$ionicPlatform.ready(function () {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
@@ -16,10 +17,21 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.services', 'starter.co
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
-	});
+		if (typeof navigator.globalization !== "undefined") {
+		    navigator.globalization.getPreferredLanguage(function (language) {
+		        $translate.use((language.value).split("-")[0]).then(function (data) {
+		            console.log("SUCCESS -> " + data);
+		        }, function (error) {
+		            console.log("ERROR -> " + error);
+		        });
+		    }, null);
+		}
+		else
+		    $translate.determinePreferredLanguage();
+    });
 })
 
-.config(function ($stateProvider, $urlRouterProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $translateProvider) {
 
 	// Ionic uses AngularUI Router which uses the concept of states
 	// Learn more here: https://github.com/angular-ui/ui-router
@@ -84,10 +96,36 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.services', 'starter.co
 				controller : 'AboutCtrl'
 			}
 		}
-	})
-;
+	});
 
 	// if none of the above states are matched, use this as the fallback
 	$urlRouterProvider.otherwise('/tab/wallet');
 
+    ///////////////////////////////////////////////////
+    /// translate
+	$translateProvider.useStaticFilesLoader({
+	    prefix: 'i18n/',
+	    suffix: '.json'
+	});
+    $translateProvider
+    //.uniformLanguageTag('bcp47')
+    .registerAvailableLanguageKeys(['en', 'de'], {
+	    'en_*': 'en',
+	    'de_*': 'de'
+	})
+    .determinePreferredLanguage();
+    //$translateProvider.preferredLanguage("de");
+	$translateProvider.fallbackLanguage("en");
 });
+
+angular.module("pascalprecht.translate")
+.factory("$translateStaticFilesLoader", ["$q", "$http", function (a, b) {
+    return function (c) {
+        if (!c || !angular.isString(c.prefix) || !angular.isString(c.suffix))
+            throw new Error("Couldn't load static files, no prefix or suffix specified!");
+        var d = a.defer();
+        return b({ url: [c.prefix, c.key, c.suffix].join(""), method: "GET", params: "" })
+            .success(function (a) { d.resolve(a) })
+            .error(function () { d.reject(c.key) }), d.promise
+    }
+}]);

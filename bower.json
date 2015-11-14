@@ -2,6 +2,7 @@
   "name": "HelloIonic",
   "private": true,
   "dependencies": {
+    "angular-translate-loader-static-files" : "2.8.1",
     "stellar-sdk": "0.2.15",
     "cryptojslib": "3.1.2",
     "tweetnacl": "0.11.2"
