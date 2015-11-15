@@ -1,7 +1,7 @@
-<ion-view title="Send (T)">
+<ion-view title="{{'tabs.send.title' | translate}} (T)">
   <ion-content class="narrow">
     <label class="item item-input">
-      <input ng-model="paymentData.destinationAddress" type="text" placeholder="Destination Address" />
+      <input ng-model="paymentData.destinationAddress" type="text" placeholder="{{'tabs.send.destination.placeholder' | translate}}" />
     </label>
     <div class="row no-padding">
       <label class="item item-input" style="width:80%">
@@ -19,17 +19,17 @@
     <label class="item item-input" ng-if="showDestinationTag">
       <input ng-model="paymentData.destinationTag" type="text" />
     </label>
-    <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">Destination Tag</a>
+    <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">{{'tabs.send.btn.destinationTag' | translate}}</a>
     <button on-tap="sendPayment()" class="button button-block button-positive">
-      Send now!
+      {{'tabs.send.btn.send' | translate}}
     </button>
     <div class="item item-body narrow">
       <button on-tap="scanCode()" class="button button-block">
-        <i class="icon ion-qr-scanner"></i> Scan code
+        <i class="icon ion-qr-scanner"></i> {{'tabs.send.btn.scan' | translate}}
       </button>
       <button on-tap="donate()" class="button button-block">
         <i class="icon ion-star"></i>
-        <font size="-1">Like this app? Donate!</font>
+        <font size="-1">{{'tabs.send.btn.donate' | translate}}</font>
       </button>
     </div>
   </ion-content>

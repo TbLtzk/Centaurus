@@ -26,8 +26,6 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 		        });
 		    }, null);
 		}
-		else
-		    $translate.determinePreferredLanguage();
     });
 })
 
@@ -108,13 +106,11 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 	    suffix: '.json'
 	});
     $translateProvider
-    //.uniformLanguageTag('bcp47')
     .registerAvailableLanguageKeys(['en', 'de'], {
-	    'en_*': 'en',
-	    'de_*': 'de'
+        'de_*' : 'de',
+        '*': 'en'
 	})
     .determinePreferredLanguage();
-    //$translateProvider.preferredLanguage("de");
 	$translateProvider.fallbackLanguage("en");
 });
 

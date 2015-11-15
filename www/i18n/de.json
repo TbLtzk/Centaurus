@@ -1,4 +1,6 @@
-﻿{
-  "tabs_wallet_title": "Konto",
-  "tabs_wallet_import": "Import"
+{
+    "_meta.version": "0.0.0",
+    
+    "tabs.wallet.title": "Konto",
+    "tabs.wallet.import": "Import"
 }

@@ -1,29 +1,28 @@
-<ion-view title="Centaurus">
+<ion-view title="{{'tabs.about.title' | translate}}">
 <ion-content class="has-header padding">
 <div class="list card">
   <div class="item item-divider">
-    Centaurus Stellar Wallet <font size="-1">(2.0)</font>
+    {{'tabs.about.main.divider' | translate}} <font size="-1">(2.0)</font>
   </div>
   <div class="item item-body">
-    <font size="4">Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
-	The next step to get there is a functional app for sending and receiving payments.</font>
+    <font size="4">{{'tabs.about.main.body.p1' | translate}} {{'tabs.about.main.body.p2' | translate}}</font>
   </div>
   <div class="item item-divider">
-    Features
+    {{'tabs.about.features.divider' | translate}}
   </div>
   <div class="item item-body">
 	<list>
-	  <li>Display balances</li>	  
-	  <li>Send by manually pasting an adress</li>	  
-	  <li>Send by scanning a QR-code</li>	  
-	  <!--<li>Cross currency payments</li>-->	  
-	  <li>QR-code for receiving</li>	  
-	  <li>Display recent transactions</li>
-	  <li>Encrypted backups</li>
+	  <li>{{'tabs.about.features.body.balances' | translate}}</li>	  
+	  <li>{{'tabs.about.features.body.sendPaste' | translate}}</li>	  
+	  <li>{{'tabs.about.features.body.sendQr' | translate}}</li>	  
+	  <!--<li>{{'tabs.about.features.body.crossCurrency' | translate}}</li>-->	  
+	  <li>{{'tabs.about.features.body.receiveQr' | translate}}</li>	  
+	  <li>{{'tabs.about.features.body.trxRecent' | translate}}</li>
+	  <li>{{'tabs.about.features.body.backup' | translate}}</li>
 	</list>
   </div>
   <div class="item item-divider">
-    Getting Started
+    {{'tabs.about.gettingStarted.divider' | translate}}
   </div>
   <div class="item item-body">
 	<list>
@@ -36,27 +35,27 @@
 	</list>
   </div>
   <div class="item item-divider">
-    Known Issues
+    {{'tabs.about.issues.divider' | translate}}
   </div>
   <div class="item item-body">
-	First of all you should be aware, that this app is in a very early stage and errors are still likely to occur. 
-	Don't hold more Lumens in this app than you need for every day purpose and you can afford to loose in worst case.
+    {{'tabs.about.issues.body.p1' | translate}}
+    {{'tabs.about.issues.body.p2' | translate}} 
 	<p>
 	<list>
-	  <li>Connectivity with the stellar network may fail for multiple reasons. If your account balance seems incorrect, closing an reopening the app might help.</li>
-	  <li>Stellar names are not supported.</li>
-	  <li>Account reserve is not calculated correctly.</li>
+	  <li>{{'tabs.about.issues.body.connectivity' | translate}}</li>
+	  <li>{{'tabs.about.issues.body.stellarNames' | translate}}</li>
+	  <li>{{'tabs.about.issues.body.accountReserve' | translate}}</li>
 	</list>
 	</p>
   </div>
   <div class="item item-divider">
-    Contact
+    {{'tabs.about.contact.divider' | translate}}
   </div>
   <div class="item item-body">
 	<list>
 	  <li>
 	  <a href="http://tbltzk.github.io/Centaurus/" target="_blank" onClick="javascript:return openExternal(this)">http://tbltzk.github.io/Centaurus/</a></li>
-	  <li>Questions and feedback appreciated: <a href="mailto:centaurus@xcoins.de">centaurus@xcoins.de</a></li>
+	  <li>{{'tabs.about.contact.body.feedback' | translate}}: <a href="mailto:centaurus@xcoins.de">centaurus@xcoins.de</a></li>
 	</list>
   </div>
 </div>
