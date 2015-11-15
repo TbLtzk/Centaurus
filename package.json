@@ -20,9 +20,8 @@
     "org.apache.cordova.globalization",
     "org.apache.cordova.inappbrowser",
     "org.apache.cordova.file",
-    "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
-    "https://github.com/knowledgecode/WebSocket-for-Android.git",
-    "https://github.com/driftyco/ionic-plugins-keyboard.git",
-    "com.phonegap.plugins.barcodescanner"
+    "com.phonegap.plugins.barcodescanner",
+    "cordova-plugin-websocket",
+    "cordova-plugin-x-socialsharing"
   ]
 }
