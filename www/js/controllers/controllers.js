@@ -13,12 +13,12 @@ angular.module('starter.controllers', [])
 			var backupString = CryptoJS.AES.encrypt(plain, pwd);
 
 			body = 'centaurus:backup003' + backupString;
-			UIHelper.shareText('My Stellar Keys', body);
+			UIHelper.shareText('controllers.wallet.shareKeys.message.caption', body);
 		};
 		UIHelper.promptForPassword(function(pwd){
 			if(pwd == ''){
-				UIHelper.confirmAndRun('Unencrypted Backup', 
-					'You are about to create an unencrypted backup. Anyone with access to the backup can access your funds, so keep it safe!',
+				UIHelper.confirmAndRun('controllers.wallet.shareKeys.unencrypted.caption', 
+					'controllers.wallet.shareKeys.unencrypted.text',
 					function(){
 						onPassword(pwd);
 					});
@@ -39,45 +39,53 @@ angular.module('starter.controllers', [])
 						$scope.myPopup.close();
 					}
 					else
-						UIHelper.showAlert('Not a valid backup qr code');
+						UIHelper.showAlert('controllers.wallet.scanCommand.invalidCode');
 				}
 			},
 			function (error) {
-				UIHelper.showAlert("Scanning failed: " + error);
+			    console.log(error);
+			    UIHelper.showAlert('controllers.wallet.scanCommand.scanFailed');
 			}
 		);
 	}
 
-	$scope.importKeys = function () {
-	  $scope.data = {}	  
-	  $scope.myPopup = $ionicPopup.show({
-		templateUrl: 'templates/importKeys.html',
-		title: 'Enter your wallet backup string',
-		subTitle: 'or plain key pair',
-		scope: $scope,
-		buttons: [
-		  { text: 'Cancel' },
-		  {
-			text: '<b>Import</b>',
-			type: 'button-positive',
-			onTap: function(e) {
-				var cmd = Commands.parse($scope.data.backupCommandString);					
-				if(cmd.isCommand){
-					return Commands.execute(cmd.rawCommand);
-				}
-				else if($scope.data.address && $scope.data.secret)
-				{
-					// TODO: validate address and secret
-					return Commands.importAddressAndSecret($scope.data.address, $scope.data.secret);
-				}
-				else{
-					UIHelper.showAlert('Not a valid backup string or key pair!');
-					e.preventDefault();
-				}
-			}
-		  },
-		]
-	  });
+	$scope.importKeys = function () {        
+	    $scope.data = {};
+	    UIHelper.translate(
+            [ 'controllers.wallet.importKeys.popup.title'
+            , 'controllers.wallet.importKeys.popup.subtitle'
+            , 'general.btn.cancel'
+            , 'general.btn.import'
+            , 'controllers.wallet.importKeys.popup.invalid'
+            ]).then(function (t) {
+	        $scope.myPopup = $ionicPopup.show({
+	            templateUrl: 'templates/importKeys.html',
+	            title: t[0],
+	            subTitle: t[1],
+	            scope: $scope,
+	            buttons: [
+                  { text: t[2] },
+                  {
+                      text: '<b>' + t[3] + '</b>',
+                      type: 'button-positive',
+                      onTap: function (e) {
+                          var cmd = Commands.parse($scope.data.backupCommandString);
+                          if (cmd.isCommand) {
+                              return Commands.execute(cmd.rawCommand);
+                          }
+                          else if ($scope.data.address && $scope.data.secret) {
+                              // TODO: validate address and secret
+                              return Commands.importAddressAndSecret($scope.data.address, $scope.data.secret);
+                          }
+                          else {
+                              UIHelper.showAlert(t[4]);
+                              e.preventDefault();
+                          }
+                      }
+                  },
+	            ]
+	        });
+	    });
 	};
 
 	if (window.localStorage['keys'] && !window.localStorage['keysArchive'])
@@ -106,7 +114,13 @@ angular.module('starter.controllers', [])
 		text : Account.get().address
 	});
 	$scope.share = function () {
-		UIHelper.shareText('My Stellar Address', 'You can send me Stellars to the address ' + $scope.account.address + '.\n\nCentaurus - Stellar Wallet for Android!');
+	    UIHelper.translate(
+            [ 'controllers.receive.share.title'
+            , 'controllers.receive.share.p1'
+            , 'controllers.receive.share.p2'
+            ]).then(function (t) {
+                UIHelper.shareText(t[0], t[1] + ' ' + $scope.account.address + '.\n\n' + t[2]);
+	    });
 	}
 })
 

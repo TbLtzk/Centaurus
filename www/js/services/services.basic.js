@@ -1,13 +1,15 @@
 angular.module('starter.services.basic', [])
 
-.factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout){
+.factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout, $translate){
 	return {
-		showAlert : function(caption){
-			console.log(caption);
-			$ionicLoading.hide();
-			$ionicPopup.alert({
-				title : caption
-			})
+	    showAlert: function (captionRes) {
+	        console.log(captionRes);
+	        $translate(captionRes).then(function (caption) {
+                $ionicLoading.hide();
+                $ionicPopup.alert({
+                    title: caption
+                })
+            });
 		},
 		promptForPassword : function(onOk){
 			$ionicPopup.prompt({
@@ -20,42 +22,64 @@ angular.module('starter.services.basic', [])
 				}
 			});			
 		},
-		confirmAndRun : function(caption, text, onConfirm){
-			$ionicLoading.hide();
-			var popup = $ionicPopup.confirm({
-				title : caption,
-				template : text
-			});
-			popup.then(function(res){
-				if(res){
-					onConfirm();
-				}
-			});
+		confirmAndRun: function (captionRes, textRes, onConfirm) {
+		    $translate([captionRes, textRes]).then(function (translations) {
+		        $ionicLoading.hide();
+		        var popup = $ionicPopup.confirm({
+		            title: translations[captionRes],
+		            template: translations[textRes]
+		        });
+		        popup.then(function (res) {
+		            if (res) {
+		                onConfirm();
+		            }
+		        });
+		    });
 		},
-		blockScreen: function(text, timeoutSec){
-			$ionicLoading.show({
-				template : text
-			});
-			$timeout(function () {
-				$ionicLoading.hide();
-			}, timeoutSec * 1000);
+		blockScreen: function (textRes, timeoutSec) {
+		    $translate(textRes).then(function (text) {
+		        $ionicLoading.show({
+		            template: text
+		        });
+		        $timeout(function () {
+		            $ionicLoading.hide();
+		        }, timeoutSec * 1000);
+		    });
 		},
-		shareText: function(caption, text){
-			if(window.plugins){
-				window.plugins.socialsharing.share(text, caption);
-			}
-			else{
-				var subject = caption.replace(' ', '%20').replace('\n', '%0A');
-				var body = text.replace(' ', '%20').replace('\n', '%0A');
-				window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-			}
-		}
+		shareText: function(captionRes, textRes){
+		    $translate([captionRes, textRes]).then(function (translations) {
+		        var caption = translations[captionRes];
+		        var text = translations[textRes];
+		        if (window.plugins) {
+		            window.plugins.socialsharing.share(text, caption);
+		        }
+		        else {
+		            var subject = caption.replace(' ', '%20').replace('\n', '%0A');
+		            var body = text.replace(' ', '%20').replace('\n', '%0A');
+		            window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+		        }
+		    });
+		},
+		translate : function(keys){
+		    var promise = new Promise(function (resolve, reject) {
+		        $translate(keys).then(function (translations) {
+		            var t = [];
+		            for (i = 0; i < keys.length; i++) {
+		                var key = keys[i];
+		                t.push(translations[key]);
+		                resolve(t);
+		            }
+		        })
+		        .catch(reject);
+		    });
+		    return promise;
+        }
 	};
 })
 
 .factory('Remote', function (UIHelper) {
-    var network = 'liveNetwork';
-//    var network = 'testNetwork';
+    //var network = 'liveNetwork';
+    var network = 'testNetwork';
     var hostname = 'horizon-testnet.stellar.org'
 
     if (network === 'liveNetwork') {
