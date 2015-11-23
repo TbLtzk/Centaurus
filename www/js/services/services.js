@@ -267,7 +267,7 @@ angular.module('starter.services', ['starter.services.basic'])
 		var oldKeys = Settings.getKeys();
 		
 		if(oldKeys.address == newKeys.address && oldKeys.secret == newKeys.secret) {
-			UIHelper.showAlert('The keys have been restored correctly but did not change since your last backup.');
+			UIHelper.showAlert('services.commands.importKeys.noChange');
 		}
 		else {
 			var doOverwrite = function(){
@@ -277,8 +277,8 @@ angular.module('starter.services', ['starter.services.basic'])
 
 			if(Account.get().balance > 0) {
 				UIHelper.confirmAndRun(
-					'Overwrite Keys', 
-					'This will overwrite your existing keys. If you do not have a backup, the remaining funds on the old address are lost!',
+					'service.commands.importKeys.overwrite.caption', 
+					'service.commands.importKeys.overwrite.text',
 					doOverwrite
 				);
 			}
@@ -358,7 +358,7 @@ angular.module('starter.services', ['starter.services.basic'])
             } catch (ex) {
 				console.log(ex.message);
 			}
-			UIHelper.showAlert('Incorrect password!');
+			UIHelper.showAlert('services.commands.backup.incorrectPwd');
 			return false;			
 		});
 	};
@@ -373,7 +373,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	        } catch (ex) {
 	            console.log(ex.message);
 	        }
-	        UIHelper.showAlert('Incorrect password!');
+	        UIHelper.showAlert('services.commands.backup.incorrectPwd');
 	        return false;
 	    });
 	};

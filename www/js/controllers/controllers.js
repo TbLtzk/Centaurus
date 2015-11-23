@@ -25,7 +25,7 @@ angular.module('starter.controllers', [])
 			}
 			else
 				onPassword(pwd);
-		});
+		}, true);
 	};
 	
 	$scope.scanCommand = function(){

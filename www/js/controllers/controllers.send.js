@@ -169,42 +169,44 @@
         if($scope.paymentData.destinationTag)
             data.tx_json.DestinationTag = $scope.paymentData.destinationTag; 
 
-        var operation;
-        if ($scope.destinationInfo.needFunding) {
-            operation = StellarSdk.Operation.createAccount({
-                destination: $scope.paymentData.destinationAddress,
-                startingBalance: context.amount.toString()
-            });
-        }
-        else {
-            operation = StellarSdk.Operation.payment({
-                destination: $scope.paymentData.destinationAddress,
-                asset: StellarSdk.Asset.native(),
-                amount: context.amount.toString()
-            });
+        var operationBuilder = function () {
+            if ($scope.destinationInfo.needFunding) {
+                operation = StellarSdk.Operation.createAccount({
+                    destination: $scope.paymentData.destinationAddress,
+                    startingBalance: context.amount.toString()
+                });
+            }
+            else {
+                operation = StellarSdk.Operation.payment({
+                    destination: $scope.paymentData.destinationAddress,
+                    asset: StellarSdk.Asset.native(),
+                    amount: context.amount.toString()
+                });
+            }
         }
 
         var actualSendAction = function () {
-            UIHelper.blockScreen("To the moon...", 20);
+            UIHelper.blockScreen('controllers.send.pending', 20);
             var memo;
             if ($scope.paymentData.destinationTag)
                 memo = StellarSdk.Memo.text($scope.paymentData.destinationTag);
+            var operation = operationBuilder();
             var transaction = Account.buildTransaction(operation, memo, true);
             Remote.getServer().submitTransaction(transaction)
             .then(function (transactionResult) {
                 console.log(transactionResult);
                 $scope.paymentData.amount = 0;
-                UIHelper.blockScreen('Payment successful!', 2);
+                UIHelper.blockScreen('controllers.send.success', 2);
             })
             .catch(function (err) {
                 if (err.type === 'https://stellar.org/horizon-errors/transaction_failed') {
                     var errorCode = err.extras && err.extras.result_codes ? err.extras.result_codes.transaction : null;
                     if (errorCode === "tx_bad_seq") {
                         Account.reload();
-                        UIHelper.showAlert('Out of sync with the network. Please try again');
+                        UIHelper.showAlert('controllers.send.outOfSync');
                     }
                     else
-                        UIHelper.showAlert('Transaction failed: ' + errorCode);
+                        UIHelper.showAlert('controllers.send.failed ', ' ' + errorCode);
                 }
                 else {
                     var msg = err.title;
@@ -213,62 +215,67 @@
                     if(msg)
                         UIHelper.showAlert(msg);
                     else
-                        UIHelper.showAlert('Transaction failed for unknown reason');
+                        UIHelper.showAlert('controllers.send.failed.unknown');
                 }
             });
         }
 
-        if($scope.paymentData.destinationAddress.length == 0)
-            UIHelper.showAlert('Destination address must not be empty.');
-        else if(!$scope.destinationInfo.isValidAddress)
-            UIHelper.showAlert('"' + $scope.paymentData.destinationAddress + '" is not a valid destination address.');
-        else if($scope.paymentData.amount < 0)
-            UIHelper.showAlert('Negative amount is not allowed.');
-        else if($scope.paymentData.amount == 0 || $scope.paymentData.amount == null)
-            UIHelper.showAlert('Amount must be greater than 0.');
-        else if(!context.isValidCurrency)
-            UIHelper.showAlert('"' + $scope.paymentData.currency + '" is not a valid currency.');
-        else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
-            UIHelper.showAlert('Insufficient Funds');
-        else if ($scope.paymentData.currency != 'XLM')
-            UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
-        else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
-            UIHelper.showAlert('There is no valid path on the network for this payment.');
-        else if (context.amount == null)
-            UIHelper.showAlert('Payment not possible. Does the recipient accept the specified currency?');
-        else if(context.alternatives.length > 0) {            
-            var sheet = {
-                buttons: [],
-                titleText: 'You can send',
-                buttonClicked: function(index) {
-                    var choice = context.alternatives[index];
-                    // TODO: build path operation
-                    UIHelper.showAlert(choice);
-                    //if(choice.paths_computed && choice.paths_computed.length > 0)
+        UIHelper.translate(
+            [ 'controllers.send.validate.address.invalid'
+            , 'controllers.send.validate.currency.invalid'
+            , 'controllers.send.options.title'
+            ]).then(function (t) {
+            if($scope.paymentData.destinationAddress.length == 0)
+                UIHelper.showAlert('controllers.send.validate.address.empty');
+            else if(!$scope.destinationInfo.isValidAddress)
+                UIHelper.showAlert('"' + $scope.paymentData.destinationAddress + '" ' + t[0]);
+            else if($scope.paymentData.amount < 0)
+                UIHelper.showAlert('controllers.send.validate.amount.negative');
+            else if($scope.paymentData.amount == 0 || $scope.paymentData.amount == null)
+                UIHelper.showAlert('controllers.send.validate.amount.zero');
+            else if(!context.isValidCurrency)
+                UIHelper.showAlert('"' + $scope.paymentData.currency + '" ' + t[1]);
+            else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
+                UIHelper.showAlert('controllers.send.validate.amount.funds');
+            else if ($scope.paymentData.currency != 'XLM')
+                UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
+            else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
+                UIHelper.showAlert('controllers.send.validate.path');
+            else if (context.amount == null)
+                UIHelper.showAlert('controllers.send.validate.general');
+            else if (context.alternatives.length > 0) {
+                var sheet = {
+                    buttons: [],
+                    titleText: t[2],
+                    buttonClicked: function (index) {
+                        var choice = context.alternatives[index];
+                        // TODO: build path operation
+                        UIHelper.showAlert(choice);
+                        //if(choice.paths_computed && choice.paths_computed.length > 0)
+                        //{
+                        //}
+                        //actualSendAction();
+                        return true;
+                    }
+                };
+                for (i = 0; i < context.alternatives.length; i++) {
+                    var alternative = context.alternatives[i];
+                    var amount = alternative.source_amount;
+                    var currency = alternative.source_asset_code;
+                    //var issuer = source_amount.issuer;
+                    //if(currency == null)
                     //{
+                    //    currency = 'XLM';
+                    //    amount = (source_amount.valueOf() / 1000000).toString();
                     //}
-                    //actualSendAction();
-                    return true;
+                    var button = { text: amount + ' ' + currency };
+                    sheet.buttons.push(button);
                 }
-            };
-            for (i=0; i<context.alternatives.length; i++)
-            {
-                var alternative = context.alternatives[i];
-                var amount = alternative.source_amount;
-                var currency = alternative.source_asset_code;
-                //var issuer = source_amount.issuer;
-                //if(currency == null)
-                //{
-                //    currency = 'XLM';
-                //    amount = (source_amount.valueOf() / 1000000).toString();
-                //}
-                var button = { text : amount + ' ' + currency };
-                sheet.buttons.push(button);
+                $ionicActionSheet.show(sheet);
             }
-            $ionicActionSheet.show(sheet); 
-        }
-        else 
-            actualSendAction();        
+            else 
+                actualSendAction();   
+        });
     };
 	
     $scope.scanCode = function () {
@@ -293,7 +300,7 @@
 			    }
 			},
 			function (error) {
-			    UIHelper.showAlert("Scanning failed: " + error);
+			    UIHelper.showAlert('controllers.send.scan.failed', ' ' + error);
 			}
 		);
     };

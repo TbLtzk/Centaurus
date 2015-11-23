@@ -2,25 +2,31 @@ angular.module('starter.services.basic', [])
 
 .factory('UIHelper', function($rootScope, $ionicLoading, $ionicPopup, $timeout, $translate){
 	return {
-	    showAlert: function (captionRes) {
+	    showAlert: function (captionRes, plainSuffix) {
 	        console.log(captionRes);
 	        $translate(captionRes).then(function (caption) {
+	            if (plainSuffix)
+                    caption+=plainSuffix;
                 $ionicLoading.hide();
                 $ionicPopup.alert({
                     title: caption
                 })
             });
 		},
-		promptForPassword : function(onOk){
-			$ionicPopup.prompt({
-				title: 'Enter Password',
-				inputType: 'password',
-				inputPlaceholder: 'Your password'
-			}).then(function(res) {
-				if(res || res == ''){
-					onOk(res)
-				}
-			});			
+	    promptForPassword: function (onOk, freeChoice) {
+	        var titleText = freeChoice ? 'services.uiHelper.password.title.choose' : 'services.uiHelper.password.title.enter';
+	        var placeholderText = freeChoice ? 'services.uiHelper.password.placeholder.choose' : 'services.uiHelper.password.placeholder.enter';
+	        this.translate([titleText, placeholderText]).then(function (t) {
+	            $ionicPopup.prompt({
+	                title: t[0],
+	                inputType: 'password',
+	                inputPlaceholder: t[1]
+	            }).then(function (res) {
+	                if (res || res == '') {
+	                    onOk(res)
+	                }
+	            });
+	        });
 		},
 		confirmAndRun: function (captionRes, textRes, onConfirm) {
 		    $translate([captionRes, textRes]).then(function (translations) {
