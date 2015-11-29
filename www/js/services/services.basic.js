@@ -73,8 +73,8 @@ angular.module('starter.services.basic', [])
 		            for (i = 0; i < keys.length; i++) {
 		                var key = keys[i];
 		                t.push(translations[key]);
-		                resolve(t);
 		            }
+		            resolve(t);
 		        })
 		        .catch(reject);
 		    });
@@ -167,8 +167,8 @@ angular.module('starter.services.basic', [])
 	//    secret: rand.seed(),
 	//};
 
-	//keysString = JSON.stringify(testKeyUnfunded);
-//    window.localStorage['keys'] = keysString;
+    //keysString = JSON.stringify(testKeyUnfunded);
+    //    window.localStorage['keys'] = keysString;
 	var settings = this;
 	var keys;
 
