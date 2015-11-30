@@ -16,11 +16,13 @@ angular.module('starter.services.basic', [])
 	    promptForPassword: function (onOk, freeChoice) {
 	        var titleText = freeChoice ? 'services.uiHelper.password.title.choose' : 'services.uiHelper.password.title.enter';
 	        var placeholderText = freeChoice ? 'services.uiHelper.password.placeholder.choose' : 'services.uiHelper.password.placeholder.enter';
-	        this.translate([titleText, placeholderText]).then(function (t) {
+	        this.translate([titleText, placeholderText, 'general.btn.ok', 'general.btn.cancel']).then(function (t) {
 	            $ionicPopup.prompt({
 	                title: t[0],
 	                inputType: 'password',
-	                inputPlaceholder: t[1]
+	                inputPlaceholder: t[1],
+	                okText: t[2],
+	                cancelText: t[3]
 	            }).then(function (res) {
 	                if (res || res == '') {
 	                    onOk(res)
@@ -29,11 +31,13 @@ angular.module('starter.services.basic', [])
 	        });
 		},
 		confirmAndRun: function (captionRes, textRes, onConfirm) {
-		    $translate([captionRes, textRes]).then(function (translations) {
+		    this.translate([captionRes, textRes, 'general.btn.ok', 'general.btn.cancel']).then(function (t) {
 		        $ionicLoading.hide();
 		        var popup = $ionicPopup.confirm({
-		            title: translations[captionRes],
-		            template: translations[textRes]
+		            title: t[0],
+		            template: t[1],
+		            okText: t[2],
+		            cancelText: t[3]
 		        });
 		        popup.then(function (res) {
 		            if (res) {

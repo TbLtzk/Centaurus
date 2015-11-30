@@ -1,6 +1,6 @@
 {
   "_meta.version": "0.0.1",
-  "controllers.receive.share.p1": "You can send me Stellars to the address",
+  "controllers.receive.share.p1": "You can send me Lumens to the address",
   "controllers.receive.share.p2": "Centaurus - Stellar Wallet for Android!",
   "controllers.receive.share.title": "My Stellar Address",
   "controllers.send.failed": "Transaction failed:",
