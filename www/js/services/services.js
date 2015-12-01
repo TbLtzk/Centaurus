@@ -236,9 +236,11 @@ angular.module('starter.services', ['starter.services.basic'])
 
 		buildTransaction: function (operation, memo, bSign) {
 		    var acc = new StellarSdk.Account(account.address, account.sequence);
-		    var transaction = new StellarSdk.TransactionBuilder(acc, memo)
-		        .addOperation(operation)
-                .build();
+		    var builder = new StellarSdk.TransactionBuilder(acc);
+		    builder = builder.addOperation(operation);
+		    if (memo)
+		        builder = builder.addMemo(memo);
+		    var transaction = builder.build();
 		    if (bSign === true)
 		        transaction.sign(Settings.getKeyPair());
 		    return transaction;

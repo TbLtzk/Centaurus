@@ -75,7 +75,7 @@
   "tabs.receive.qrcode.instruction": "Lass diesen Code vom Sender einscannen",
   "tabs.receive.title": "Empfangen",
   "tabs.send.btn.destinationTag": "Zuordnungshinweis",
-  "tabs.send.btn.donate": "Die App gefällt dir? Hier kannst du spenden!",
+  "tabs.send.btn.donate": "Die App gefällt dir? Bitte spenden!",
   "tabs.send.btn.scan": "Code einscannen",
   "tabs.send.btn.send": "Jetzt schicken!",
   "tabs.send.destination.placeholder": "Empfänger-Adresse",

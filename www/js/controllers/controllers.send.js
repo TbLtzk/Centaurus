@@ -91,7 +91,8 @@
             Remote.getServer().paths(keys.address, $scope.paymentData.destinationAddress, asset, context.amount)
                 .call()
                 .then(function (response) {
-                    context.alternatives = response.records;
+                    //context.alternatives = response.records;
+                    console.log(JSON.stringify(response));
                 })
             .catch(function (err) {
                 console.log(err);
@@ -202,7 +203,7 @@
         }
 
         var actualSendAction = function () {
-        try{
+            try{
             UIHelper.blockScreen('controllers.send.pending', 20);
             var memo;
             if ($scope.paymentData.destinationTag)
