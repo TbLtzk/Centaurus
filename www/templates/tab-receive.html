@@ -1,19 +1,27 @@
 <ion-view title="{{'tabs.receive.title' | translate}} (T)">
   <ion-content class="has-header padding">
-    <div class="list card">
-	  <div class="item item-button-right">
-		{{'tabs.receive.address.label' | translate}}: <br/>
-		<font size="4">{{account.address}}</font>
-		<button class="button button-positive" on-tap="share()">
+	  <div class="item item-divider">
+		{{'tabs.receive.address.label' | translate}} <br/>
+		<font size="-2" href="#" on-hold="share()">{{account.address}}</font>
+		<!--<button class="button button-positive" on-tap="share()">
 		  <i class="icon ion-android-share"></i>
-		</button>
+		</button>-->
 	  </div>
-	  <div class="item item-body">	   
-		<div id="QRCODE" style="width: 100px; height: 100px"></div><br/>
+	  <div class="item item-body  narrow">	   
+		<div id="QRCODE" style="width: 180px; height: 180px;"></div><br/>
 	  </div>
-	  <div class="item item-body">
+	  <div class="item item-body narrow">
         {{'tabs.receive.qrcode.instruction' | translate}}...		
 	  </div>
-	</div>
+        <div class="button-bar">
+            <button class="button button-block" on-tap="share()">
+                <i class="icon ion-android-share"></i>
+                {{'general.btn.share' | translate}}
+            </button>
+            <!--<button class="button button-block" on-tap="shareKeys()">
+                <i class="icon ion-share"></i>
+                {{'tabs.wallet.export' | translate}}
+            </button>-->
+        </div>
   </ion-content>
 </ion-view>

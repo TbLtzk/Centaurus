@@ -109,8 +109,8 @@ angular.module('starter.controllers', [])
 	});
 	$scope.account = Account.get();
 	new QRCode(document.getElementById("QRCODE"), {
-		width : 128,
-		height : 128,
+		width : 200,
+		height : 200,
 		text : Account.get().address
 	});
 	$scope.share = function () {
