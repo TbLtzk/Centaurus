@@ -106,8 +106,9 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 	    suffix: '.json'
 	});
     $translateProvider
-    .registerAvailableLanguageKeys(['en', 'de'], {
-        'de_*' : 'de',
+    .registerAvailableLanguageKeys(['en', 'de', 'nl'], {
+        'de_*': 'de',
+        'nl_*': 'nl',
         '*': 'en'
 	})
     .determinePreferredLanguage();
