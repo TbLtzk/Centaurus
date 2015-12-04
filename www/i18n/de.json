@@ -58,7 +58,7 @@
   "tabs.about.features.body.trxRecent": "Anzeige der letzen Transaktionen",
   "tabs.about.features.divider": "Funktionen",
   "tabs.about.gettingStarted.body.alternatives": "Informiere dich auf folgenden Seiten über weitere Möglichkeiten und das Stellar-Prinzip:",
-  "tabs.about.gettingStarted.body.doBackup": "Mach eine Sicherung und verwahre sie gut! Andernfalls sind - wenn du dein Handy verlierst, du die App deinstallierst oder die App-Daten löschst - das verbliebene Guthaben, sowie alle Zukünftigen Zahlungen auf diese Adresse für immer verloren!",
+  "tabs.about.gettingStarted.body.doBackup": "Mach eine Sicherung und verwahre sie gut! Wenn du das Gerät verlierst, die App deinstallierst oder die Daten der App löschst, sind ansonsten sämtliche Guthaben die noch in der App waren, sowie zukünftige Zahlungen auf diese Adresse verloren!",
   "tabs.about.gettingStarted.body.shareAddress": "Gehe auf die Empfangen-Ansicht und schicke deine Adresse einem Freund, der schon Lumen hat.",
   "tabs.about.gettingStarted.body.whichAddress": "Verwende die generierte Adresse oder importiere die Schlüssel aus dem Stellar-Upgrade.",
   "tabs.about.gettingStarted.divider": "Los geht's",

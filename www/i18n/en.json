@@ -58,7 +58,7 @@
   "tabs.about.features.body.trxRecent": "Display recent transactions",
   "tabs.about.features.divider": "Features",
   "tabs.about.gettingStarted.body.alternatives": "Browse the following sites to find more alternatives and additional information on Stellar:",
-  "tabs.about.gettingStarted.body.doBackup": "Make a backup of your wallet and keep it safe! Otherwise, if you lose your phone, uninstall the app, or clear the app data, your remaining Lumens (and all future payments to this address) are lost forever!",
+  "tabs.about.gettingStarted.body.doBackup": "Make a backup of your wallet and keep it safe! Otherwise, if you lose your phone, uninstall the app, or clear the app data, your remaining funds (and all future payments to this address) are lost forever!",
   "tabs.about.gettingStarted.body.shareAddress": "Go to the receive tab and share your address with a friend who already has Lumens.",
   "tabs.about.gettingStarted.body.whichAddress": "Use the generated address or import your keys from the stellar upgrade.",
   "tabs.about.gettingStarted.divider": "Getting Started",
