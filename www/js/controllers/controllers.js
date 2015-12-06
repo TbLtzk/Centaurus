@@ -1,12 +1,25 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, $ionicPopup, $http, UIHelper, Account, QR, Commands, Settings) {
+.controller('WalletCtrl', function ($scope, $ionicPopup, $ionicPopover, $http, UIHelper, Account, QR, Commands, Settings) {
 	$scope.$on('accountInfoLoaded', function (event) {
 		$scope.account = Account.get();
 		$scope.$apply();
 	});
 	$scope.account = Account.get();
 	$scope.Math = window.Math;
-    	
+
+	$scope.languages = {
+	    available: ['de', 'en', 'fr', 'nl'],
+	    selected: UIHelper.getCurrentLanguage()
+	}
+	$scope.$watch('languages.selected', function (newLang) {
+	    UIHelper.changeLanguage(newLang);
+	});
+	$ionicPopover.fromTemplateUrl('templates/selectLanguage.html', {
+	    scope: $scope
+	}).then(function (popover) {
+	    $scope.languagePopover = popover;
+	});
+
 	$scope.shareKeys = function () {
 		var onPassword = function(pwd){
 			var plain = JSON.stringify(Settings.getKeys());

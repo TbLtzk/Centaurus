@@ -83,7 +83,13 @@ angular.module('starter.services.basic', [])
 		        .catch(reject);
 		    });
 		    return promise;
-        }
+		},
+		getCurrentLanguage: function () {
+		    return $translate.use();
+		},
+	    changeLanguage: function(newLang){
+	        $translate.use(newLang);
+	    }
 	};
 })
 
