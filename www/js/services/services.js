@@ -56,7 +56,7 @@ angular.module('starter.services', ['starter.services.basic'])
         })
         .catch(StellarSdk.NotFoundError, function (err) {
             console.log("account not found");
-            //Remote.getServer().friendbot(keys.address).call();
+            Remote.getServer().friendbot(keys.address).call();
         })
         .catch(function (err) {
            console.log(err.stack || err);

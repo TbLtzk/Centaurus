@@ -206,8 +206,28 @@
             try{
             UIHelper.blockScreen('controllers.send.pending', 20);
             var memo;
-            if ($scope.paymentData.destinationTag)
-                memo = StellarSdk.Memo.text($scope.paymentData.destinationTag);
+                
+            //console.log('actualSendAction() destMemo: ' + destMemo)
+            if ($scope.paymentData.destinationTag) {
+                var destMemo = $scope.paymentData.destinationTag;
+                //console.log('actualSendAction() destMemo: ' + destMemo)
+                //console.log('actualSendAction() destMemo.length: ' + destMemo.length)
+                destMemo = unescape(encodeURIComponent(destMemo));
+                //console.log('actualSendAction() encoded destMemo: ' + destMemo)
+                //console.log('actualSendAction() encoded destMemo.length: ' + destMemo.length)
+                if (destMemo.length > 28) {
+                    destMemo = destMemo.substr(0, 28);
+                }
+                //console.log('actualSendAction() destMemo: ' + destMemo)
+                //console.log('actualSendAction() destMemo.length: ' + destMemo.length)
+                memo = StellarSdk.Memo.text(destMemo);
+
+                // decode memo
+                //var memoDecoded = decodeURIComponent(escape(destMemo));
+                //console.log('actualSendAction() memoDecoded: ' + memoDecoded)
+                //console.log('actualSendAction() memoDecoded.length: ' + memoDecoded.length)
+            }
+                
             var operation = operationBuilder();
             var transaction = Account.buildTransaction(operation, memo, true);
             Remote.getServer().submitTransaction(transaction)
