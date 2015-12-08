@@ -87,5 +87,6 @@
   "tabs.wallet.announcements": "Ankündigungen",
   "tabs.wallet.export": "Export",
   "tabs.wallet.import": "Import",
-  "tabs.wallet.title": "Konto"
+  "tabs.wallet.title": "Konto",
+  "view.settings.language.label": "Sprache"
 }

@@ -17,15 +17,6 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
-		if (typeof navigator.globalization !== "undefined") {
-		    navigator.globalization.getPreferredLanguage(function (language) {
-		        $translate.use((language.value).split("-")[0]).then(function (data) {
-		            console.log("SUCCESS -> " + data);
-		        }, function (error) {
-		            console.log("ERROR -> " + error);
-		        });
-		    }, null);
-		}
     });
 })
 
@@ -105,14 +96,20 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 	    prefix: 'i18n/',
 	    suffix: '.json'
 	});
-    $translateProvider
+	$translateProvider
     .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl'], {
         'de_*': 'de',
         'fr_*': 'fr',
         'nl_*': 'nl',
         '*': 'en'
-	})
-    .determinePreferredLanguage();
+    });
+
+	var lang = window.localStorage['language'];
+	if (lang)
+	    $translateProvider.preferredLanguage(lang);
+	else 
+	    $translateProvider.determinePreferredLanguage();
+
 	$translateProvider.fallbackLanguage("en");
 });
 

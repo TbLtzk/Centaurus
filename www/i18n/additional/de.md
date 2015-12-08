@@ -1,5 +1,7 @@
 ﻿#Store Entry
 
+_meta.version: 0.0.1
+
 ### Title (max 30)
 
 Centaurus Stellar Wallet

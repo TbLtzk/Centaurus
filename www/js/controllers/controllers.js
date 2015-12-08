@@ -12,6 +12,7 @@ angular.module('starter.controllers', [])
 	    selected: UIHelper.getCurrentLanguage()
 	}
 	$scope.$watch('languages.selected', function (newLang) {
+	    window.localStorage['language'] = newLang;
 	    UIHelper.changeLanguage(newLang);
 	});
 	$ionicPopover.fromTemplateUrl('templates/selectLanguage.html', {
