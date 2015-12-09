@@ -24,7 +24,7 @@ I am a complete newbee to HTML/JS, Ionic, so
 * Use the app and report any bugs
 * Just contribute new code
 * Peer review and improve existing code
-* Donate to our Stellar-Address `GAN65D2FEI63T4MBMOWWOP3K7VS6SVI5T6NNKIHNCI6PN32IGF6OVKSS`
+* Donate to our Stellar-Address `GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7`
 
 ## Levels of Contribution
 
