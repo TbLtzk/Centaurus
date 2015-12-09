@@ -4,7 +4,7 @@
 ### Add New Language
 
 If you want to contribute a new language, make a copy of the files `en.json` and `additional/en.md` rename them with the new language code and translate them.
-You will also need to include the new language code in the [app.js](../js/app.js#L109-L114) and in the [controller](../js/controllers/controllers.js#L10-L13).
+You will also need to include the new language code in the [app.js](../js/app.js#L109-L114) and in the [controller](../js/controllers/controllers.js#L139-L142).
 
 Please try your translation at least in the browser to see what it looks like (too long translations might be cut off or displayed unintentionally in two lines).
 
@@ -28,7 +28,10 @@ It always contains a latest section `pending` of keys that have been touched but
 
 initial Version
 
-### pending
+### 0.0.2
 
 tabs.about.gettingStarted.body.doBackup: **modified**
 view.settings.language.label: **new**
+
+### pending
+
