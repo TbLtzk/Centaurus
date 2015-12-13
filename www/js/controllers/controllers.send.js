@@ -206,8 +206,17 @@
             try{
             UIHelper.blockScreen('controllers.send.pending', 20);
             var memo;
-            if ($scope.paymentData.destinationTag)
-                memo = StellarSdk.Memo.text($scope.paymentData.destinationTag);
+            // do this check, in case user pastes into input field or something
+            // not handled by the maxlenstr directive
+            if ($scope.paymentData.destinationTag) {
+                var destMemo = $scope.paymentData.destinationTag;
+                if (destMemo.length > 28) {
+                    destMemo = destMemo.substr(0, 28);
+                }
+     
+                memo = StellarSdk.Memo.text(destMemo);
+            }
+                
             var operation = operationBuilder();
             var transaction = Account.buildTransaction(operation, memo, true);
             Remote.getServer().submitTransaction(transaction)

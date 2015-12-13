@@ -17,7 +17,7 @@
       </label>
     </div>
     <label class="item item-input" ng-if="showDestinationTag">
-      <input ng-model="paymentData.destinationTag" type="text" />
+      <input ng-model="paymentData.destinationTag" placeholder="{{'tabs.send.destinationtag.placeholder' | translate}}" maxlenstr="28" type="text" />
     </label>
     <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">{{'tabs.send.btn.destinationTag' | translate}}</a>
     <button on-tap="sendPayment()" class="button button-block button-positive">

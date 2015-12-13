@@ -80,6 +80,7 @@
   "tabs.send.btn.scan": "Scan Code",
   "tabs.send.btn.send": "Send now!",
   "tabs.send.destination.placeholder": "Destination Address",
+  "tabs.send.destinationtag.placeholder": "Max 28 characters",
   "tabs.send.title": "Send",
   "tabs.trx.from": "from",
   "tabs.trx.title": "Recent Transactions",
