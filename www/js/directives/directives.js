@@ -1,4 +1,4 @@
-﻿angular.module( "starter.directives.maxlenstr", [] )
+﻿angular.module( "starter.directives", [] )
 .directive("maxlenstr", function () {
     return {
         restrict: "A",
