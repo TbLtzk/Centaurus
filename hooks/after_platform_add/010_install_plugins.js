@@ -7,12 +7,12 @@ var pluginlist = [
     "https://github.com/driftyco/ionic-plugins-keyboard.git",
 	"https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
     "https://github.com/knowledgecode/WebSocket-for-Android.git",
-    "com.phonegap.plugins.barcodescanner",
-    "org.apache.cordova.console",
-    "org.apache.cordova.device",
-	"org.apache.cordova.file",
-    "org.apache.cordova.globalization",
-	"org.apache.cordova.inappbrowser"
+    "phonegap-plugin-barcodescanner",
+    "cordova-plugin-console",
+    "cordova-plugin-device",
+    "cordova-plugin-globalization",
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-file"
 ];
 
 // no need to configure below

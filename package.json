@@ -15,14 +15,14 @@
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
-    "org.apache.cordova.console",
-    "org.apache.cordova.device",
-    "org.apache.cordova.globalization",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.file",
-    "com.phonegap.plugins.barcodescanner",
+    "cordova-plugin-console",
+    "cordova-plugin-device",
+    "cordova-plugin-globalization",
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-file",
     "cordova-plugin-websocket",
     "cordova-plugin-x-socialsharing",
+    "phonegap-plugin-barcodescanner",
     "https://github.com/knowledgecode/WebSocket-for-Android.git",
     "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
     "https://github.com/driftyco/ionic-plugins-keyboard.git"
