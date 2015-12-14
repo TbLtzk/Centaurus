@@ -4,10 +4,10 @@
 
 // add your plugins to this list--either the identifier, the filesystem location or the URL
 var pluginlist = [
-    "https://github.com/driftyco/ionic-plugins-keyboard.git",
-	"https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
-    "https://github.com/knowledgecode/WebSocket-for-Android.git",
+    "ionic-plugin-keyboard",
     "phonegap-plugin-barcodescanner",
+    "cordova-plugin-x-socialsharing",
+    "cordova-plugin-websocket",
     "cordova-plugin-console",
     "cordova-plugin-device",
     "cordova-plugin-globalization",
