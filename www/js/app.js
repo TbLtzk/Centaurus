@@ -3,7 +3,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
+angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
     , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives'])
 
 .run(function ($ionicPlatform, $translate) {
@@ -107,7 +107,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 	var lang = window.localStorage['language'];
 	if (lang)
 	    $translateProvider.preferredLanguage(lang);
-	else 
+	else
 	    $translateProvider.determinePreferredLanguage();
 
 	$translateProvider.fallbackLanguage("en");
