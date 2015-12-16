@@ -21,7 +21,8 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 })
 
 .config(function ($ionicConfigProvider) {
-    $ionicConfigProvider.platform.android.tabs.position('bottom');
+    $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.navBar.alignTitle('center');
 })
 
 .config(function ($stateProvider, $urlRouterProvider, $translateProvider) {
