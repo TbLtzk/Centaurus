@@ -20,6 +20,10 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
     });
 })
 
+.config(function ($ionicConfigProvider) {
+    $ionicConfigProvider.platform.android.tabs.position('bottom');
+})
+
 .config(function ($stateProvider, $urlRouterProvider, $translateProvider) {
 
 	// Ionic uses AngularUI Router which uses the concept of states
