@@ -8,7 +8,7 @@
     xcoins
   </author>
   <content src="index.html"/>
-  <access origin="*"/>
+  <access origin="mailto:*" launch-external="yes"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
