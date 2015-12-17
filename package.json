@@ -23,6 +23,7 @@
     "cordova-plugin-websocket",
     "cordova-plugin-x-socialsharing",
     "phonegap-plugin-barcodescanner",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    "cordova-plugin-whitelist"
   ]
 }
