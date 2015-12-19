@@ -10,19 +10,34 @@
          <i class="icon ion-checkmark-circled"></i>
          <font size="-2">{{item.Account}}</font> now trusts you over {{item.LimitAmount.value}} {{item.LimitAmount.currency ? item.LimitAmount.currency : 'Unknown'}}
      </ion-item>
--->
+
      <ion-item class="narrow" ng-if="item.debit">
          <i class="icon ion-minus"></i>
          <font color="#E02000">
-      {{ item.amount }} {{item.asset_code }} <font size="-2">{{'tabs.trx.to' | translate}} {{item.receiver}}</font>
+      {{ item.amount }} {{item.asset_code }} <font size="-2">{{'tabs.trx.to' | translate}} {{item.receiver | trunk:8:"Y"}} </font> {{item.creationDate | fromnow:item.sender.length}}
          </font>
      </ion-item>
      <ion-item class="narrow" ng-if="!item.debit">		
          <i class="icon ion-plus"></i>
          <font color="#20E000">
-      {{ item.amount }} {{item.asset_code }} <font size="-2">{{'tabs.trx.from' | translate}} {{item.sender}}</font>
+      {{ item.amount }} {{item.asset_code }} <font size="-2">{{'tabs.trx.from' | translate}} {{item.sender | trunk:8:"Y"}} </font> {{item.creationDate | fromnow:item.sender.length}}
          </font>
      </ion-item>
+-->
+     <div class="row balanced item item-divider" ng-if="!item.debit">
+         <div class="col text-right"><font size="-1"><i class="icon ion-plus"></i>{{item.amount}}</font></div>
+         <div class="col col-10"><font size="-2">{{item.asset_code}}</font></div>
+         <div class="col col-10"><font size="-2">{{'tabs.trx.from' | translate}}</font></div>
+         <div class="col"><font size="-1">{{item.sender | trunk:10:"Y"}}</font></div>
+         <div class="col col-30 text-right"><font size="-2">{{item.creationDate | fromnow}}</font></div>
+     </div>
+     <div class="row assertive item item-divider" ng-if="item.debit">
+         <div class="col text-right"><font size="-1"><i class="icon ion-minus"></i>{{item.amount}}</font></div>
+         <div class="col col-10"><font size="-2">{{item.asset_code}}</font></div>
+         <div class="col col-10"><font size="-2">{{'tabs.trx.to' | translate}}</font></div>
+         <div class="col"><font size="-1">{{item.sender | trunk:10:"Y"}}</font></div>
+         <div class="col col-30 text-right"><font size="-2">{{item.creationDate | fromnow}}</font></div>
+     </div>
     </ion-list>
 </ion-content>
 </ion-view>

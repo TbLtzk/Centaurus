@@ -4,7 +4,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
-    , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives'])
+    , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives', 'starter.filters'])
 
 .run(function ($ionicPlatform, $translate) {
 	$ionicPlatform.ready(function () {
