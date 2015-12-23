@@ -6,7 +6,7 @@ angular.module('starter.controllers', [])
 	});
 	$scope.account = Account.get();
 	$scope.Math = window.Math;
-    	
+
 	$scope.shareKeys = function () {
 		var onPassword = function(pwd){
 			var plain = JSON.stringify(Settings.getKeys());
@@ -135,5 +135,18 @@ angular.module('starter.controllers', [])
     $scope.account = Account.get();
 })
 
-.controller('AboutCtrl', function ($scope) {	
+.controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
+    $scope.languages = {
+        available: ['de', 'en', 'fr', 'nl'],
+        selected: UIHelper.getCurrentLanguage()
+    }
+    $scope.$watch('languages.selected', function (newLang) {
+        window.localStorage['language'] = newLang;
+        UIHelper.changeLanguage(newLang);
+    });
+    $ionicPopover.fromTemplateUrl('templates/selectLanguage.html', {
+        scope: $scope
+    }).then(function (popover) {
+        $scope.languagePopover = popover;
+    });
 });

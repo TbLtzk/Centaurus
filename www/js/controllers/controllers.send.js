@@ -332,7 +332,7 @@
     $scope.donate = function () {
         $scope.paymentData = {
             //destinationAddress: 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y',
-            destinationAddress: 'GAN65D2FEI63T4MBMOWWOP3K7VS6SVI5T6NNKIHNCI6PN32IGF6OVKSS',
+            destinationAddress: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7',
             amount: Math.floor(0.01 * account.balance),
             currency: 'XLM'
         }

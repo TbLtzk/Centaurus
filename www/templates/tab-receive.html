@@ -1,11 +1,8 @@
 <ion-view title="{{'tabs.receive.title' | translate}} (T)">
   <ion-content class="has-header padding">
-	  <div class="item item-divider">
+	  <div class="item item-divider" on-hold="share()">
 		{{'tabs.receive.address.label' | translate}} <br/>
-		<font size="-2" href="#" on-hold="share()">{{account.address}}</font>
-		<!--<button class="button button-positive" on-tap="share()">
-		  <i class="icon ion-android-share"></i>
-		</button>-->
+		<font size="-2">{{account.address}}</font>
 	  </div>
 	  <div class="item item-body  narrow">	   
 		<div id="QRCODE" style="width: 180px; height: 180px;"></div><br/>
@@ -18,10 +15,6 @@
                 <i class="icon ion-android-share"></i>
                 {{'general.btn.share' | translate}}
             </button>
-            <!--<button class="button button-block" on-tap="shareKeys()">
-                <i class="icon ion-share"></i>
-                {{'tabs.wallet.export' | translate}}
-            </button>-->
         </div>
   </ion-content>
 </ion-view>

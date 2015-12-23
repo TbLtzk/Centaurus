@@ -1,5 +1,5 @@
 ﻿{
-  "_meta.version": "0.0.1",
+  "_meta.version": "0.0.2",
   "controllers.receive.share.p1": "Du kannst mir Lumen an diese Adresse schicken",
   "controllers.receive.share.p2": "Centaurus - Stellar Wallet für Android!",
   "controllers.receive.share.title": "Meine Stellar-Adresse",
@@ -87,5 +87,6 @@
   "tabs.wallet.announcements": "Ankündigungen",
   "tabs.wallet.export": "Export",
   "tabs.wallet.import": "Import",
-  "tabs.wallet.title": "Konto"
+  "tabs.wallet.title": "Konto",
+  "view.settings.language.label": "Sprache"
 }

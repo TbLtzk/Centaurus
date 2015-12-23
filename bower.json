@@ -2,18 +2,13 @@
   "name": "HelloIonic",
   "private": true,
   "dependencies": {
-    "angular-translate-loader-static-files" : "2.8.1",
-    "stellar-sdk": "0.2.20",
+    "angular-translate-loader-static-files": "2.8.1",
+    "stellar-sdk": "0.3.0",
     "cryptojslib": "3.1.2",
-    "tweetnacl": "0.11.2"
+    "tweetnacl": "0.11.2",
+    "ng-cordova": "0.0.3"
   },
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.0-beta.11"
-  },
-  "resolutions": {
-    "angular-animate": "1.4.3",
-    "angular": ">= 1.0.8",
-    "angular-sanitize": "1.4.3",
-    "angular-ui-router": "0.2.13"
+    "ionic": "1.1.1"
   }
 }

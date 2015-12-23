@@ -1,7 +1,7 @@
 <ion-view title="{{'tabs.about.title' | translate}}">
 <ion-content class="has-header padding">
   <div class="item item-divider">
-    {{'tabs.about.main.divider' | translate}} <font size="-1">(2.0)</font>
+    {{'tabs.about.main.divider' | translate}} <font size="-1">(2.1)</font>
   </div>
   <div class="item item-body">
     <font size="4">{{'tabs.about.main.body.p1' | translate}} {{'tabs.about.main.body.p2' | translate}}</font>
@@ -19,6 +19,11 @@
 	  <li translate="tabs.about.features.body.trxRecent"></li>
 	  <li translate="tabs.about.features.body.backup"></li>
 	</list>
+    <div class="padding-top">
+        <a href="javascript:void(0)" on-tap="languagePopover.show($event)">
+            {{'view.settings.language.label' | translate}}
+        </a>
+    </div>
   </div>
   <div class="item item-divider">
     {{'tabs.about.gettingStarted.divider' | translate}}

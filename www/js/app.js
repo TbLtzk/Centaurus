@@ -3,8 +3,8 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
-    , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives', 'starter.filters'])
+angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
+   , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives', 'starter.filters'])
 
 .run(function ($ionicPlatform, $translate) {
 	$ionicPlatform.ready(function () {
@@ -17,16 +17,12 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
-		if (typeof navigator.globalization !== "undefined") {
-		    navigator.globalization.getPreferredLanguage(function (language) {
-		        $translate.use((language.value).split("-")[0]).then(function (data) {
-		            console.log("SUCCESS -> " + data);
-		        }, function (error) {
-		            console.log("ERROR -> " + error);
-		        });
-		    }, null);
-		}
     });
+})
+
+.config(function ($ionicConfigProvider) {
+    $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.navBar.alignTitle('center');
 })
 
 .config(function ($stateProvider, $urlRouterProvider, $translateProvider) {
@@ -105,13 +101,20 @@ angular.module('starter', ['ionic', 'ngCordova', 'pascalprecht.translate',
 	    prefix: 'i18n/',
 	    suffix: '.json'
 	});
-    $translateProvider
-    .registerAvailableLanguageKeys(['en', 'de', 'nl'], {
+	$translateProvider
+    .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl'], {
         'de_*': 'de',
+        'fr_*': 'fr',
         'nl_*': 'nl',
         '*': 'en'
-	})
-    .determinePreferredLanguage();
+    });
+
+	var lang = window.localStorage['language'];
+	if (lang)
+	    $translateProvider.preferredLanguage(lang);
+	else
+	    $translateProvider.determinePreferredLanguage();
+
 	$translateProvider.fallbackLanguage("en");
 });
 
