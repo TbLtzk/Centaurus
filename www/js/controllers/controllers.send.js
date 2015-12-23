@@ -126,7 +126,7 @@
                         $scope.destinationInfo.acceptedCurrencies.push(bal.asset_code);
                     var iou = {
                         currency: bal.asset_code,
-                        issuer: bal.issuer
+                        issuer: bal.asset_issuer
                     };
                     $scope.destinationInfo.acceptedIOUs.push(iou);
                 }
@@ -193,10 +193,26 @@
                 });
             }
             else {
-                operation = StellarSdk.Operation.payment({
-                    destination: $scope.paymentData.destinationAddress,
-                    asset: StellarSdk.Asset.native(),
-                    amount: context.amount.toString()
+                var asset = StellarSdk.Asset.native();
+
+		if ($scope.paymentData.currency != 'XLM') {
+		    var issuer = '';
+
+		    for(i=0; i<$scope.destinationInfo.acceptedIOUs.length; i++)
+                    {
+			var iou = $scope.destinationInfo.acceptedIOUs[i];
+			if(iou.currency === $scope.paymentData.currency){
+			    issuer = iou.issuer;
+                            break;
+			}
+                    }
+                    asset = new StellarSdk.Asset($scope.paymentData.currency, issuer);
+		}
+
+		operation = StellarSdk.Operation.payment({
+			destination: $scope.paymentData.destinationAddress,
+			asset: asset,
+			amount: context.amount.toString()
                 });
             }
             return operation;
@@ -266,10 +282,10 @@
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" ' + t.get(1));
         else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('controllers.send.validate.amount.funds');
-        else if ($scope.paymentData.currency != 'XLM')
+        /*else if ($scope.paymentData.currency != 'XLM')
             UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
         else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
-            UIHelper.showAlert('controllers.send.validate.path');
+            UIHelper.showAlert('controllers.send.validate.path');*/
         else if (context.amount == null)
             UIHelper.showAlert('controllers.send.validate.general');
         else if (context.alternatives.length > 1) {
