@@ -53,7 +53,11 @@ While the simple mode is a good way to get started, you will soon want to see th
 ionic platform android
 ionic run android
 ```
-
+Some problems might arise with the latest android platform version. Centaurus is best tested with version 3.7.1. You can get it by
+```bash
+cordova remove platform android
+cordova add platform android@3.7.1
+```
 ### Advanced (other platforms)
 
 No experience yet, so let us know.
