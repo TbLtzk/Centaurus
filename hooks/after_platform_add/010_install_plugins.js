@@ -7,7 +7,6 @@ var pluginlist = [
     "ionic-plugin-keyboard",
     "phonegap-plugin-barcodescanner",
     "cordova-plugin-x-socialsharing",
-    "cordova-plugin-websocket",
     "cordova-plugin-console",
     "cordova-plugin-device",
     "cordova-plugin-globalization",
