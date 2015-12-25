@@ -2,8 +2,12 @@
 .filter("fromnow", function () {
     var momentsFilter = function (input) {
         if (input) {
-            //moment.locale("fr");
-            //moment.locale("ar-ma");
+            var curlocale = window.localStorage['language'];
+            if (curlocale === null || curlocale === undefined) {
+                moment.locale('en');
+            } else {
+                moment.locale(curlocale);
+            }
             var mfnow = moment(input).fromNow(true);
             return mfnow;
         }
