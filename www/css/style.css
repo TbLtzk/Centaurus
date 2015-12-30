@@ -12,3 +12,8 @@
 .align-right {
   text-align: right !important;
 }
+.my-ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
