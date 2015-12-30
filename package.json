@@ -20,7 +20,6 @@
     "cordova-plugin-globalization",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-file",
-    "cordova-plugin-websocket",
     "cordova-plugin-x-socialsharing",
     "phonegap-plugin-barcodescanner",
     "ionic-plugin-keyboard"
