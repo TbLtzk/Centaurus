@@ -252,6 +252,59 @@ angular.module('starter.services', ['starter.services.basic'])
 	}
 })
 
+.factory('Contacts', function () {
+    // contact names are considered an id and have to be unique
+    var contacts = [
+        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
+    { name: 'Centaurus1', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
+{ name: 'Centaurus2', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
+{ name: 'Centaurus3', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null }
+];
+
+    var contactsString = window.localStorage['contacts001'];
+    if (contactsString)
+        contacts = JSON.parse(contactsString);
+
+    return {
+        save: function(){
+            var contactsString = JSON.stringify(contacts);
+            window.localStorage['contacts001'] = contactsString;       
+        },
+        getAll: function () {
+            return contacts;
+        },
+        find: function (name) {
+            var c = contacts.find(function (c) { return c.name === name; })
+            return c;
+        },
+        add: function (name, address, destinationTag) {
+            if (this.find(name) != null)
+                return false;
+            contacts.push({ name: name, address: address, destinationTag: destinationTag });
+            this.save();
+            return true;
+        },
+        removeAt: function(index){
+            if (index < 0)
+                return false;
+
+            contacts.splice(index, 1);
+            this.save();
+            return true;
+        },
+        remove: function(c){
+            if (!c)
+                return false;
+
+            var index = contacts.indexOf(c);
+            return this.removeAt(index);
+        },
+        removeByName: function (name) {
+            return this.remove(findByName(name));
+        }
+    }
+})
+
 .factory('Commands', function ($http, UIHelper, Settings, Account) {	
 
 	if (typeof String.prototype.startsWith != 'function') {
