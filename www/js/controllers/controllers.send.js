@@ -29,6 +29,7 @@
         isDirty : false,
         isValidCurrency : false,
         alternatives : [],
+        choice : [],
         amount: 0
     };
     $scope.popoverItemCount = 2;
@@ -93,7 +94,7 @@
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
                 .then(function (response) {
-                    //context.alternatives = response.records;
+                    context.alternatives = response.records;
                     console.log(JSON.stringify(response));
                 })
             .catch(function (err) {
@@ -153,7 +154,7 @@
                         $scope.destinationInfo.acceptedCurrencies.push(bal.asset_code);
                     var iou = {
                         currency: bal.asset_code,
-                        issuer: bal.issuer
+                        issuer: bal.asset_issuer
                     };
                     $scope.destinationInfo.acceptedIOUs.push(iou);
                 }
@@ -211,10 +212,36 @@
                 });
             }
             else {
-                operation = StellarSdk.Operation.payment({
-                    destination: $scope.destinationInfo.accountId,
-                    asset: StellarSdk.Asset.native(),
-                    amount: context.amount.toString()
+                var choice = context.choice;
+                var sendAsset = StellarSdk.Asset.native();
+                if (choice.source_asset_type != "native") {
+                    sendAsset = new StellarSdk.Asset(choice.source_asset_code,
+                                                     choice.source_asset_issuer);
+                }
+                var sendMax   = choice.source_amount;
+                var destination = $scope.destinationInfo.accountId;
+                var destAsset = StellarSdk.Asset.native();
+                if (choice.destination_asset_type != "native") {
+                    destAsset = new StellarSdk.Asset(choice.destination_asset_code,
+                                                     choice.destination_asset_issuer);
+                }
+                var destAmount = choice.destination_amount;
+                var path = [];
+                for (var i = 0; i < choice.path.length; i++) {
+                    path[i] = StellarSdk.Asset.native();
+                    if (choice.path[i].asset_type != "native") {
+                        path[i] = new StellarSdk.Asset(choice.path[i].asset_code,
+                                                       choice.path[i].asset_issuer);
+                    }
+                }
+
+                operation = StellarSdk.Operation.pathPayment({
+                    sendAsset: sendAsset,
+                    sendMax: sendMax,
+                    destination: destination,
+                    destAsset: destAsset,
+                    destAmount: destAmount,
+                    path: path
                 });
             }
             return operation;
@@ -284,8 +311,6 @@
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" ' + t.get(1));
         else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('controllers.send.validate.amount.funds');
-        else if ($scope.paymentData.currency != 'XLM')
-            UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
         else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
             UIHelper.showAlert('controllers.send.validate.path');
         else if (context.amount == null)
@@ -296,12 +321,11 @@
                 titleText: t.get(2),
                 buttonClicked: function (index) {
                     var choice = context.alternatives[index];
-                    // TODO: build path operation
-                    UIHelper.showAlert(choice);
+                    context.choice = choice;
                     //if(choice.paths_computed && choice.paths_computed.length > 0)
                     //{
                     //}
-                    //actualSendAction();
+                    actualSendAction();
                     return true;
                 }
             };
