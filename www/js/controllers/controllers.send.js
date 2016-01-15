@@ -212,36 +212,49 @@
                 });
             }
             else {
-                var choice = context.choice;
-                var sendAsset = StellarSdk.Asset.native();
-                if (choice.source_asset_type != "native") {
-                    sendAsset = new StellarSdk.Asset(choice.source_asset_code,
-                                                     choice.source_asset_issuer);
-                }
-                var sendMax   = choice.source_amount;
-                var destination = $scope.destinationInfo.accountId;
-                var destAsset = StellarSdk.Asset.native();
-                if (choice.destination_asset_type != "native") {
-                    destAsset = new StellarSdk.Asset(choice.destination_asset_code,
-                                                     choice.destination_asset_issuer);
-                }
-                var destAmount = choice.destination_amount;
-                var path = [];
-                for (var i = 0; i < choice.path.length; i++) {
-                    path[i] = StellarSdk.Asset.native();
-                    if (choice.path[i].asset_type != "native") {
-                        path[i] = new StellarSdk.Asset(choice.path[i].asset_code,
-                                                       choice.path[i].asset_issuer);
+                var determineSendAsset = function (choice) {
+                    if (choice.source_asset_type == "native") {
+                        return StellarSdk.Asset.native();
+                    }
+                    else {
+                        return new StellarSdk.Asset(choice.source_asset_code,
+                                                    choice.source_asset_issuer);
                     }
                 }
 
+                var determineDestAsset = function (choice) {
+                    if (choice.destination_asset_type == "native") {
+                        return StellarSdk.Asset.native();
+                    }
+                    else {
+                        return new StellarSdk.Asset(choice.destination_asset_code,
+                                                    choice.destination_asset_issuer);
+                    }
+                }
+
+                var determinePath = function (choice) {
+                    var path = [];
+                    for (var i = 0; i < choice.path.length; i++) {
+                        if (choice.path[i].asset_type == "native") {
+                            path[i] = StellarSdk.Asset.native();
+                        }
+                        else {
+                            path[i] = new StellarSdk.Asset(choice.path[i].asset_code,
+                                                           choice.path[i].asset_issuer);
+                        }
+                    }
+                    return path;
+                }
+
+                var choice = context.choice;
+
                 operation = StellarSdk.Operation.pathPayment({
-                    sendAsset: sendAsset,
-                    sendMax: sendMax,
-                    destination: destination,
-                    destAsset: destAsset,
-                    destAmount: destAmount,
-                    path: path
+                    sendAsset   : determineSendAsset(choice),
+                    sendMax     : choice.source_amount,
+                    destination : $scope.destinationInfo.accountId,
+                    destAsset   : determineDestAsset(choice),
+                    destAmount  : choice.destination_amount,
+                    path        : determinePath(choice)
                 });
             }
             return operation;
@@ -315,17 +328,37 @@
             UIHelper.showAlert('controllers.send.validate.path');
         else if (context.amount == null)
             UIHelper.showAlert('controllers.send.validate.general');
-        else if (context.alternatives.length > 1) {
+        else {
             var sheet = {
                 buttons: [],
                 titleText: t.get(2),
                 buttonClicked: function (index) {
+
+                    var hasEnoughBalance = function(choice) {
+                        var enoughBalance = false;
+                        if (choice.source_asset_type == "native") {
+                            enoughBalance = account.balance >= choice.source_amount;
+                        }
+                        else {
+                            for (j = 0; j < account.otherCurrencies.length; j++) {
+                                if (account.otherCurrencies[j].currency == choice.source_asset_code) {
+                                    enoughBalance = account.otherCurrencies[j].amount >= choice.source_amount;
+                                    break;
+                                }
+                            }
+                        }
+                        return enoughBalance;
+                    };
+
                     var choice = context.alternatives[index];
-                    context.choice = choice;
-                    //if(choice.paths_computed && choice.paths_computed.length > 0)
-                    //{
-                    //}
-                    actualSendAction();
+                    context.choice = context.alternatives[index];
+
+                    if (hasEnoughBalance(choice)) {
+                        actualSendAction();
+                    }
+                    else {
+                        UIHelper.showAlert('controllers.send.validate.amount.funds');
+                    }
                     return true;
                 }
             };
@@ -340,8 +373,6 @@
             }
             $ionicActionSheet.show(sheet);
         }
-        else 
-            actualSendAction();   
     };
 	
     $scope.scanCode = function () {
