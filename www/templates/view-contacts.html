@@ -1,0 +1,10 @@
+<ion-view title="{{'views.contacts.title' | translate}} (T)">
+    <ion-content class="has-header">
+        <ion-list ng-repeat="item in contactList">
+            <ion-item class="narrow">
+                <i class="icon ion-person"></i>
+                {{ item.name }}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

@@ -135,6 +135,10 @@ angular.module('starter.controllers', [])
     $scope.account = Account.get();
 })
 
+.controller('ContactsCtrl', function ($scope, Contacts) {
+    $scope.contactList = Contacts.getAll();
+})
+
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
     $scope.languages = {
         available: ['de', 'en', 'fr', 'nl'],

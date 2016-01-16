@@ -255,10 +255,10 @@ angular.module('starter.services', ['starter.services.basic'])
 .factory('Contacts', function () {
     // contact names are considered an id and have to be unique
     var contacts = [
-        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
-    { name: 'Centaurus1', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
-{ name: 'Centaurus2', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null },
-{ name: 'Centaurus3', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', destinationTag: null }
+        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null, memoType: null },
+    { name: 'Centaurus1', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null },
+{ name: 'Centaurus2', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null },
+{ name: 'Centaurus3', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null }
 ];
 
     var contactsString = window.localStorage['contacts001'];
@@ -277,10 +277,10 @@ angular.module('starter.services', ['starter.services.basic'])
             var c = contacts.find(function (c) { return c.name === name; })
             return c;
         },
-        add: function (name, address, destinationTag) {
+        add: function (name, address, memo, memoType) {
             if (this.find(name) != null)
                 return false;
-            contacts.push({ name: name, address: address, destinationTag: destinationTag });
+            contacts.push({ name: name, address: address, memo: memo, memoType: memoType });
             this.save();
             return true;
         },

@@ -73,13 +73,23 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	})
 
 	.state('tab.transactions', {
-		url : '/transactions',
-		views : {
-			'tab-transactions' : {
-				templateUrl : 'templates/tab-transactions.html',
-				controller : 'TransactionsCtrl'
-			}
-		}
+	    url: '/transactions',
+	    views: {
+	        'tab-transactions': {
+	            templateUrl: 'templates/tab-transactions.html',
+	            controller: 'TransactionsCtrl'
+	        }
+	    }
+	})
+
+	.state('tab.contacts', {
+	    url: '/contacts',
+	    views: {
+	        'view-contacts': {
+	            templateUrl: 'templates/view-contacts.html',
+	            controller: 'ContactsCtrl'
+	        }
+	    }
 	})
 
 	.state('tab.about', {
@@ -112,7 +122,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	var lang = window.localStorage['language'];
 	if (lang)
 	    $translateProvider.preferredLanguage(lang);
-	else
+	else 
 	    $translateProvider.determinePreferredLanguage();
 
 	$translateProvider.fallbackLanguage("en");
