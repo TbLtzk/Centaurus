@@ -18,6 +18,8 @@
         currency : 'XLM'
     };
     $scope.destinationInfo = {
+        accountId : '',
+        memo : null,
         isValidAddress: false,
         needFunding : false,
         acceptedCurrencies : ['XLM'],
@@ -88,7 +90,7 @@
             }           
             
             var keys = Settings.getKeys();
-            Remote.getServer().paths(keys.address, $scope.paymentData.destinationAddress, asset, context.amount)
+            Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
                 .then(function (response) {
                     //context.alternatives = response.records;
@@ -105,13 +107,38 @@
     });
     
     $scope.$watch('paymentData.destinationAddress', function(newAddress) {
+        var isValidAddress = StellarSdk.Account.isValidAccountId(newAddress);
+        if (isValidAddress)
+            $scope.destinationInfo.accountId = newAddress;
+        else {
+            StellarSdk.FederationServer.resolve(newAddress)
+             .then(federationRecord => {
+                 $scope.destinationInfo.accountId = federationRecord.account_id;
+                 if (federationRecord.memo) {
+                     var implicitMemo;
+                     if (memo_type === 'id')
+                         implicitMemo = StellarSdk.Memo.id(federationRecord.memo);
+                     else if (memo_type === 'hash')
+                         implicitMemo = StellarSdk.Memo.hash(federationRecord.memo);
+                     else
+                         implicitMemo = StellarSdk.Memo.text(federationRecord.memo);
+                 $scope.destinationInfo.memo = implicitMemo
+                 }
+             })
+            .catch(err => {
+                $scope.destinationInfo.accountId = '';
+            });
+        }
+    });
+    
+    $scope.$watch('destinationInfo.accountId', function(newAccountId) {
         $scope.destinationInfo.acceptedCurrencies = ['XLM'];
         $scope.destinationInfo.acceptedIOUs = [];
-        var isValidAddress = StellarSdk.Account.isValidAddress(newAddress);
+        var isValidAddress = StellarSdk.Account.isValidAccountId(newAccountId);
         if(isValidAddress)
         {
             Remote.getServer().accounts()
-            .address(newAddress)
+            .address(newAccountId)
             .call()
             .then(function (acc) {
                 $scope.destinationInfo.needFunding = false;
@@ -139,18 +166,9 @@
             });
         }
         $scope.destinationInfo.isValidAddress = isValidAddress;
-        //        if($scope.destinationInfo.acceptedCurrencies.indexOf($scope.paymentData.currency) < 0)
-        //        {
-        //            $scope.paymentData.currency = 'STR';
-        //            $scope.paymentData.amount = 0;
-        //        }
         $scope.transactionContext.isDirty = true;
     });
     
-    //$scope.$on('paymentSuccessful', function (event) {
-    //    $scope.paymentData.amount = 0;
-    //});
-
     $scope.$watch('paymentData.currency', function(newCurrency) {
         if(newCurrency.toUpperCase() != $scope.paymentData.currency)
             $scope.paymentData.currency = newCurrency.toUpperCase();
@@ -188,13 +206,13 @@
             var operation = null;
             if ($scope.destinationInfo.needFunding) {
                 operation = StellarSdk.Operation.createAccount({
-                    destination: $scope.paymentData.destinationAddress,
+                    destination: $scope.destinationInfo.accountId,
                     startingBalance: context.amount.toString()
                 });
             }
             else {
                 operation = StellarSdk.Operation.payment({
-                    destination: $scope.paymentData.destinationAddress,
+                    destination: $scope.destinationInfo.accountId,
                     asset: StellarSdk.Asset.native(),
                     amount: context.amount.toString()
                 });
@@ -205,16 +223,16 @@
         var actualSendAction = function () {
             try{
             UIHelper.blockScreen('controllers.send.pending', 20);
-            var memo;
-            // do this check, in case user pastes into input field or something
-            // not handled by the maxlenstr directive
-            if ($scope.paymentData.destinationTag) {
-                var destMemo = $scope.paymentData.destinationTag;
-                if (destMemo.length > 28) {
-                    destMemo = destMemo.substr(0, 28);
+            var memo = $scope.destinationInfo.memo;
+            if(!memo) {
+                // no implicit memo from federation. Check explicit memo
+                var explicitMemo = $scope.paymentData.destinationTag;
+                if(explicitMemo){
+                    if (eplicitMemo.length > 28) {
+                        eplicitMemo = eplicitMemo.substr(0, 28);
+                    } 
+                    memo = StellarSdk.Memo.text(eplicitMemo);
                 }
-     
-                memo = StellarSdk.Memo.text(destMemo);
             }
                 
             var operation = operationBuilder();
