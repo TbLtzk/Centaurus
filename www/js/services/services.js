@@ -255,11 +255,8 @@ angular.module('starter.services', ['starter.services.basic'])
 .factory('Contacts', function () {
     // contact names are considered an id and have to be unique
     var contacts = [
-        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null, memoType: null },
-    { name: 'Centaurus1', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null },
-{ name: 'Centaurus2', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null },
-{ name: 'Centaurus3', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null }
-];
+        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null, memoType: null }
+    ];
 
     var contactsString = window.localStorage['contacts001'];
     if (contactsString)

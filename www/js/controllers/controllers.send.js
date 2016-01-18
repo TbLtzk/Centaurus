@@ -1,5 +1,5 @@
 ﻿angular.module('starter.controllers.send', [])
-.controller('SendCtrl', function ($scope, $ionicActionSheet, $ionicPopover, UIHelper, Account, Remote, Settings, QR, Commands) {
+.controller('SendCtrl', function ($scope, $ionicActionSheet, $ionicPopover, UIHelper, Account, Contacts, Remote, Settings, QR, Commands) {
     var account = Account.get();
     $scope.$on('accountInfoLoaded', function (event) {
         account = Account.get();
@@ -19,7 +19,8 @@
     };
     $scope.destinationInfo = {
         accountId : '',
-        memo : null,
+        memo: null,
+        memoType: null,
         isValidAddress: false,
         needFunding : false,
         acceptedCurrencies : ['XLM'],
@@ -106,28 +107,30 @@
         context.isDirty = false;
     });
     
-    $scope.$watch('paymentData.destinationAddress', function(newAddress) {
+    $scope.$watch('paymentData.destinationAddress', function (newAddress) {
+        var fillDestinationInfo = function (id, memo, type) {
+            $scope.destinationInfo.accountId = id;
+            $scope.destinationInfo.memo = memo;
+            $scope.destinationInfo.memoType = type;
+        };
+        
         var isValidAddress = StellarSdk.Account.isValidAccountId(newAddress);
         if (isValidAddress)
-            $scope.destinationInfo.accountId = newAddress;
+            fillDestinationInfo(newAddress);
         else {
-            StellarSdk.FederationServer.resolve(newAddress)
-             .then(federationRecord => {
-                 $scope.destinationInfo.accountId = federationRecord.account_id;
-                 if (federationRecord.memo) {
-                     var implicitMemo;
-                     if (memo_type === 'id')
-                         implicitMemo = StellarSdk.Memo.id(federationRecord.memo);
-                     else if (memo_type === 'hash')
-                         implicitMemo = StellarSdk.Memo.hash(federationRecord.memo);
-                     else
-                         implicitMemo = StellarSdk.Memo.text(federationRecord.memo);
-                 $scope.destinationInfo.memo = implicitMemo
-                 }
-             })
-            .catch(err => {
-                $scope.destinationInfo.accountId = '';
-            });
+            var contact = Contacts.find(newAddress);
+            if (contact)
+                fillDestinationInfo(contact.address, contact.memo, contact.memoType);
+            else {
+                StellarSdk.FederationServer.resolve(newAddress)
+                 .then(federationRecord => {
+                     fillDestinationInfo(federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
+                     Contacts.add(newAddress, federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
+                 })
+                .catch(err => {
+                    fillDestinationInfo('');
+                });
+            }
         }
     });
     
@@ -223,16 +226,22 @@
         var actualSendAction = function () {
             try{
             UIHelper.blockScreen('controllers.send.pending', 20);
-            var memo = $scope.destinationInfo.memo;
-            if(!memo) {
-                // no implicit memo from federation. Check explicit memo
+
+            if (!$scope.destinationInfo.memo) {
                 var explicitMemo = $scope.paymentData.destinationTag;
-                if(explicitMemo){
-                    if (eplicitMemo.length > 28) {
-                        eplicitMemo = eplicitMemo.substr(0, 28);
-                    } 
-                    memo = StellarSdk.Memo.text(eplicitMemo);
-                }
+                if(explicitMemo)
+                    $scope.destinationInfo.memo = explicitMemo.substr(0, 28);                
+            }
+
+            var memo = null;
+            if ($scope.destinationInfo.memo) {
+                if ($scope.destinationInfo.memoType === 'id')
+                    memo = StellarSdk.Memo.id($scope.destinationInfo.memo.toString());
+                else if ($scope.destinationInfo.memoType === 'hash')
+                    memo = StellarSdk.Memo.hash($scope.destinationInfo.memo);
+                else
+                    memo = StellarSdk.Memo.text($scope.destinationInfo.memo);
+
             }
                 
             var operation = operationBuilder();
@@ -350,7 +359,8 @@
     $scope.donate = function () {
         $scope.paymentData = {
             //destinationAddress: 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y',
-            destinationAddress: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7',
+            //destinationAddress: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7',
+            destinationAddress: 'Centaurus',
             amount: Math.floor(0.01 * account.balance),
             currency: 'XLM'
         }
