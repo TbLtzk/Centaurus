@@ -123,11 +123,11 @@
                 fillDestinationInfo(contact.address, contact.memo, contact.memoType);
             else {
                 StellarSdk.FederationServer.resolve(newAddress)
-                 .then(federationRecord => {
+                 .then(function(federationRecord) {
                      fillDestinationInfo(federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
                      Contacts.add(newAddress, federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
                  })
-                .catch(err => {
+                .catch(function(err) {
                     fillDestinationInfo('');
                 });
             }
