@@ -1,5 +1,5 @@
 ﻿angular.module('starter.controllers.send', [])
-.controller('SendCtrl', function ($scope, $ionicActionSheet, $ionicPopover, UIHelper, Account, Contacts, Remote, Settings, QR, Commands) {
+.controller('SendCtrl', function ($scope, $stateParams, $ionicActionSheet, $ionicPopover, UIHelper, Account, Contacts, Remote, Settings, QR, Commands) {
     var account = Account.get();
     $scope.$on('accountInfoLoaded', function (event) {
         account = Account.get();
@@ -12,7 +12,7 @@
     $scope.account = account;
     $scope.showDestinationTag = false;
     $scope.paymentData = {
-        destinationAddress : '',
+        destinationAddress : $stateParams ? $stateParams.recipient : '',
         destinationTag : null,
         amount : null,
         currency : 'XLM'

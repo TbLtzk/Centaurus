@@ -1,9 +1,10 @@
 <ion-view title="{{'views.contacts.title' | translate}} (T)">
     <ion-content class="has-header">
         <ion-list ng-repeat="item in contactList">
-            <ion-item class="narrow">
+            <ion-item class="narrow" on-swipe-right="sendPayment(item.name)">
                 <i class="icon ion-person"></i>
-                {{ item.name }}
+                {{ item.name }} <br />
+                <font size="-2">{{ item.address }}</font>
             </ion-item>
         </ion-list>
     </ion-content>

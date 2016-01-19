@@ -135,8 +135,11 @@ angular.module('starter.controllers', [])
     $scope.account = Account.get();
 })
 
-.controller('ContactsCtrl', function ($scope, Contacts) {
+.controller('ContactsCtrl', function ($scope, $location, Contacts) {
     $scope.contactList = Contacts.getAll();
+    $scope.sendPayment = function (contactName) {
+        $location.url('tab/send/' + contactName);
+    }
 })
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
