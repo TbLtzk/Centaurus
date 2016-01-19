@@ -297,7 +297,7 @@ angular.module('starter.services', ['starter.services.basic'])
             return this.removeAt(index);
         },
         removeByName: function (name) {
-            return this.remove(findByName(name));
+            return this.remove(this.find(name));
         }
     }
 })

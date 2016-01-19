@@ -135,11 +135,18 @@ angular.module('starter.controllers', [])
     $scope.account = Account.get();
 })
 
-.controller('ContactsCtrl', function ($scope, $location, Contacts) {
+.controller('ContactsCtrl', function ($scope, $location, Contacts, UIHelper) {
     $scope.contactList = Contacts.getAll();
     $scope.sendPayment = function (contactName) {
         $location.url('tab/send/' + contactName);
-    }
+    };
+    $scope.remove = function (contactName) {
+        UIHelper.confirmAndRun('controllers.contacts.remove.caption',
+        'controllers.contacts.remove.text',
+        function () {
+            Contacts.removeByName(contactName);
+        });
+    };
 })
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
