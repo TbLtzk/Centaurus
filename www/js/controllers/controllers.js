@@ -124,7 +124,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('TransactionsCtrl', function ($scope, Account) {
+.controller('TransactionsCtrl', function ($scope, $ionicPopup, Account, Contacts, UIHelper) {
     var onNewTransactions = function (event) {
         var account = Account.get();
         $scope.account = account;
@@ -133,6 +133,40 @@ angular.module('starter.controllers', [])
     $scope.$on('accountInfoLoaded', onNewTransactions);
     $scope.$on('newTransaction', onNewTransactions);
     $scope.account = Account.get();
+
+    $scope.createContact = function (trx) {
+        var remoteAccount = trx.debit ? trx.receiver : trx.sender;
+        $scope.contact = {
+            address: remoteAccount
+        };
+        UIHelper.translate(
+            ['controllers.trx.createContact.popup.title'
+            , 'controllers.trx.createContact.popup.subtitle'
+            , 'general.btn.cancel'
+            , 'general.btn.ok'
+            , 'controllers.trx.createContact.popup.exists'
+            ]).then(function (t) {
+                $scope.myPopup = $ionicPopup.show({
+                    templateUrl: 'templates/view-contact.html',
+                    title: t[0],
+                    subTitle: t[1],
+                    scope: $scope,
+                    buttons: [
+                      { text: t[2] },
+                      {
+                          text: '<b>' + t[3] + '</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              if (!Contacts.add($scope.contact.name, $scope.contact.address, $scope.contact.memo)) {
+                                  UIHelper.showAlert(t[4]);
+                                  e.preventDefault();
+                              }
+                          }
+                      },
+                    ]
+                });
+            });
+    };
 })
 
 .controller('ContactsCtrl', function ($scope, $location, Contacts, UIHelper) {

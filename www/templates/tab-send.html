@@ -16,8 +16,11 @@
         {{paymentData.currency}}
       </label>
     </div>
-    <label class="item item-input" ng-if="showDestinationTag">
+    <label class="item item-input" ng-if="showDestinationTag && !destinationInfo.memo">
       <input ng-model="paymentData.destinationTag" placeholder="{{'tabs.send.destinationtag.placeholder' | translate}}" maxlenstr="28" type="text" />
+    </label>
+    <label class="item item-input" ng-if="showDestinationTag && destinationInfo.memo">
+     <input ng-if="destinationInfo.memo" ng-model="destinationInfo.memo" ng-disabled="true" type="text" style="color:dimgray;font-style:italic"/>
     </label>
     <a href="javascript:void(0)" on-tap="showDestinationTag = !showDestinationTag">{{'tabs.send.btn.destinationTag' | translate}}</a>
     <button on-tap="sendPayment()" class="button button-block button-positive">

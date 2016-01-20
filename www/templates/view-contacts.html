@@ -4,7 +4,7 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="search" ng-model="q" placeholder="{{'views.contacts.filter.placeholder' | translate}}">
         </label>
-       <ion-list ng-repeat="item in contactList | filter: {'name': q} | orderBy:'address' as results track by item.name">
+       <ion-list ng-repeat="item in contactList | filter: {'name': q} | orderBy:'name' as results track by item.name">
             <ion-item class="narrow" on-swipe-right="sendPayment(item.name)" on-swipe-left="remove(item.name)">
                 <i class="icon ion-person"></i>
                 {{ item.name }} <br />
