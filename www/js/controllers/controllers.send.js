@@ -29,6 +29,7 @@
         isDirty : false,
         isValidCurrency : false,
         alternatives : [],
+        choice : [],
         amount: 0
     };
     $scope.popoverItemCount = 2;
@@ -93,7 +94,7 @@
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
                 .then(function (response) {
-                    //context.alternatives = response.records;
+                    context.alternatives = response.records;
                     console.log(JSON.stringify(response));
                 })
             .catch(function (err) {
@@ -153,7 +154,7 @@
                         $scope.destinationInfo.acceptedCurrencies.push(bal.asset_code);
                     var iou = {
                         currency: bal.asset_code,
-                        issuer: bal.issuer
+                        issuer: bal.asset_issuer
                     };
                     $scope.destinationInfo.acceptedIOUs.push(iou);
                 }
@@ -211,10 +212,49 @@
                 });
             }
             else {
-                operation = StellarSdk.Operation.payment({
-                    destination: $scope.destinationInfo.accountId,
-                    asset: StellarSdk.Asset.native(),
-                    amount: context.amount.toString()
+                var determineSendAsset = function (choice) {
+                    if (choice.source_asset_type == "native") {
+                        return StellarSdk.Asset.native();
+                    }
+                    else {
+                        return new StellarSdk.Asset(choice.source_asset_code,
+                                                    choice.source_asset_issuer);
+                    }
+                }
+
+                var determineDestAsset = function (choice) {
+                    if (choice.destination_asset_type == "native") {
+                        return StellarSdk.Asset.native();
+                    }
+                    else {
+                        return new StellarSdk.Asset(choice.destination_asset_code,
+                                                    choice.destination_asset_issuer);
+                    }
+                }
+
+                var determinePath = function (choice) {
+                    var path = [];
+                    for (var i = 0; i < choice.path.length; i++) {
+                        if (choice.path[i].asset_type == "native") {
+                            path[i] = StellarSdk.Asset.native();
+                        }
+                        else {
+                            path[i] = new StellarSdk.Asset(choice.path[i].asset_code,
+                                                           choice.path[i].asset_issuer);
+                        }
+                    }
+                    return path;
+                }
+
+                var choice = context.choice;
+
+                operation = StellarSdk.Operation.pathPayment({
+                    sendAsset   : determineSendAsset(choice),
+                    sendMax     : choice.source_amount,
+                    destination : $scope.destinationInfo.accountId,
+                    destAsset   : determineDestAsset(choice),
+                    destAmount  : choice.destination_amount,
+                    path        : determinePath(choice)
                 });
             }
             return operation;
@@ -284,24 +324,41 @@
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" ' + t.get(1));
         else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('controllers.send.validate.amount.funds');
-        else if ($scope.paymentData.currency != 'XLM')
-            UIHelper.showAlert('Assets other than XLM are not supported yet, but coming soon.');
         else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
             UIHelper.showAlert('controllers.send.validate.path');
         else if (context.amount == null)
             UIHelper.showAlert('controllers.send.validate.general');
-        else if (context.alternatives.length > 1) {
+        else {
             var sheet = {
                 buttons: [],
                 titleText: t.get(2),
                 buttonClicked: function (index) {
+
+                    var hasEnoughBalance = function(choice) {
+                        var enoughBalance = false;
+                        if (choice.source_asset_type == "native") {
+                            enoughBalance = account.balance >= choice.source_amount;
+                        }
+                        else {
+                            for (j = 0; j < account.otherCurrencies.length; j++) {
+                                if (account.otherCurrencies[j].currency == choice.source_asset_code) {
+                                    enoughBalance = account.otherCurrencies[j].amount >= choice.source_amount;
+                                    break;
+                                }
+                            }
+                        }
+                        return enoughBalance;
+                    };
+
                     var choice = context.alternatives[index];
-                    // TODO: build path operation
-                    UIHelper.showAlert(choice);
-                    //if(choice.paths_computed && choice.paths_computed.length > 0)
-                    //{
-                    //}
-                    //actualSendAction();
+                    context.choice = context.alternatives[index];
+
+                    if (hasEnoughBalance(choice)) {
+                        actualSendAction();
+                    }
+                    else {
+                        UIHelper.showAlert('controllers.send.validate.amount.funds');
+                    }
                     return true;
                 }
             };
@@ -316,8 +373,6 @@
             }
             $ionicActionSheet.show(sheet);
         }
-        else 
-            actualSendAction();   
     };
 	
     $scope.scanCode = function () {
