@@ -270,9 +270,18 @@ angular.module('starter.services', ['starter.services.basic'])
         getAll: function () {
             return contacts;
         },
+        findIndex: function (name) {
+            for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].name === name)
+                    return i;
+            }
+            return -1;
+        },
         find: function (name) {
-            var c = contacts.find(function (c) { return c.name === name; })
-            return c;
+            var index = this.findIndex(name);
+            if (index < 0)
+                return null;
+            return contacts[index];
         },
         add: function (name, address, memo, memoType) {
             if (this.find(name) != null)
@@ -297,7 +306,7 @@ angular.module('starter.services', ['starter.services.basic'])
             return this.removeAt(index);
         },
         removeByName: function (name) {
-            return this.remove(this.find(name));
+            return this.removeAt(this.findIndex(name));
         }
     }
 })
