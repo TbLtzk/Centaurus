@@ -31,7 +31,18 @@ initial Version
 ### 0.0.2
 
 tabs.about.gettingStarted.body.doBackup: **modified**
-view.settings.language.label: **new**
+views.settings.language.label: **new**
 
 ### pending
 
+controllers.contacts.remove.caption: **new**
+controllers.contacts.remove.text: **new**
+controllers.trx.createContact.popup.exists: **new**
+controllers.trx.createContact.popup.subtitle: **new**
+controllers.trx.createContact.popup.title: **new**
+general.common.address: **new**
+general.common.name: **new**
+general.common.filter: **new**
+navigation.contacts.title: **new**
+views.contact.memo.placeholder: **new**
+views.contacts.title: **new**

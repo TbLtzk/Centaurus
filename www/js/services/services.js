@@ -273,8 +273,11 @@ angular.module('starter.services', ['starter.services.basic'])
             return contacts;
         },
         findIndex: function (name) {
+            if (!name)
+                return -1;
+            var normalized = name.toUpperCase();
             for (var i = 0; i < contacts.length; i++) {
-                if (contacts[i].name === name)
+                if (contacts[i].name.toUpperCase() === normalized)
                     return i;
             }
             return -1;
@@ -298,6 +301,8 @@ angular.module('starter.services', ['starter.services.basic'])
             return bestMatch;
         },
         add: function (name, address, memo, memoType) {
+            if (!name)
+                return false;
             if (this.find(name) != null)
                 return false;
             contacts.push({ name: name, address: address, memo: memo, memoType: memoType });
