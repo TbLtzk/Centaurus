@@ -1,5 +1,7 @@
 {
   "_meta.version": "0.0.2",
+  "controllers.contacts.remove.caption": "Remove contact",
+  "controllers.contacts.remove.text": "Please confirm to remove this contact.",
   "controllers.receive.share.p1": "You can send me Lumens to the address",
   "controllers.receive.share.p2": "Centaurus - Stellar Wallet for Android!",
   "controllers.receive.share.title": "My Stellar Address",
@@ -18,6 +20,9 @@
   "controllers.send.validate.currency.invalid": "is not a valid currency.",
   "controllers.send.validate.general": "Payment not possible. Does the recipient accept the specified currency?",
   "controllers.send.validate.path": "There is no valid path on the network for this payment.",
+  "controllers.trx.createContact.popup.title": "Create Contact",
+  "controllers.trx.createContact.popup.subtitle": "Please enter the contact details.",
+  "controllers.trx.createContact.popup.exists": "A contact with the specified name already exists.",
   "controllers.wallet.importKeys.popup.invalid": "Not a valid backup string or key pair!",
   "controllers.wallet.importKeys.popup.subtitle": "or plain key pair",
   "controllers.wallet.importKeys.popup.title": "Enter your wallet backup string",
@@ -34,7 +39,11 @@
   "general.btn.import": "Import",
   "general.btn.ok": "Ok",
   "general.btn.share": "Share",
+  "general.common.address": "Address",
+  "general.common.filter": "Filter",
+  "general.common.name": "Name",
   "navigation.about.title": "About",
+  "navigation.contacts.title": "Contacts",
   "navigation.receive.title": "Receive",
   "navigation.send.title": "Send",
   "navigation.trx.title": "Trx",
@@ -89,5 +98,7 @@
   "tabs.wallet.export": "Export",
   "tabs.wallet.import": "Import",
   "tabs.wallet.title": "Wallet",
-  "view.settings.language.label": "Language"
+  "views.contact.memo.placeholder": "Memo (optional)",
+  "views.contacts.title": "Contacts",
+  "views.settings.language.label": "Language"
 }

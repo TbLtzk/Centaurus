@@ -87,7 +87,9 @@ angular.module('starter.services', ['starter.services.basic'])
                 amount: effect.amount,
                 debit: effect.type === 'account_debited',
                 sender: op.from,
-                receiver: op.to
+                receiver: op.to,
+                memo: trx.memo,
+                memoType: trx.memo_type
             }
 
             if (op.type === 'create_account') {
@@ -250,6 +252,82 @@ angular.module('starter.services', ['starter.services.basic'])
 		    Settings.get().onKeysAvailable()
 		}
 	}
+})
+
+.factory('Contacts', function () {
+    // contact names are considered an id and have to be unique
+    var contacts = [
+        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null, memoType: null }
+    ];
+
+    var contactsString = window.localStorage['contacts001'];
+    if (contactsString)
+        contacts = JSON.parse(contactsString);
+
+    return {
+        save: function(){
+            var contactsString = JSON.stringify(contacts);
+            window.localStorage['contacts001'] = contactsString;       
+        },
+        getAll: function () {
+            return contacts;
+        },
+        findIndex: function (name) {
+            if (!name)
+                return -1;
+            var normalized = name.toUpperCase();
+            for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].name.toUpperCase() === normalized)
+                    return i;
+            }
+            return -1;
+        },
+        find: function (name) {
+            var index = this.findIndex(name);
+            if (index < 0)
+                return null;
+            return contacts[index];
+        },
+        findReverse: function(address, memo){
+            var bestMatch = null;
+            for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].address === address) {
+                    if (contacts[i].memo === memo)
+                        return contacts[i];
+                    else if(!bestMatch)
+                        bestMatch = contacts[i];
+                }
+            }
+            return bestMatch;
+        },
+        add: function (name, address, memo, memoType) {
+            if (!name)
+                return false;
+            if (this.find(name) != null)
+                return false;
+            contacts.push({ name: name, address: address, memo: memo, memoType: memoType });
+            this.save();
+            return true;
+        },
+        removeAt: function(index){
+            if (index < 0)
+                return false;
+
+            contacts.splice(index, 1);
+            this.save();
+            return true;
+        },
+        remove: function(c){
+            if (!c)
+                return false;
+
+            var index = contacts.indexOf(c);
+            return this.removeAt(index);
+        },
+        removeByName: function (name) {
+            return this.removeAt(this.findIndex(name));
+        }
+    }
 })
 
 .factory('Commands', function ($http, UIHelper, Settings, Account) {	

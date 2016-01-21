@@ -35,6 +35,7 @@
   "general.btn.ok": "Ok",
   "general.btn.share": "Teilen",
   "navigation.about.title": "Über",
+  "navigation.contacts.title": "Kontakte",
   "navigation.receive.title": "Empfangen",
   "navigation.send.title": "Senden",
   "navigation.trx.title": "Trx",
@@ -88,5 +89,6 @@
   "tabs.wallet.export": "Export",
   "tabs.wallet.import": "Import",
   "tabs.wallet.title": "Konto",
-  "view.settings.language.label": "Sprache"
+  "views.contacts.title": "Kontakte",
+  "views.settings.language.label": "Sprache"
 }

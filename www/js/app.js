@@ -43,7 +43,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	// Each tab has its own nav history stack:
 
 	.state('tab.receive', {
-		url : '/receive',
+		url : '/receive/',
 		views : {
 			'tab-receive' : {
 				templateUrl : 'templates/tab-receive.html',
@@ -53,7 +53,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	})
 
 	.state('tab.wallet', {
-		url : '/wallet',
+		url : '/wallet/',
 		views : {
 			'tab-wallet' : {
 				templateUrl : 'templates/tab-wallet.html',
@@ -63,27 +63,37 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	})
 
 	.state('tab.send', {
-		url : '/send',
-		views : {
-			'tab-send' : {
-				templateUrl : 'templates/tab-send.html',
-				controller : 'SendCtrl'
-			}
-		}
+	    url: '/send/{recipient}',
+	    views: {
+	        'tab-send': {
+	            templateUrl: 'templates/tab-send.html',
+	            controller: 'SendCtrl'
+	        }
+	    }
 	})
 
 	.state('tab.transactions', {
-		url : '/transactions',
-		views : {
-			'tab-transactions' : {
-				templateUrl : 'templates/tab-transactions.html',
-				controller : 'TransactionsCtrl'
-			}
-		}
+	    url: '/transactions/',
+	    views: {
+	        'tab-transactions': {
+	            templateUrl: 'templates/tab-transactions.html',
+	            controller: 'TransactionsCtrl'
+	        }
+	    }
+	})
+
+	.state('tab.contacts', {
+	    url: '/contacts/',
+	    views: {
+	        'view-contacts': {
+	            templateUrl: 'templates/view-contacts.html',
+	            controller: 'ContactsCtrl'
+	        }
+	    }
 	})
 
 	.state('tab.about', {
-		url : '/about',
+		url : '/about/',
 		views : {
 			'tab-about' : {
 				templateUrl : 'templates/tab-about.html',
@@ -93,7 +103,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	});
 
 	// if none of the above states are matched, use this as the fallback
-	$urlRouterProvider.otherwise('/tab/wallet');
+	$urlRouterProvider.otherwise('/tab/wallet/');
 
     ///////////////////////////////////////////////////
     /// translate
@@ -112,7 +122,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	var lang = window.localStorage['language'];
 	if (lang)
 	    $translateProvider.preferredLanguage(lang);
-	else
+	else 
 	    $translateProvider.determinePreferredLanguage();
 
 	$translateProvider.fallbackLanguage("en");

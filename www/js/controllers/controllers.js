@@ -124,15 +124,82 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('TransactionsCtrl', function ($scope, Account) {
-    var onNewTransactions = function (event) {
+.controller('TransactionsCtrl', function ($scope, $ionicPopup, Account, Contacts, UIHelper) {
+    var augmentTransactions = function (trxList) {
+        for (var i = 0; i < trxList.length; i++) {
+            var trx = trxList[i];
+            if(!trx.remoteAccount)
+                trx.remoteAccount = trx.debit ? trx.receiver : trx.sender;
+            var c = Contacts.findReverse(trx.remoteAccount, trx.memo);
+            trx.remoteContact = c ? c.name : null;
+        }
+    }
+
+    var bindTransactions = function () {
         var account = Account.get();
+        augmentTransactions(account.transactions);
         $scope.account = account;
+    }
+
+    var onNewTransactions = function (event) {
+        bindTransactions();
         $scope.$apply();
     };
     $scope.$on('accountInfoLoaded', onNewTransactions);
     $scope.$on('newTransaction', onNewTransactions);
-    $scope.account = Account.get();
+
+    bindTransactions();
+
+    $scope.createContact = function (trx) {
+        $scope.contact = {
+            address: trx.remoteAccount,
+            memo: trx.debit ? trx.memo : null,
+            memoType: trx.debit ? trx.memoType: null
+        };
+        UIHelper.translate(
+            ['controllers.trx.createContact.popup.title'
+            , 'controllers.trx.createContact.popup.subtitle'
+            , 'general.btn.cancel'
+            , 'general.btn.ok'
+            , 'controllers.trx.createContact.popup.exists'
+            ]).then(function (t) {
+                $scope.myPopup = $ionicPopup.show({
+                    templateUrl: 'templates/view-contact.html',
+                    title: t[0],
+                    subTitle: t[1],
+                    scope: $scope,
+                    buttons: [
+                      { text: t[2] },
+                      {
+                          text: '<b>' + t[3] + '</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              if (Contacts.add($scope.contact.name, $scope.contact.address, $scope.contact.memo))
+                                  augmentTransactions($scope.account.transactions);
+                              else {
+                                  UIHelper.showAlert(t[4]);
+                                  e.preventDefault();
+                              }
+                          }
+                      },
+                    ]
+                });
+            });
+    };
+})
+
+.controller('ContactsCtrl', function ($scope, $location, Contacts, UIHelper) {
+    $scope.contactList = Contacts.getAll();
+    $scope.sendPayment = function (contactName) {
+        $location.url('tab/send/' + contactName);
+    };
+    $scope.remove = function (contactName) {
+        UIHelper.confirmAndRun('controllers.contacts.remove.caption',
+        'controllers.contacts.remove.text',
+        function () {
+            Contacts.removeByName(contactName);
+        });
+    };
 })
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
