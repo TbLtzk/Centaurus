@@ -87,7 +87,9 @@ angular.module('starter.services', ['starter.services.basic'])
                 amount: effect.amount,
                 debit: effect.type === 'account_debited',
                 sender: op.from,
-                receiver: op.to
+                receiver: op.to,
+                memo: trx.memo,
+                memoType: trx.memo_type
             }
 
             if (op.type === 'create_account') {
@@ -282,6 +284,18 @@ angular.module('starter.services', ['starter.services.basic'])
             if (index < 0)
                 return null;
             return contacts[index];
+        },
+        findReverse: function(address, memo){
+            var bestMatch = null;
+            for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].address === address) {
+                    if (contacts[i].memo === memo)
+                        return contacts[i];
+                    else if(!bestMatch)
+                        bestMatch = contacts[i];
+                }
+            }
+            return bestMatch;
         },
         add: function (name, address, memo, memoType) {
             if (this.find(name) != null)

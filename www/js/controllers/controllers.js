@@ -125,19 +125,36 @@ angular.module('starter.controllers', [])
 })
 
 .controller('TransactionsCtrl', function ($scope, $ionicPopup, Account, Contacts, UIHelper) {
-    var onNewTransactions = function (event) {
+    var augmentTransactions = function (trxList) {
+        for (var i = 0; i < trxList.length; i++) {
+            var trx = trxList[i];
+            if(!trx.remoteAccount)
+                trx.remoteAccount = trx.debit ? trx.receiver : trx.sender;
+            var c = Contacts.findReverse(trx.remoteAccount, trx.memo);
+            trx.remoteContact = c ? c.name : null;
+        }
+    }
+
+    var bindTransactions = function () {
         var account = Account.get();
+        augmentTransactions(account.transactions);
         $scope.account = account;
+    }
+
+    var onNewTransactions = function (event) {
+        bindTransactions();
         $scope.$apply();
     };
     $scope.$on('accountInfoLoaded', onNewTransactions);
     $scope.$on('newTransaction', onNewTransactions);
-    $scope.account = Account.get();
+
+    bindTransactions();
 
     $scope.createContact = function (trx) {
-        var remoteAccount = trx.debit ? trx.receiver : trx.sender;
         $scope.contact = {
-            address: remoteAccount
+            address: trx.remoteAccount,
+            memo: trx.debit ? trx.memo : null,
+            memoType: trx.debit ? trx.memoType: null
         };
         UIHelper.translate(
             ['controllers.trx.createContact.popup.title'
@@ -157,7 +174,9 @@ angular.module('starter.controllers', [])
                           text: '<b>' + t[3] + '</b>',
                           type: 'button-positive',
                           onTap: function (e) {
-                              if (!Contacts.add($scope.contact.name, $scope.contact.address, $scope.contact.memo)) {
+                              if (Contacts.add($scope.contact.name, $scope.contact.address, $scope.contact.memo))
+                                  augmentTransactions($scope.account.transactions);
+                              else {
                                   UIHelper.showAlert(t[4]);
                                   e.preventDefault();
                               }

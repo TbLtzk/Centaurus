@@ -6,7 +6,8 @@
                     <font size="-1"><i class="icon ion-plus"></i> {{item.amount}}</font>
                     <font size="-1">{{item.asset_code}}</font>
                     <font size="-2">{{'tabs.trx.from' | translate}}</font>
-                    <font size="-1">{{item.sender}}</font>
+                    <font size="-1" ng-if="!item.remoteContact">{{ item.sender}}</font>
+                    <font size="-1" ng-if=" item.remoteContact">{{ item.remoteContact}}</font>
                 </div>
                 <div class="col text-right no-padding"><font size="-2">{{item.creationDate | fromnow}}</font></div>
             </div>
@@ -15,7 +16,8 @@
                     <font size="-1"><i class="icon ion-minus"></i> {{item.amount}}</font>
                     <font size="-1">{{item.asset_code}}</font>
                     <font size="-2">{{'tabs.trx.to' | translate}}</font>
-                    <font size="-1">{{item.receiver }}</font>
+                    <font size="-1" ng-if="!item.remoteContact">{{item.receiver }}</font>
+                    <font size="-1" ng-if=" item.remoteContact">{{ item.remoteContact}}</font>
                 </div>
                 <div class="col text-right no-padding"><font size="-2">{{item.creationDate | fromnow}}</font></div>
             </div>
