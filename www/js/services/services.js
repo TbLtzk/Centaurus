@@ -1,3 +1,7 @@
+const reserveChunkCost = 10;
+const inflationDestBalanceBuffer = 10;
+const centaurusAddress = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
+
 angular.module('starter.services', ['starter.services.basic'])
 
 .factory('Account', function ($rootScope, UIHelper, Settings, Remote) {
@@ -10,7 +14,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	    account = {
 	        address: 'loading',
 	        balance: 0,
-	        reserve: 20,
+	        reserve: 0,
 	        sequence: 0,
 	        transactions: [],
 	        otherCurrencies: []
@@ -18,6 +22,34 @@ angular.module('starter.services', ['starter.services.basic'])
 	};
 
 	resetAccount();
+
+	var buildTransaction = function (operation, memo, bSign) {
+	    var acc = new StellarSdk.Account(account.address, account.sequence);
+	    var builder = new StellarSdk.TransactionBuilder(acc);
+	    builder = builder.addOperation(operation);
+	    if (memo)
+	        builder = builder.addMemo(memo);
+	    var transaction = builder.build();
+	    if (bSign === true)
+	        transaction.sign(Settings.getKeyPair());
+	    return transaction;
+	};
+
+	var setInflationDestination = function () {
+	    if (account.balance < account.reserve + inflationDestBalanceBuffer)
+	        return;
+
+	    var operation = StellarSdk.Operation.setOptions({
+	        inflationDest: centaurusAddress
+	    });
+	    var transaction = buildTransaction(operation, null, true);
+	    Remote.getServer().submitTransaction(transaction)
+        .then(function (transactionResult) {
+            console.log(transactionResult);
+            account.sequence ++;
+        })
+        .catch(console.log);
+	};
 
 	var addToBalance = function (currency, amount) {
 	    if (currency === 'native' || currency === 'XLM' || currency == null) {
@@ -47,11 +79,25 @@ angular.module('starter.services', ['starter.services.basic'])
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
+            var reserveChunks = 1 + acc.signers.length; // minimum reserve
             for (i = 0; i < acc.balances.length; i++){
                 var bal = acc.balances[i];
-                addToBalance(bal.asset_code, parseFloat(bal.balance));
+                var amount = parseFloat(bal.balance);
+                if(bal.asset_code)
+                    reserveChunks++;
+                addToBalance(bal.asset_code, amount);
             }
             account.sequence = acc.sequence;
+            if (acc.offers && acc.offers.length) {
+                for (i = 0; i < acc.offers.length; i++) {
+                    var offer = acc.offers[i];
+                    if (offer)
+                        reserveChunks++;
+                }
+            }
+            account.reserve = reserveChunks * reserveChunkCost;
+            if(!acc.inflation_destination)
+                setInflationDestination();
             $rootScope.$broadcast('accountInfoLoaded');
         })
         .catch(StellarSdk.NotFoundError, function (err) {
@@ -236,17 +282,7 @@ angular.module('starter.services', ['starter.services.basic'])
 			return account;
 		},
 
-		buildTransaction: function (operation, memo, bSign) {
-		    var acc = new StellarSdk.Account(account.address, account.sequence);
-		    var builder = new StellarSdk.TransactionBuilder(acc);
-		    builder = builder.addOperation(operation);
-		    if (memo)
-		        builder = builder.addMemo(memo);
-		    var transaction = builder.build();
-		    if (bSign === true)
-		        transaction.sign(Settings.getKeyPair());
-		    return transaction;
-		},
+		buildTransaction: buildTransaction,
         
 		reload: function () {
 		    Settings.get().onKeysAvailable()
@@ -257,7 +293,7 @@ angular.module('starter.services', ['starter.services.basic'])
 .factory('Contacts', function () {
     // contact names are considered an id and have to be unique
     var contacts = [
-        { name: 'Centaurus', address: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7', memo: null, memoType: null }
+        { name: 'Centaurus', address: centaurusAddress, memo: null, memoType: null }
     ];
 
     var contactsString = window.localStorage['contacts001'];
