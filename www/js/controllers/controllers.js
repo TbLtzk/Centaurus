@@ -6,6 +6,7 @@ angular.module('starter.controllers', [])
 	});
 	$scope.account = Account.get();
 	$scope.Math = window.Math;
+	$scope.data = Settings.getKeys();
 
 	$scope.shareKeys = function () {
 		var onPassword = function(pwd){
@@ -99,6 +100,10 @@ angular.module('starter.controllers', [])
 	        $scope.apply();
 	    };
 	    Commands.upgradeFromStr(oldKeys.secret, onSuccess);
+	}
+
+	$scope.copyToClipboard = function (caption, text) {
+	    window.prompt(caption, text);
 	}
 })
 
