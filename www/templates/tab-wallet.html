@@ -18,6 +18,12 @@
 			  {{'tabs.wallet.export' | translate}}
 		</button>
     </div>
+    <div>
+          <button class="button button-block" on-tap="copyToClipboard('{{'tabs.wallet.secret' | translate}}', data.secret)">
+              <i class="icon ion-ios-copy"></i>
+              {{'tabs.wallet.secret' | translate}}
+          </button>
+    </div>
     <div class="item item-divider">
     {{'tabs.wallet.announcements' | translate}}
     </div>
