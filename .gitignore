@@ -4,6 +4,7 @@ bld/
 node_modules/
 platforms/
 plugins/
+bower_components/
 Centaurus.jsproj.user
 config.xml
 logcat.txt
