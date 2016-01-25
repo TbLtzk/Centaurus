@@ -97,6 +97,7 @@
   "tabs.wallet.announcements": "Announcements",
   "tabs.wallet.export": "Export",
   "tabs.wallet.import": "Import",
+  "tabs.wallet.secret": "Reveal Account Secret",
   "tabs.wallet.title": "Wallet",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Contacts",

@@ -100,6 +100,12 @@ angular.module('starter.controllers', [])
 	    };
 	    Commands.upgradeFromStr(oldKeys.secret, onSuccess);
 	}
+
+	$scope.revealSecret = function () {
+	    UIHelper.translate(['tabs.wallet.secret']).then(function(t){
+	        window.prompt(t[0], Settings.getKeys().secret);
+        })
+	}
 })
 
 .controller('ReceiveCtrl', function ($scope, Account, UIHelper) {

@@ -44,5 +44,6 @@ general.common.address: **new**
 general.common.name: **new**
 general.common.filter: **new**
 navigation.contacts.title: **new**
+tabs.wallet.secret: **new**
 views.contact.memo.placeholder: **new**
 views.contacts.title: **new**
