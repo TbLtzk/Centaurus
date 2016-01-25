@@ -7,19 +7,14 @@
 var fs = require('fs-extra');
 
 var victims = [
-    'platforms/android/res/drawable'
-  , 'platforms/android/res/drawable-hdpi'
-  , 'platforms/android/res/drawable-land-hdpi'
-  , 'platforms/android/res/drawable-land-ldpi'
-  , 'platforms/android/res/drawable-land-mdpi'
-  , 'platforms/android/res/drawable-land-xhdpi'
-  , 'platforms/android/res/drawable-ldpi'
-  , 'platforms/android/res/drawable-mdpi'
-  , 'platforms/android/res/drawable-port-hdpi'
-  , 'platforms/android/res/drawable-port-ldpi'
-  , 'platforms/android/res/drawable-port-mdpi'
-  , 'platforms/android/res/drawable-port-xhdpi'
-  , 'platforms/android/res/drawable-xhdpi'
+  , 'platforms/android/res/drawable-land-hdpi/screen.png'
+  , 'platforms/android/res/drawable-land-ldpi/screen.png'
+  , 'platforms/android/res/drawable-land-mdpi/screen.png'
+  , 'platforms/android/res/drawable-land-xhdpi/screen.png'
+  , 'platforms/android/res/drawable-port-hdpi/screen.png'
+  , 'platforms/android/res/drawable-port-ldpi/screen.png'
+  , 'platforms/android/res/drawable-port-mdpi/screen.png'
+  , 'platforms/android/res/drawable-port-xhdpi/screen.png'
 ];
 
 victims.forEach(function(file){

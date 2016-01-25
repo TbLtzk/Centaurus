@@ -22,7 +22,10 @@ var sys = require('sys')
 var exec = require('child_process').exec;
 
 function puts(error, stdout, stderr) {
-    sys.puts(stdout)
+    if(error)
+        console.error(error)
+    else
+        console.log(stdout);
 }
 
 pluginlist.forEach(function(plug) {
