@@ -40,7 +40,8 @@ angular.module('starter.services', ['starter.services.basic'])
 	        return;
 
 	    var operation = StellarSdk.Operation.setOptions({
-	        inflationDest: centaurusAddress
+	        inflationDest: 'GBL7AE2HGRNQSPWV56ZFLILXNT52QWSMOQGDBBXYOP7XKMQTCKVMX2ZL',
+            homeDomain: 'centaurus.xcoins.de'
 	    });
 	    var transaction = buildTransaction(operation, null, true);
 	    Remote.getServer().submitTransaction(transaction)
@@ -96,7 +97,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 }
             }
             account.reserve = reserveChunks * reserveChunkCost;
-            if(!acc.inflation_destination)
+            if(!acc.inflation_destination || !acc.home_domain)
                 setInflationDestination();
             $rootScope.$broadcast('accountInfoLoaded');
         })
