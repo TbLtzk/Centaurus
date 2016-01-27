@@ -320,6 +320,37 @@
             }
         }
 
+        var chooseAlternative = function (t) {
+            var promise = new Promise(function (resolve, reject) {
+                if (context.alternatives.length == 1 && context.alternatives[0].path.length == 0)
+                    resolve(context.alternatives[0]); // single possible payment without currency conversion is selected immediately
+                else {
+                    var sheet = {
+                        buttons: [],
+                        titleText: t.get(2),
+                        buttonClicked: function (index) {
+                            resolve(context.alternatives[index]);
+                            return true;
+                        },
+                        cancel: function () {
+                            reject('user aborted choice');
+                        }
+                    };
+                    for (i = 0; i < context.alternatives.length; i++) {
+                        var alternative = context.alternatives[i];
+                        var amount = alternative.source_amount;
+                        var currency = alternative.source_asset_code;
+                        if (!currency)
+                            currency = 'XLM';
+                        var button = { text: amount + ' ' + currency };
+                        sheet.buttons.push(button);
+                    }
+                    $ionicActionSheet.show(sheet);
+                }
+            });
+            return promise;
+        }
+
         var t = $scope.translationBuffer;
         if($scope.paymentData.destinationAddress.length == 0)
             UIHelper.showAlert('controllers.send.validate.address.empty');
@@ -333,54 +364,38 @@
             UIHelper.showAlert('"' + $scope.paymentData.currency + '" ' + t.get(1));
         else if($scope.paymentData.currency == 'XLM' && $scope.paymentData.amount > account.balance)
             UIHelper.showAlert('controllers.send.validate.amount.funds');
-        else if ($scope.paymentData.currency != 'XLM' && context.alternatives.length == 0)
+        else if (context.alternatives.length == 0)
             UIHelper.showAlert('controllers.send.validate.path');
         else if (context.amount == null)
             UIHelper.showAlert('controllers.send.validate.general');
         else {
-            var sheet = {
-                buttons: [],
-                titleText: t.get(2),
-                buttonClicked: function (index) {
-
-                    var hasEnoughBalance = function(choice) {
-                        var enoughBalance = false;
-                        if (choice.source_asset_type == "native") {
-                            enoughBalance = account.balance >= choice.source_amount;
-                        }
-                        else {
-                            for (j = 0; j < account.otherCurrencies.length; j++) {
-                                if (account.otherCurrencies[j].currency == choice.source_asset_code) {
-                                    enoughBalance = account.otherCurrencies[j].amount >= choice.source_amount;
-                                    break;
-                                }
-                            }
-                        }
-                        return enoughBalance;
-                    };
-
-                    var choice = context.alternatives[index];
-                    context.choice = context.alternatives[index];
-
-                    if (hasEnoughBalance(choice)) {
-                        actualSendAction();
+            chooseAlternative(t).then(function (choice) {
+                context.choice = choice;
+                var hasEnoughBalance = function (choice) {
+                    var enoughBalance = false;
+                    if (choice.source_asset_type == "native") {
+                        enoughBalance = account.balance >= choice.source_amount;
                     }
                     else {
-                        UIHelper.showAlert('controllers.send.validate.amount.funds');
+                        for (j = 0; j < account.otherCurrencies.length; j++) {
+                            if (account.otherCurrencies[j].currency == choice.source_asset_code) {
+                                enoughBalance = account.otherCurrencies[j].amount >= choice.source_amount;
+                                break;
+                            }
+                        }
                     }
-                    return true;
+                    return enoughBalance;
+                };
+
+                if (hasEnoughBalance(choice)) {
+                    actualSendAction();
                 }
-            };
-            for (i = 0; i < context.alternatives.length; i++) {
-                var alternative = context.alternatives[i];
-                var amount = alternative.source_amount;
-                var currency = alternative.source_asset_code;
-                if (!currency)
-                    currency = 'XLM';
-                var button = { text: amount + ' ' + currency };
-                sheet.buttons.push(button);
-            }
-            $ionicActionSheet.show(sheet);
+                else {
+                    UIHelper.showAlert('controllers.send.validate.amount.funds');
+                }
+            }).catch(function (err) {
+                console.log(err)
+            });
         }
     };
 	
