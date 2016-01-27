@@ -47,7 +47,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	    Remote.getServer().submitTransaction(transaction)
         .then(function (transactionResult) {
             console.log(transactionResult);
-            account.sequence ++;
+            account.sequence = (parseInt(account.sequence) + 1).toString();
         })
         .catch(console.log);
 	};
