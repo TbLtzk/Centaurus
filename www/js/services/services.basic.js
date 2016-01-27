@@ -199,7 +199,7 @@ angular.module('starter.services.basic', [])
 	settings.init = function () {
 		if (!keysString) {
             var keyPair = StellarSdk.Keypair.random();
-            setKeysFunc(keyPair.address(), keyPair.seed());
+            setKeysFunc(keyPair.accountId(), keyPair.seed());
 
 //            // mock with specific address (remain in local storage)
 //			 var mock = testKeys;
