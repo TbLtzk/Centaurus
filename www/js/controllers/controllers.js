@@ -194,7 +194,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('ContactsCtrl', function ($scope, $location, Contacts, UIHelper) {
+.controller('ContactsCtrl', function ($scope, $location, $ionicPopup, Contacts, UIHelper) {
     $scope.contactList = Contacts.getAll();
     $scope.sendPayment = function (contactName) {
         $location.url('tab/send/' + contactName);
@@ -206,6 +206,38 @@ angular.module('starter.controllers', [])
             Contacts.removeByName(contactName);
         });
     };
+    $scope.createContact = function () {
+        $scope.contact = {};
+        UIHelper.translate(
+            ['controllers.trx.createContact.popup.title'
+            , 'controllers.trx.createContact.popup.subtitle'
+            , 'general.btn.cancel'
+            , 'general.btn.ok'
+            , 'controllers.trx.createContact.popup.exists'
+            ]).then(function (t) {
+                $scope.myPopup = $ionicPopup.show({
+                    templateUrl: 'templates/view-contact.html',
+                    title: t[0],
+                    subTitle: t[1],
+                    scope: $scope,
+                    buttons: [
+                      { text: t[2] },
+                      {
+                          text: '<b>' + t[3] + '</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              if (Contacts.add($scope.contact.name, $scope.contact.address, $scope.contact.memo))
+                                  return true;
+                              else {
+                                  UIHelper.showAlert(t[4]);
+                                  e.preventDefault();
+                              }
+                          }
+                      },
+                    ]
+                });
+            });
+    }
 })
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
