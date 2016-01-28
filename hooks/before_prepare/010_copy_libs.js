@@ -8,6 +8,7 @@ var fs = require('fs-extra');
 
 const sourceDir = 'bower_components/';
 const targetDir = 'www/lib/'
+const force = false; // set this locally to true when you update bower references
 
 var libs = [
     'ionic/release/css/ionic.min.css'
@@ -21,11 +22,20 @@ var libs = [
   , 'tweetnacl/nacl-fast.min.js'
   , 'moment/min/moment-with-locales.min.js'
 ];
+var skipped = 0;
 libs.forEach(function(file){
-    fs.copy(sourceDir + file, targetDir + file, function(err){
-        if(err)
-            console.error('010_copy_libs failed to copy ' + file);
-        else
+    try{
+        var targetFile = targetDir + file;
+        if(force || !fs.existsSync(targetFile)){
+            fs.copySync(sourceDir + file, targetDir + file);
             console.log('010_copy_libs copied ' + file);
-    });
+        }
+        else 
+            skipped++;
+    } catch(err) {
+        console.error('010_copy_libs failed to copy ' + file + ' ' + err);
+    }
 });
+if(skipped > 0)
+    console.log('010_copy_libs skipped ' + skipped + ' files');
+
