@@ -33,7 +33,7 @@ initial Version
 tabs.about.gettingStarted.body.doBackup: **modified**
 views.settings.language.label: **new**
 
-### pending
+### 0.0.3
 
 controllers.contacts.edit.popup.subtitle: **new**
 controllers.contacts.edit.popup.title: **new**
@@ -49,3 +49,5 @@ navigation.contacts.title: **new**
 tabs.wallet.secret: **new**
 views.contact.memo.placeholder: **new**
 views.contacts.title: **new**
+
+### pending

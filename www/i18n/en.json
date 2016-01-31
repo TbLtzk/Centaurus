@@ -1,5 +1,5 @@
 {
-  "_meta.version": "0.0.2",
+  "_meta.version": "0.0.3",
   "controllers.contacts.edit.popup.subtitle": "Please edit the contact details.",
   "controllers.contacts.edit.popup.title":  "Edit contact",
   "controllers.contacts.remove.caption": "Remove contact",
@@ -22,9 +22,9 @@
   "controllers.send.validate.currency.invalid": "is not a valid currency.",
   "controllers.send.validate.general": "Payment not possible. Does the recipient accept the specified currency?",
   "controllers.send.validate.path": "There is no valid path on the network for this payment.",
-  "controllers.trx.createContact.popup.title": "Create Contact",
-  "controllers.trx.createContact.popup.subtitle": "Please enter the contact details.",
   "controllers.trx.createContact.popup.exists": "A contact with the specified name already exists.",
+  "controllers.trx.createContact.popup.subtitle": "Please enter the contact details.",
+  "controllers.trx.createContact.popup.title": "Create Contact",
   "controllers.wallet.importKeys.popup.invalid": "Not a valid backup string or key pair!",
   "controllers.wallet.importKeys.popup.subtitle": "or plain key pair",
   "controllers.wallet.importKeys.popup.title": "Enter your wallet backup string",
