@@ -47,7 +47,9 @@ angular.module('starter.services', ['starter.services.basic'])
 	    Remote.getServer().submitTransaction(transaction)
         .then(function (transactionResult) {
             console.log(transactionResult);
-            account.sequence = (parseInt(account.sequence) + 1).toString();
+            var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
+            sdkAcc.incrementSequenceNumber();
+            account.sequence = sdkAcc.sequenceNumber();
         })
         .catch(console.log);
 	};
