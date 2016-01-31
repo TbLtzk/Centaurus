@@ -1,5 +1,7 @@
 {
   "_meta.version": "0.0.2",
+  "controllers.contacts.edit.popup.subtitle": "Please edit the contact details.",
+  "controllers.contacts.edit.popup.title":  "Edit contact",
   "controllers.contacts.remove.caption": "Remove contact",
   "controllers.contacts.remove.text": "Please confirm to remove this contact.",
   "controllers.receive.share.p1": "You can send me Lumens to the address",

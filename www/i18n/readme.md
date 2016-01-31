@@ -35,6 +35,8 @@ views.settings.language.label: **new**
 
 ### pending
 
+controllers.contacts.edit.popup.subtitle: **new**
+controllers.contacts.edit.popup.title: **new**
 controllers.contacts.remove.caption: **new**
 controllers.contacts.remove.text: **new**
 controllers.trx.createContact.popup.exists: **new**

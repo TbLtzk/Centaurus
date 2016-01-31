@@ -8,7 +8,7 @@
             <button class="button icon ion-person-add" on-tap="createContact()"></button>
         </div>
        <ion-list ng-repeat="item in contactList | filter: {'name': q} | orderBy:'name' as results track by item.name">
-            <ion-item class="narrow" on-swipe-right="sendPayment(item.name)" on-swipe-left="remove(item.name)">
+            <ion-item class="narrow" on-swipe-right="sendPayment(item.name)" on-swipe-left="remove(item.name)" on-hold="edit(item)">
                 <i class="icon ion-person"></i>
                 {{ item.name }} <br />
                 <font size="-2">{{ item.address }}</font>

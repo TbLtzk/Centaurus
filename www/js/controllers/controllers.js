@@ -238,6 +238,42 @@ angular.module('starter.controllers', [])
                 });
             });
     }
+    $scope.edit = function (contact) {
+        $scope.contact = {
+            name: contact.name,
+            address: contact.address,
+            memo: contact.memo,
+            memoType: contact.memoType
+        };
+        UIHelper.translate(
+            [ 'controllers.contacts.edit.popup.title'
+            , 'controllers.contacts.edit.popup.subtitle'
+            , 'general.btn.cancel'
+            , 'general.btn.ok'
+            ]).then(function (t) {
+                $scope.myPopup = $ionicPopup.show({
+                    templateUrl: 'templates/view-contact.html',
+                    title: t[0],
+                    subTitle: t[1],
+                    scope: $scope,
+                    buttons: [
+                      { text: t[2] },
+                      {
+                          text: '<b>' + t[3] + '</b>',
+                          type: 'button-positive',
+                          onTap: function (e) {
+                              contact.name = $scope.contact.name;
+                              contact.address = $scope.contact.address;
+                              contact.memo = $scope.contact.memo;
+                              contact.memoType = $scope.contact.memoType;
+                              Contacts.save();
+                              return true;
+                          }
+                      },
+                    ]
+                });
+            });
+    }
 })
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
