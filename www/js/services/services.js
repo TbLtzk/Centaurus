@@ -15,7 +15,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	        address: 'loading',
 	        balance: 0,
 	        reserve: 0,
-	        sequence: 0,
+	        sequence: "0",
 	        transactions: [],
 	        otherCurrencies: []
 	    };

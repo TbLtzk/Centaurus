@@ -92,11 +92,54 @@
             }           
             
             var keys = Settings.getKeys();
+            var toAsset = function(type, code, issuer){
+                if (type == "native")
+                    return StellarSdk.Asset.native();
+                else
+                    return new StellarSdk.Asset(code, issuer)
+            };
+            var convertPath = function (rawPath) {
+                var path = [];
+                for (var i = 0; i < rawPath.length; i++) {
+                    var rawAsset = rawPath[i];
+                    path[i] = toAsset(rawAsset.asset_type, rawAsset.asset_code, rawAsset.asset_issuer);
+                }
+                return path;
+            }
+
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
-                .then(function (response) {
-                    context.alternatives = response.records;
-                    console.log(JSON.stringify(response));
+                .then(function (response) {                    
+                    context.alternatives = [];
+                    for (var i = 0; i < response.records.length; i++) {
+                        var record =  response.records[i];
+
+                       var alternative = {
+                            destination_amount: record.destination_amount,
+                            sendAsset: toAsset(record.source_asset_type, record.source_asset_code, record.source_asset_issuer),
+                            destAsset: toAsset(record.destination_asset_type, record.destination_asset_code, record.destination_asset_issuer),
+                            path: convertPath(record.path)
+                        }
+
+                        var assetHops;
+                        if (alternative.path.length > 0)
+                            assetHops = alternative.path.length + 1;
+                        else if (!alternative.sendAsset.equals(alternative.destAsset))
+                            assetHops = 1;
+                        else
+                            assetHops = 0;
+
+                        var isReasonablePath = true;
+                        if (record.sendAsset == record.destAsset && assetHops > 0)
+                            isReasonablePath = false; // skip options with unnecessary hops
+
+                        if (isReasonablePath) {
+                            const slipageBufferPerHop = 0.002;
+                            alternative.bufferedAmount = parseFloat(record.source_amount) * (1 + assetHops * slipageBufferPerHop);
+
+                            context.alternatives.push(alternative);
+                        }
+                    }
                 })
             .catch(function (err) {
                 console.log(err);
@@ -215,49 +258,15 @@
                 });
             }
             else {
-                var determineSendAsset = function (choice) {
-                    if (choice.source_asset_type == "native") {
-                        return StellarSdk.Asset.native();
-                    }
-                    else {
-                        return new StellarSdk.Asset(choice.source_asset_code,
-                                                    choice.source_asset_issuer);
-                    }
-                }
-
-                var determineDestAsset = function (choice) {
-                    if (choice.destination_asset_type == "native") {
-                        return StellarSdk.Asset.native();
-                    }
-                    else {
-                        return new StellarSdk.Asset(choice.destination_asset_code,
-                                                    choice.destination_asset_issuer);
-                    }
-                }
-
-                var determinePath = function (choice) {
-                    var path = [];
-                    for (var i = 0; i < choice.path.length; i++) {
-                        if (choice.path[i].asset_type == "native") {
-                            path[i] = StellarSdk.Asset.native();
-                        }
-                        else {
-                            path[i] = new StellarSdk.Asset(choice.path[i].asset_code,
-                                                           choice.path[i].asset_issuer);
-                        }
-                    }
-                    return path;
-                }
-
                 var choice = context.choice;
 
                 operation = StellarSdk.Operation.pathPayment({
-                    sendAsset   : determineSendAsset(choice),
-                    sendMax     : choice.source_amount,
+                    sendAsset   : choice.sendAsset,
+                    sendMax     : choice.bufferedAmount.toFixed(7),
                     destination : $scope.destinationInfo.accountId,
-                    destAsset   : determineDestAsset(choice),
+                    destAsset   : choice.destAsset,
                     destAmount  : choice.destination_amount,
-                    path        : determinePath(choice)
+                    path        : choice.path,
                 });
             }
             return operation;
@@ -338,10 +347,9 @@
                     };
                     for (i = 0; i < context.alternatives.length; i++) {
                         var alternative = context.alternatives[i];
-                        var amount = alternative.source_amount;
-                        var currency = alternative.source_asset_code;
-                        if (!currency)
-                            currency = 'XLM';
+                        var currency = alternative.sendAsset.getCode();
+                        var precision = alternative.bufferedAmount < 1 ? 7 : 2;
+                        var amount = alternative.bufferedAmount.toFixed(precision);
                         var button = { text: amount + ' ' + currency };
                         sheet.buttons.push(button);
                     }
@@ -373,13 +381,13 @@
                 context.choice = choice;
                 var hasEnoughBalance = function (choice) {
                     var enoughBalance = false;
-                    if (choice.source_asset_type == "native") {
-                        enoughBalance = account.balance >= choice.source_amount;
+                    if (choice.sendAsset.isNative()) {
+                        enoughBalance = account.balance >= choice.bufferedAmount;
                     }
                     else {
                         for (j = 0; j < account.otherCurrencies.length; j++) {
-                            if (account.otherCurrencies[j].currency == choice.source_asset_code) {
-                                enoughBalance = account.otherCurrencies[j].amount >= choice.source_amount;
+                            if (account.otherCurrencies[j].currency == choice.sendAsset.getCode()) {
+                                enoughBalance = account.otherCurrencies[j].amount >= choice.bufferedAmount;
                                 break;
                             }
                         }
