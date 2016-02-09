@@ -110,7 +110,7 @@
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
                 .then(function (response) {                    
-                    context.alternatives = [];
+                    alternatives = [];
                     for (var i = 0; i < response.records.length; i++) {
                         var record =  response.records[i];
 
@@ -137,8 +137,9 @@
                             const slipageBufferPerHop = 0.002;
                             alternative.bufferedAmount = parseFloat(record.source_amount) * (1 + assetHops * slipageBufferPerHop);
 
-                            context.alternatives.push(alternative);
+                            alternatives.push(alternative);
                         }
+                        context.alternatives = alternatives;
                     }
                 })
             .catch(function (err) {
@@ -435,7 +436,7 @@
     };
 
     $scope.donate = function () {
-        $scope.paymentData = {
+        $scope.paymentData = {           
             //destinationAddress: 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y',
             //destinationAddress: 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7',
             destinationAddress: 'Centaurus',
