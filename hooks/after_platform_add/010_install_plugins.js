@@ -11,7 +11,8 @@ var pluginlist = [
     "cordova-plugin-device",
     "cordova-plugin-globalization",
     "cordova-plugin-inappbrowser",
-    "cordova-plugin-file"
+    "cordova-plugin-file",
+    "cordova-plugin-whitelist"
 ];
 
 // no need to configure below
