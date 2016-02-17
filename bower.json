@@ -6,7 +6,7 @@
     "stellar-sdk": "0.4.0",
     "cryptojslib": "3.1.2",
     "tweetnacl": "0.11.2",
-    "ng-cordova": "0.0.3",
+    "ngCordova": "^0.1.24-alpha",
     "moment": "2.10.6"
   },
   "devDependencies": {
