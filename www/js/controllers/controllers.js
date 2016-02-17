@@ -290,4 +290,13 @@ angular.module('starter.controllers', [])
     }).then(function (popover) {
         $scope.languagePopover = popover;
     });
+})
+
+.controller('NavCtrl', function ($scope, $ionicSideMenuDelegate) {
+    $scope.showMenu = function () {
+        $ionicSideMenuDelegate.toggleLeft();
+    };
+    $scope.showRightMenu = function () {
+        $ionicSideMenuDelegate.toggleRight();
+    };
 });
