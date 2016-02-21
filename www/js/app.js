@@ -33,7 +33,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	// Each state's controller can be found in controllers.js
 	$stateProvider
 
-	// setup an abstract state for the tabs directive
+	// setup an abstract state for the sidemenu directive
 	.state('app', {
 	    url: "/app",
 		abstract : true,
