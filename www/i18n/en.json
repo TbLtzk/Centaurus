@@ -1,7 +1,7 @@
 {
   "_meta.version": "0.0.3",
   "controllers.contacts.edit.popup.subtitle": "Please edit the contact details.",
-  "controllers.contacts.edit.popup.title":  "Edit contact",
+  "controllers.contacts.edit.popup.title": "Edit contact",
   "controllers.contacts.remove.caption": "Remove contact",
   "controllers.contacts.remove.text": "Please confirm to remove this contact.",
   "controllers.receive.share.p1": "You can send me Lumens to the address",
@@ -50,6 +50,9 @@
   "navigation.send.title": "Send",
   "navigation.trx.title": "Trx",
   "navigation.wallet.title": "Wallet",
+  "navigation.transaction.title": "Transaction",
+  "navigation.language.title": "Language",
+  "navigation.main.title": "Main",
   "service.commands.importKeys.overwrite.caption": "Overwrite Keys",
   "service.commands.importKeys.overwrite.text": "This will overwrite your existing keys. If you do not have a backup, the remaining funds on the old address are lost!",
   "services.commands.backup.incorrectPwd": "Incorrect password!",
