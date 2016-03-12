@@ -16,7 +16,9 @@ The app is built using AngularJS, Cordova and the Ionic Framework. We first focu
 * Display recent transactions
 * Encrypted backups
 
-## Get it from [Google Play](https://play.google.com/store/apps/details?id=de.xcoins.centaurus)
+## Try it
+* Get it from [Google Play](https://play.google.com/store/apps/details?id=de.xcoins.centaurus)
+* [Browser-demo](http://tbltzk.github.io/Centaurus/testnet-demo) (testnet only)
 
 ## Contribute
 
