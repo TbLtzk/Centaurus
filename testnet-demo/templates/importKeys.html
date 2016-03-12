@@ -1,0 +1,18 @@
+<div class="list card">
+  <div class="item item-body">
+    <label class="item item-input">
+      <input ng-model="data.backupCommandString" type="text" placeholder="{{'controllers.wallet.importKeys.template.backupString' | translate}}"/>
+    </label>
+    <button on-tap="scanCommand()" class="button button-block" translate="controllers.wallet.importKeys.template.btn.scan">
+		 <i class="icon ion-qr-scanner"></i> 
+    </button> 
+  </div>
+  <div class="item item-body">
+    <label class="item item-input">
+      <input ng-model="data.address" type="text" placeholder="{{'controllers.wallet.importKeys.template.address' | translate}}"/>
+    </label>
+    <label class="item item-input">
+      <input ng-model="data.secret" type="text" placeholder="{{'controllers.wallet.importKeys.template.secret' | translate}}"/>
+    </label>
+  </div>
+</div>
