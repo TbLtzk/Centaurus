@@ -21,6 +21,7 @@
     "cordova-plugin-globalization",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-file",
+    "cordova-plugin-whitelist",
     "cordova-plugin-x-socialsharing",
     "phonegap-plugin-barcodescanner",
     "ionic-plugin-keyboard"

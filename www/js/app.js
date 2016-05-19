@@ -122,10 +122,11 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	    suffix: '.json'
 	});
 	$translateProvider
-    .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl'], {
+    .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl', 'zh'], {
         'de_*': 'de',
         'fr_*': 'fr',
         'nl_*': 'nl',
+        'zh_*': 'zh',
         '*': 'en'
     });
 
