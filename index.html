@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Centaurus by TbLtzk</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Centaurus</h1>
+        <p>First Stellar Wallet for Android</p>
+        <p class="view"><a href="https://github.com/TbLtzk/Centaurus">View the Project on GitHub <small>TbLtzk/Centaurus</small></a></p>
+        <ul>
+          <li><a href="https://github.com/TbLtzk/Centaurus/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/TbLtzk/Centaurus/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/TbLtzk/Centaurus">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="centaurus" class="anchor" href="#centaurus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Centaurus</h1>
+
+<h2>
+<a id="the-first-stellar-wallet-for-android" class="anchor" href="#the-first-stellar-wallet-for-android" aria-hidden="true"><span class="octicon octicon-link"></span></a>The First Stellar Wallet for Android!</h2>
+
+<p>Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
+The next step to get there is a functional app for sending and receiving payments.</p>
+
+<p>The app is built using AngularJS, Cordova and the Ionic Framework. We first focus on android, but as Ionic is a platform agnostic tool, feel free to try it on the platform you like.</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Display account balances</li>
+<li>Send any asset and cross currency</li>
+<li>QR-code for receiving</li>
+<li>Addressbook</li>
+<li>Display recent transactions</li>
+<li>Encrypted backups</li>
+</ul>
+
+<h2>
+<a id="try-it" class="anchor" href="#tryIt" aria-hidden="true"><span class="octicon octicon-link"></span></a>Try it</h2>
+
+<ul>
+<li>
+  Get it from <a href="https://play.google.com/store/apps/details?id=de.xcoins.centaurus" target="_blank">Google Play</a>
+</li>
+<li>
+  <a href="http://tbltzk.github.io/Centaurus/testnet-demo" target="_blank">Browser-demo</a> (testnet-only)
+</li>
+</ul>
+
+<h2>
+<a id="contribute" class="anchor" href="#contribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contribute</h2>
+
+<p>I am a complete newbee to HTML/JS, Ionic, so </p>
+
+<ul>
+<li>Use the app and report any bugs</li>
+<li>Just contribute new code</li>
+<li>Peer review and improve existing code</li>
+<li>Donate to our Stellar-Address <code>GAN65D2FEI63T4MBMOWWOP3K7VS6SVI5T6NNKIHNCI6PN32IGF6OVKSS</code>
+</li>
+</ul>
+
+<h2>
+<a id="levels-of-contribution" class="anchor" href="#levels-of-contribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Levels of Contribution</h2>
+
+<p>There is a simple way for contribution as long as you don't develop on phone specific issues. </p>
+
+<p>While the simple mode is a good way to get started, you will soon want to see this on your own device. Or check the layout on several emulated devices or whatever.</p>
+
+<h3>
+<a id="simple" class="anchor" href="#simple" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple</h3>
+
+<ul>
+<li>
+<a href="https://github.com/klopper/Centaurus">Fork project</a> as usual.</li>
+<li>Open file './www/index.html' with your browser. What you see is close to what you have in the app.</li>
+<li>Modify the html views in './www/templates/' or the JS files in './www/js/'. Watch your changes immediatly by refreshing the page in the browser. </li>
+<li>You might also want to add some JS libs to './www/lib/'.</li>
+<li>See <a href="https://github.com/klopper/Centaurus/blob/master/www/README.md">www/Readme.md</a>
+</li>
+</ul>
+
+<h3>
+<a id="advanced-android" class="anchor" href="#advanced-android" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced (Android)</h3>
+
+<ul>
+<li>We recommend VisualStudio Community Edition (free) and <a href="taco.visualstudio.com/">Tools for Apache Cordova</a> (a.k.a. Taco)
+
+<ul>
+<li>Otherwise <a href="http://ionicframework.com/getting-started/">Install Ionic</a>. The <a href="http://learn.ionicframework.com/videos/windows-android/">video tutorial for Windows users</a> is quite comprehensive</li>
+</ul>
+</li>
+<li>
+<a href="https://github.com/klopper/Centaurus">Fork project</a> as usual.</li>
+<li>make a copy of configTemplate.xml and name it config.xml</li>
+<li>Make sure your device is visible to your computer. You can check this by running <code>adb devices</code>. More information coming soon.</li>
+<li>Navigate to your Centaurus root folder in the command line, use ionic to add android platform</li>
+<li>Build, deploy and run the app. Be Happy!</li>
+</ul>
+
+<div class="highlight highlight-source-shell"><pre>ionic platform android
+ionic run android</pre></div>
+
+<h3>
+<a id="advanced-other-platforms" class="anchor" href="#advanced-other-platforms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced (other platforms)</h3>
+
+<p>No experience yet, so let us know.</p>
+
+<h2>
+<a id="links" class="anchor" href="#links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links</h2>
+
+<ul>
+<li><a href="i18n/de/FinancialInclusion.html">Motivation (German)</a></li>
+<li><a href="http://ionicframework.com/">Ionic</a></li>
+<li><a href="https://www.stellar.org/blog/introducing-stellar/">Stellar</a></li>
+<li>...</li>
+</ul>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/TbLtzk">TbLtzk</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
