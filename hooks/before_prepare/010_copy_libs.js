@@ -14,7 +14,6 @@ var libs = [
     'ionic/release/css/ionic.min.css'
   , 'ionic/release/fonts'
   , 'ionic/release/js/ionic.bundle.min.js'
-  , 'ng-cordova/dist/ng-cordova.min.js'
   , 'angular-translate/angular-translate.min.js'
   , 'angular-translate-loader-static-files/angular-translate-loader-static-files.min.js'
   , 'stellar-sdk/stellar-sdk.min.js'

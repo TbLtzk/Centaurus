@@ -47,11 +47,15 @@ angular.module('starter.services', ['starter.services.basic'])
 	    Remote.getServer().submitTransaction(transaction)
         .then(function (transactionResult) {
             console.log(transactionResult);
-            var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
-            sdkAcc.incrementSequenceNumber();
-            account.sequence = sdkAcc.sequenceNumber();
         })
-        .catch(console.log);
+        .catch(function (err) {
+            console.log(err);
+        })
+	    .finally(function(){
+	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
+	        sdkAcc.incrementSequenceNumber();
+	        account.sequence = sdkAcc.sequenceNumber();
+	    });
 	};
 
 	var addToBalance = function (currency, amount) {
