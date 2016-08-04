@@ -68,3 +68,6 @@ No experience yet, so let us know.
 * [Ionic](http://ionicframework.com/)
 * [Stellar](https://www.stellar.org/blog/introducing-stellar/)
 * ...
+
+## License
+Centaurus is licensed under Mozilla Public License, v. 2.0. See the [LICENSE](LICENSE) file for details.
