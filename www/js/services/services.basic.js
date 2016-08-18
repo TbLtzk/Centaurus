@@ -160,25 +160,24 @@ angular.module('starter.services.basic', [])
 .factory('Settings', function (Remote) {
  	var keysString = window.localStorage['keysXLM'];
     //keysString = null;
- 	//window.localStorage.removeItem('keysArchive');
+ 	//window.localStorage.removeItem('keys');
 
-	// override for use in test network (funded)
-	var testKeys = {
-		address : 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4', // customer
-		secret : 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
-	};
-	var testKeysAlternative = {
-		address : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y', // issuer
-		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
-	};
-	//var rand = StellarSdk.Keypair.random();
-	//var testKeyUnfunded = {
-	//    address: rand.address(),
-	//    secret: rand.seed(),
-	//};
+ 	var keypair;
+	//keypair = StellarSdk.Keypair.fromSeed('SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'); // customer - GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4
+	//keypair = StellarSdk.Keypair.fromSeed('SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'); // issuer - GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y
+    //keypair = StellarSdk.Keypair.random();
 
-    //keysString = JSON.stringify(testKeyUnfunded);
-    //    window.localStorage['keys'] = keysString;
+    if (keypair) {
+        // override keys for testing
+        testKeys = {
+            address: keypair.accountId(),
+            secret: keypair.seed(),
+        };
+
+        keysString = JSON.stringify(testKeys);
+        // window.localStorage['keys'] = keysString;
+    }
+
 	var settings = this;
 	var keys;
 
@@ -200,11 +199,6 @@ angular.module('starter.services.basic', [])
 		if (!keysString) {
             var keyPair = StellarSdk.Keypair.random();
             setKeysFunc(keyPair.accountId(), keyPair.seed());
-
-//            // mock with specific address (remain in local storage)
-//			 var mock = testKeys;
-//			 setKeysFunc(mock.address, mock.secret);
-
 		} else {
 			keys = JSON.parse(keysString);
 			keys.mode = 'loaded';
