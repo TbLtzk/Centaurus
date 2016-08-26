@@ -50,4 +50,9 @@ tabs.wallet.secret: **new**
 views.contact.memo.placeholder: **new**
 views.contacts.title: **new**
 
+### 0.0.4
+navigation.anchors.title: **new**
+navigation.trx.title: **modified**
+views.anchors.title: **new**
+
 ### pending

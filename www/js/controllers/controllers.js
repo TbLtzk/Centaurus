@@ -194,6 +194,27 @@ angular.module('starter.controllers', [])
     };
 })
 
+.controller('AnchorsCtrl', function ($scope, Account, Contacts) {
+    var augmentAnchors = function (anchors) {
+        for (var i = 0; i < anchors.length; i++) {
+            var anchor = anchors[i];
+            var c = Contacts.findReverse(anchor.accountId);
+            anchor.name = c ? c.name : anchor.accountId;
+        }
+    }
+
+    var bindAnchors = function (event) {
+        var account = Account.get();
+        augmentAnchors(account.anchors);
+        $scope.account = account;
+        $scope.$apply();
+    }
+
+    $scope.$on('accountInfoLoaded', bindAnchors);
+
+    bindAnchors();
+})
+
 .controller('ContactsCtrl', function ($scope, $location, $ionicPopup, Contacts, UIHelper) {
     $scope.contactList = Contacts.getAll();
     $scope.sendPayment = function (contactName) {

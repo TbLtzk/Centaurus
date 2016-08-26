@@ -1,5 +1,5 @@
 ﻿{
-  "_meta.version": "0.0.3",
+  "_meta.version": "0.0.4",
   "controllers.contacts.edit.popup.subtitle": "Bitte die Details bearbeiten.",
   "controllers.contacts.edit.popup.title": "Kontakt bearbeiten",
   "controllers.contacts.remove.caption": "Kontakt löschen",
@@ -45,10 +45,11 @@
   "general.common.name": "Name",
   "general.common.filter": "Filter",
   "navigation.about.title": "Über",
+  "navigation.anchors.title": "Anker",
   "navigation.contacts.title": "Kontakte",
   "navigation.receive.title": "Empfangen",
   "navigation.send.title": "Senden",
-  "navigation.trx.title": "Trx",
+  "navigation.trx.title": "Verlauf",
   "navigation.wallet.title": "Konto",
   "service.commands.importKeys.overwrite.caption": "Schlüssel überschreiben",
   "service.commands.importKeys.overwrite.text": "Dies überschreibt die vorhandenen Schlüssel. Wenn du keine Sicherung hast, geht das übrige Guthaben auf der alten Adresse verloren!",
@@ -100,6 +101,7 @@
   "tabs.wallet.import": "Import",
   "tabs.wallet.secret": "Privaten Schlüssel anzeigen",
   "tabs.wallet.title": "Konto",
+  "views.anchors.title": "Anker",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Kontakte",
   "views.settings.language.label": "Sprache"

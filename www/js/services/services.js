@@ -17,6 +17,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	        reserve: 0,
 	        sequence: "0",
 	        transactions: [],
+            anchors: [],
 	        otherCurrencies: []
 	    };
 	};
@@ -73,7 +74,19 @@ angular.module('starter.services', ['starter.services.basic'])
         }
         // no entry for currency exists -> add new entry
         account.otherCurrencies.push({currency:currency, amount:amount});             
-    };
+	};
+
+	var addAnchorAsset = function (issuer, currency) {
+	    for (var index = 0; index < account.anchors.length; ++index) {
+	        var anchor = account.anchors[index];
+	        if (anchor.accountId == issuer) {
+	            anchor.assets.push(currency);
+	            return;
+	        }
+	    }
+	    // no entry for currency exists -> add new entry
+	    account.anchors.push({ accountId: issuer, assets: [currency] });
+	}
 	
 	var attachToKeys = function () {
 	    var keys = Settings.getKeys();
@@ -90,8 +103,10 @@ angular.module('starter.services', ['starter.services.basic'])
             for (i = 0; i < acc.balances.length; i++){
                 var bal = acc.balances[i];
                 var amount = parseFloat(bal.balance);
-                if(bal.asset_code)
+                if (bal.asset_code) {
                     reserveChunks++;
+                    addAnchorAsset(bal.asset_issuer, bal.asset_code);
+                }
                 addToBalance(bal.asset_code, amount);
             }
             account.sequence = acc.sequence;

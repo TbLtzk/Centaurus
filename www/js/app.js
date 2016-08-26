@@ -82,6 +82,16 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	    }
 	})
 
+	.state('tab.anchors', {
+	    url: '/anchors/',
+	    views: {
+	        'view-anchors': {
+	            templateUrl: 'templates/view-anchors.html',
+	            controller: 'AnchorsCtrl'
+	        }
+	    }
+	})
+
 	.state('tab.contacts', {
 	    url: '/contacts/',
 	    views: {
