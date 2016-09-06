@@ -1,0 +1,73 @@
+<ion-view title="{{'tabs.about.title' | translate}}">
+<ion-content class="has-header padding">
+  <div class="item item-divider">
+    {{'tabs.about.main.divider' | translate}} <font size="-1">(2.2)</font>
+  </div>
+  <div class="item item-body">
+    <font size="4">{{'tabs.about.main.body.p1' | translate}} {{'tabs.about.main.body.p2' | translate}}</font>
+  </div>
+  <div class="item item-divider">
+    {{'tabs.about.features.divider' | translate}}
+  </div>
+  <div class="item item-body">
+	<list>
+	  <li translate="tabs.about.features.body.balances"></li>	  
+	  <li translate="tabs.about.features.body.sendPaste"></li>	  
+	  <li translate="tabs.about.features.body.sendQr"></li>	  
+	  <!--<li translate="tabs.about.features.body.crossCurrency"></li>-->	  
+	  <li translate="tabs.about.features.body.receiveQr"></li>	  
+	  <li translate="tabs.about.features.body.trxRecent"></li>
+	  <li translate="tabs.about.features.body.backup"></li>
+	</list>
+    <div class="padding-top">
+        <a href="javascript:void(0)" on-tap="languagePopover.show($event)">
+            {{'views.settings.language.label' | translate}}
+        </a>
+    </div>
+  </div>
+  <div class="item item-divider">
+    {{'tabs.about.gettingStarted.divider' | translate}}
+  </div>
+    <div class="item item-body">
+        <p>
+            <list>
+                <li translate="tabs.about.gettingStarted.body.whichAddress"></li>
+                <li translate="tabs.about.gettingStarted.body.shareAddress"></li>
+                <!--<li>If you have a facebook account, you're lucky! On launch.stellar.org, authenticate with facebook and get Stellars for free, worth about 10$.</li>-->
+                <li translate="tabs.about.gettingStarted.body.doBackup"></li>
+            </list>
+        </p>
+        {{'tabs.about.gettingStarted.body.alternatives' | translate}}
+        <p>
+            <list>
+                <li><a href="https://www.stellar.org/learn/" target="_blank" onClick="javascript:return openExternal(this)">https://www.stellar.org/learn/</a></li>
+                <li><a href="http://coinmarketcap.com/currencies/stellar/" target="_blank" onClick="javascript:return openExternal(this)">http://coinmarketcap.com/currencies/stellar/</a></li>
+                <list>
+        </p>
+    </div>
+  <div class="item item-divider">
+    {{'tabs.about.issues.divider' | translate}}
+  </div>
+  <div class="item item-body">
+    {{'tabs.about.issues.body.p1' | translate}}
+    {{'tabs.about.issues.body.p2' | translate}} 
+	<p>
+	<list>
+	  <li translate="tabs.about.issues.body.connectivity"></li>
+	  <li translate="tabs.about.issues.body.stellarNames"></li>
+	  <li translate="tabs.about.issues.body.accountReserve"></li>
+	</list>
+	</p>
+  </div>
+  <div class="item item-divider">
+    {{'tabs.about.contact.divider' | translate}}
+  </div>
+  <div class="item item-body">
+	<list>
+	  <li>
+	  <a href="http://tbltzk.github.io/Centaurus/" target="_blank" onClick="javascript:return openExternal(this)">http://tbltzk.github.io/Centaurus/</a></li>
+	  <li>{{'tabs.about.contact.body.feedback' | translate}}: <a href="mailto:centaurus@xcoins.de">centaurus@xcoins.de</a></li>
+	</list>
+  </div>
+</ion-content>
+</ion-view>

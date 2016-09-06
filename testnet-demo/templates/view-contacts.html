@@ -1,0 +1,18 @@
+<ion-view title="{{'views.contacts.title' | translate}} (T)">
+    <ion-content>
+        <div class="bar bar-header item-input-inset">
+            <label class="item-input-wrapper">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="search" ng-model="q" placeholder="{{'general.common.filter' | translate}}">
+            </label>
+            <button class="button icon ion-person-add" on-tap="createContact()"></button>
+        </div>
+       <ion-list ng-repeat="item in contactList | filter: {'name': q} | orderBy:'name' as results track by item.name">
+            <ion-item class="narrow" on-swipe-right="sendPayment(item.name)" on-swipe-left="remove(item.name)" on-tap="edit(item)">
+                <i class="icon ion-person"></i>
+                {{ item.name }} <br />
+                <font size="-2">{{ item.address }}</font>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

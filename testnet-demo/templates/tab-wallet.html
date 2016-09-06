@@ -1,0 +1,40 @@
+<ion-view title="{{'tabs.wallet.title' | translate}} (T)">
+  <ion-content class="has-header padding">
+    <ion-item class="">
+        <font size="+2">{{account.balance.toFixed(1)}}</font> (XLM)
+    </ion-item>
+    <ion-list ng-repeat="item in account.otherCurrencies">
+	    <ion-item class="" ng-if="Math.abs(item.amount) > 0.00001">
+            <font size="+2">{{item.amount.toFixed(2)}}</font> ({{item.currency}})
+        </ion-item>
+    </ion-list>
+	<div class="button-bar">
+		<button class="button button-block" on-tap="importKeys()">
+			 <i class="icon ion-archive"></i> 
+			  {{'tabs.wallet.import' | translate}}
+		</button> 
+		<button class="button button-block" on-tap="shareKeys()">
+			<i class="icon ion-share"></i>
+			  {{'tabs.wallet.export' | translate}}
+		</button>
+    </div>
+      <div class="text-center" style="padding-bottom:10px">
+      <button class="button button-clear" on-tap="revealSecret()">
+          <i class="icon ion-android-unlock"></i>
+          {{'tabs.wallet.secret' | translate}}
+      </button>
+      </div>
+    <div class="item item-divider">
+    {{'tabs.wallet.announcements' | translate}}
+    </div>
+    <div class="item item-body" ng-if="showUpgrade">
+        Stellar Foundation has decided to launch a new consensus network called Stellar-Core.
+        It has a new native currency called Lumen (XLM). You have to upgrade to the new network in order to continue using centraurus and stellar.
+        Your stellars from the old account will be migrated to XLM.
+        <button class="button button-block" on-tap="upgrade()">
+            <i class="icon ion-archive"></i>
+            Upgrade to Stellar-Core
+        </button>
+    </div>
+  </ion-content>
+</ion-view>

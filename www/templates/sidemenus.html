@@ -1,0 +1,46 @@
+﻿<ion-side-menus>
+    <ion-side-menu-content ng-controller="NavCtrl">
+        <ion-nav-bar class="bar-positive">
+            <ion-nav-back-button class="button-icon ion-arrow-left-c">
+            </ion-nav-back-button>
+
+            <ion-nav-buttons side="left">
+                <button class="button button-icon button-clear ion-navicon" ng-click="showMenu()"></button>
+            </ion-nav-buttons>
+
+        </ion-nav-bar>
+        <ion-nav-view name="sidemenuContent" animation="slide-left-right"></ion-nav-view>
+        <ion-footer-bar class="bar-positive">
+            <div class="button-bar">
+                <a class="button button-block button-icon button-clear ion-reply" tab-state ui-sref="app.receive">{{'navigation.receive.title' | translate}}</a>
+                <a class="button button-block button-icon button-clear ion-home" tab-state ui-sref="app.wallet">{{'navigation.wallet.title' | translate}}</a>
+                <a class="button button-block button-icon button-clear ion-forward" tab-state ui-sref="app.send">{{'navigation.send.title' | translate}}</a>
+            </div>
+        </ion-footer-bar>
+    </ion-side-menu-content>
+
+    <ion-side-menu side="left">
+        <ion-header-bar class="bar bar-header bar-balanced">
+            <h1 class="title">{{'navigation.main.title' | translate}}</h1>
+        </ion-header-bar>
+        <ion-content has-header="true">
+            <ul class="list">
+                <li>
+                    <a ui-sref="app.wallet" class="item" menu-close>{{'navigation.wallet.title' | translate}}</a>
+                </li>
+                <li>
+                    <a ui-sref="app.contacts" class="item" menu-close>{{'navigation.contacts.title' | translate}}</a>
+                </li>
+                <li>
+                    <a ui-sref="app.transactions" class="item" menu-close>{{'navigation.transaction.title' | translate}}</a>
+                </li>
+                <li>
+                    <a ui-sref="app.language" class="item" menu-close>{{'navigation.language.title' | translate}}</a>
+                </li>
+                <li>
+                    <a ui-sref="app.about" class="item" menu-close>{{'navigation.about.title' | translate}}</a>
+                </li>
+            </ul>
+        </ion-content>
+    </ion-side-menu>
+</ion-side-menus>

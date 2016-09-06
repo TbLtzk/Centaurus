@@ -1,0 +1,19 @@
+.narrow {
+    padding: 8px !important;
+}
+.no-padding {
+    padding: 0px !important;
+}
+.my-select {
+    padding: 8px !important;
+    border: 0px !important;
+    font-size: +2 !important;
+}
+.align-right {
+  text-align: right !important;
+}
+.my-ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -33,87 +33,77 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	// Each state's controller can be found in controllers.js
 	$stateProvider
 
-	// setup an abstract state for the sidemenu directive
-	.state('app', {
-	    url: "/app",
+	// setup an abstract state for the tabs directive
+	.state('tab', {
+		url : "/tab",
 		abstract : true,
-		templateUrl: "templates/sidemenus.html"
+		templateUrl : "templates/tabs.html"
 	})
 
 	// Each tab has its own nav history stack:
 
-	.state('app.receive', {
+	.state('tab.receive', {
 		url : '/receive/',
 		views : {
-		    'sidemenuContent': {
+			'tab-receive' : {
 				templateUrl : 'templates/tab-receive.html',
 				controller : 'ReceiveCtrl'
 			}
 		}
 	})
 
-	.state('app.wallet', {
+	.state('tab.wallet', {
 		url : '/wallet/',
 		views : {
-		    'sidemenuContent': {
+			'tab-wallet' : {
 				templateUrl : 'templates/tab-wallet.html',
 				controller : 'WalletCtrl'
 			}
 		}
 	})
 
-	.state('app.send', {
+	.state('tab.send', {
 	    url: '/send/{recipient}',
 	    views: {
-	        'sidemenuContent': {
+	        'tab-send': {
 	            templateUrl: 'templates/tab-send.html',
 	            controller: 'SendCtrl'
 	        }
 	    }
 	})
 
-	.state('app.transactions', {
+	.state('tab.transactions', {
 	    url: '/transactions/',
 	    views: {
-	        'sidemenuContent': {
+	        'tab-transactions': {
 	            templateUrl: 'templates/tab-transactions.html',
 	            controller: 'TransactionsCtrl'
 	        }
 	    }
 	})
 
-	.state('app.contacts', {
+	.state('tab.contacts', {
 	    url: '/contacts/',
 	    views: {
-	        'sidemenuContent': {
+	        'view-contacts': {
 	            templateUrl: 'templates/view-contacts.html',
 	            controller: 'ContactsCtrl'
 	        }
 	    }
 	})
 
-	.state('app.about', {
+	.state('tab.about', {
 		url : '/about/',
 		views : {
-		    'sidemenuContent': {
+			'tab-about' : {
 				templateUrl : 'templates/tab-about.html',
 				controller : 'AboutCtrl'
 			}
 		}
-	})
-
-    .state('app.language', {
-        url: '/language/',
-        views: {
-            'sidemenuContent': {
-                templateUrl: 'templates/selectLanguage.html',
-                controller: 'AboutCtrl'
-            }
-        }
-    });
+	});
 
 	// if none of the above states are matched, use this as the fallback
-	$urlRouterProvider.otherwise('/app/wallet/');
+	$urlRouterProvider.otherwise('/tab/wallet/');
 
     ///////////////////////////////////////////////////
     /// translate
