@@ -96,14 +96,14 @@ angular.module('starter.services.basic', [])
 .factory('Remote', function (UIHelper) {
     //var network = 'liveNetwork';
     var network = 'testNetwork';
-    var hostname = 'horizon-testnet.stellar.org'
+    var url = 'https://horizon-testnet.stellar.org';
 
     if (network === 'liveNetwork') {
         StellarSdk.Network.usePublicNetwork();
-        hostname = 'horizon.stellar.org'
+        url = 'https://horizon.stellar.org'
     }
 
-    var server = new StellarSdk.Server({ hostname: hostname, secure: true, port: 443 });
+    var server = new StellarSdk.Server(url);
   		
 	var messageHandlers = [];
 	messageHandlers.add = function(filter, callback){

@@ -129,7 +129,7 @@ angular.module('starter.services', ['starter.services.basic'])
 
 	    // initial balances
 	    Remote.getServer().accounts()
-        .address(keys.address)
+        .accountId(keys.address)
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
