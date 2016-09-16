@@ -194,7 +194,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('AnchorsCtrl', function ($scope, Account, Contacts) {
+.controller('AnchorsCtrl', function ($scope, Account, Contacts, UIHelper) {
     var augmentAnchors = function (anchors) {
         for (var i = 0; i < anchors.length; i++) {
             var anchor = anchors[i];
@@ -213,6 +213,17 @@ angular.module('starter.controllers', [])
     $scope.$on('accountInfoLoaded', bindAnchors);
 
     bindAnchors();
+
+    $scope.addAnchor = function (anchorDomain) {
+        if (anchorDomain === 'www') {
+            var issuer = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
+            var assets = ['EUR', 'BTC'];
+            Account.changeTrust(issuer, assets);
+        }
+        else {
+            UIHelper.showAlert('"' + anchorDomain + '" is not a valid domain of a stellar anchor.');
+        }
+    }
 })
 
 .controller('ContactsCtrl', function ($scope, $location, $ionicPopup, Contacts, UIHelper) {

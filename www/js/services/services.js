@@ -25,15 +25,41 @@ angular.module('starter.services', ['starter.services.basic'])
 	resetAccount();
 
 	var buildTransaction = function (operation, memo, bSign) {
+	    return buildBatchTransaction([operation], memo, bSign);
+	};
+
+	var buildBatchTransaction = function (operations, memo, bSign) {
 	    var acc = new StellarSdk.Account(account.address, account.sequence);
 	    var builder = new StellarSdk.TransactionBuilder(acc);
-	    builder = builder.addOperation(operation);
+
+	    for (var index = 0; index < operations.length; index++) {
+	        var operation = operations[index];
+	        builder = builder.addOperation(operation);
+        }
+
 	    if (memo)
 	        builder = builder.addMemo(memo);
 	    var transaction = builder.build();
+
 	    if (bSign === true)
 	        transaction.sign(Settings.getKeyPair());
+
 	    return transaction;
+	};
+
+	var submitTransaction = function (trx) {
+	    Remote.getServer().submitTransaction(trx)
+        .then(function (transactionResult) {
+            console.log(transactionResult);
+        })
+        .catch(function (err) {
+            console.log(err);
+        })
+	    .finally(function () {
+	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
+	        sdkAcc.incrementSequenceNumber();
+	        account.sequence = sdkAcc.sequenceNumber();
+	    });
 	};
 
 	var setInflationDestination = function () {
@@ -45,18 +71,26 @@ angular.module('starter.services', ['starter.services.basic'])
             homeDomain: 'centaurus.xcoins.de'
 	    });
 	    var transaction = buildTransaction(operation, null, true);
-	    Remote.getServer().submitTransaction(transaction)
-        .then(function (transactionResult) {
-            console.log(transactionResult);
-        })
-        .catch(function (err) {
-            console.log(err);
-        })
-	    .finally(function(){
-	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
-	        sdkAcc.incrementSequenceNumber();
-	        account.sequence = sdkAcc.sequenceNumber();
-	    });
+	    submitTransaction(transaction);
+	};
+
+	var changeTrust = function (issuer, assets, newLimit) {
+	    if (!(assets.length > 0))
+	        return;
+
+	    var operations = [];
+	    for (var index = 0; index < assets.length; index++) {
+	        var assetCode = assets[index];
+	        var asset = new StellarSdk.Asset(assetCode, issuer);
+	        var operation = StellarSdk.Operation.changeTrust({
+                asset : asset,
+	            limit: newLimit
+	        });
+	        operations.push(operation);
+	    }
+
+	    var transaction = buildBatchTransaction(operations, null, true);
+	    submitTransaction(transaction);
 	};
 
 	var addToBalance = function (currency, amount) {
@@ -84,7 +118,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	            return;
 	        }
 	    }
-	    // no entry for currency exists -> add new entry
+	    // no entry for this issuer exists -> add new entry
 	    account.anchors.push({ accountId: issuer, assets: [currency] });
 	}
 	
@@ -210,6 +244,15 @@ angular.module('starter.services', ['starter.services.basic'])
 
         var effectHandler = function (effect, fromStream) {
             console.log(effect);
+
+            if (fromStream){
+                var reload = 
+                    effect.type === 'trustline_updated'
+                 || effect.type === 'trustline_created';
+                if(reload)
+                    Settings.get().onKeysAvailable();
+            }
+
             var isRelevant =
                    effect.type === 'account_created'
                 || effect.type === 'account_debited'
@@ -305,6 +348,8 @@ angular.module('starter.services', ['starter.services.basic'])
 		},
 
 		buildTransaction: buildTransaction,
+
+        changeTrust: changeTrust,
         
 		reload: function () {
 		    Settings.get().onKeysAvailable()
