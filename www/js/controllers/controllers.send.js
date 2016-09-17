@@ -130,7 +130,7 @@
                             assetHops = 0;
 
                         var isReasonablePath = true;
-                        if (record.sendAsset == record.destAsset && assetHops > 0)
+                        if (alternative.sendAsset.equals(alternative.destAsset) && assetHops > 0)
                             isReasonablePath = false; // skip options with unnecessary hops
 
                         if (isReasonablePath) {
@@ -186,7 +186,7 @@
         if(isValidAddress)
         {
             Remote.getServer().accounts()
-            .address(newAccountId)
+            .accountId(newAccountId)
             .call()
             .then(function (acc) {
                 $scope.destinationInfo.needFunding = false;

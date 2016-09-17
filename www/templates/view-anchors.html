@@ -1,0 +1,18 @@
+<ion-view title="{{'views.anchors.title' | translate}} (T)">
+    <ion-content>
+        <div class="bar bar-header item-input-inset">
+            <label class="item-input-wrapper">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="search" ng-model="anchorDomain" placeholder="{{'views.anchors.domainName.placeholder' | translate}}">
+            </label>
+            <button class="button icon ion-plus-round" style="margin-bottom:5px" on-tap="addAnchor(anchorDomain)"></button>
+        </div>
+       <ion-list ng-repeat="item in account.anchors | orderBy:'name' as results track by item.name">
+            <ion-item class="narrow">
+                <i class="icon ion-cash"></i>
+                {{ item.name }} <br />
+                <label class="narrow" ng-repeat="asset in item.assets">{{ asset }}</label>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

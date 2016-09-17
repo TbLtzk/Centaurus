@@ -8,7 +8,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	var account;
 	var keysChanged = false;
 	var connectionChanged = false;
-	var paymentsEventSource;
+	var paymentsCloseHandle;
 
 	var resetAccount = function () {
 	    account = {
@@ -17,6 +17,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	        reserve: 0,
 	        sequence: "0",
 	        transactions: [],
+            anchors: [],
 	        otherCurrencies: []
 	    };
 	};
@@ -24,15 +25,41 @@ angular.module('starter.services', ['starter.services.basic'])
 	resetAccount();
 
 	var buildTransaction = function (operation, memo, bSign) {
+	    return buildBatchTransaction([operation], memo, bSign);
+	};
+
+	var buildBatchTransaction = function (operations, memo, bSign) {
 	    var acc = new StellarSdk.Account(account.address, account.sequence);
 	    var builder = new StellarSdk.TransactionBuilder(acc);
-	    builder = builder.addOperation(operation);
+
+	    for (var index = 0; index < operations.length; index++) {
+	        var operation = operations[index];
+	        builder = builder.addOperation(operation);
+        }
+
 	    if (memo)
 	        builder = builder.addMemo(memo);
 	    var transaction = builder.build();
+
 	    if (bSign === true)
 	        transaction.sign(Settings.getKeyPair());
+
 	    return transaction;
+	};
+
+	var submitTransaction = function (trx) {
+	    Remote.getServer().submitTransaction(trx)
+        .then(function (transactionResult) {
+            console.log(transactionResult);
+        })
+        .catch(function (err) {
+            console.log(err);
+        })
+	    .finally(function () {
+	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
+	        sdkAcc.incrementSequenceNumber();
+	        account.sequence = sdkAcc.sequenceNumber();
+	    });
 	};
 
 	var setInflationDestination = function () {
@@ -44,18 +71,39 @@ angular.module('starter.services', ['starter.services.basic'])
             homeDomain: 'centaurus.xcoins.de'
 	    });
 	    var transaction = buildTransaction(operation, null, true);
-	    Remote.getServer().submitTransaction(transaction)
-        .then(function (transactionResult) {
-            console.log(transactionResult);
-        })
-        .catch(function (err) {
-            console.log(err);
-        })
-	    .finally(function(){
-	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
-	        sdkAcc.incrementSequenceNumber();
-	        account.sequence = sdkAcc.sequenceNumber();
-	    });
+	    submitTransaction(transaction);
+	};
+
+	var changeTrustForIssuer = function (issuer, assetCodes, newLimit) {
+	    if (!(assetCodes.length > 0))
+	        return;
+
+	    var assets = [];
+	    for (var index = 0; index < assetCodes.length; index++) {
+	        var assetCode = assetCodes[index];
+	        var asset = new StellarSdk.Asset(assetCode, issuer);
+	        assets.push(asset);
+	    }
+
+	    changeTrust(assets, newLimit);
+	};
+
+	var changeTrust = function (assets, newLimit) {
+	    if (!(assets.length > 0))
+	        return;
+
+	    var operations = [];
+	    for (var index = 0; index < assets.length; index++) {
+	        var asset = assets[index];
+	        var operation = StellarSdk.Operation.changeTrust({
+	            asset: asset,
+	            limit: newLimit
+	        });
+	        operations.push(operation);
+	    }
+
+	    var transaction = buildBatchTransaction(operations, null, true);
+	    submitTransaction(transaction);
 	};
 
 	var addToBalance = function (currency, amount) {
@@ -73,7 +121,19 @@ angular.module('starter.services', ['starter.services.basic'])
         }
         // no entry for currency exists -> add new entry
         account.otherCurrencies.push({currency:currency, amount:amount});             
-    };
+	};
+
+	var addAnchorAsset = function (issuer, currency) {
+	    for (var index = 0; index < account.anchors.length; ++index) {
+	        var anchor = account.anchors[index];
+	        if (anchor.accountId == issuer) {
+	            anchor.assets.push(currency);
+	            return;
+	        }
+	    }
+	    // no entry for this issuer exists -> add new entry
+	    account.anchors.push({ accountId: issuer, assets: [currency] });
+	}
 	
 	var attachToKeys = function () {
 	    var keys = Settings.getKeys();
@@ -82,7 +142,7 @@ angular.module('starter.services', ['starter.services.basic'])
 
 	    // initial balances
 	    Remote.getServer().accounts()
-        .address(keys.address)
+        .accountId(keys.address)
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
@@ -90,8 +150,10 @@ angular.module('starter.services', ['starter.services.basic'])
             for (i = 0; i < acc.balances.length; i++){
                 var bal = acc.balances[i];
                 var amount = parseFloat(bal.balance);
-                if(bal.asset_code)
+                if (bal.asset_code) {
                     reserveChunks++;
+                    addAnchorAsset(bal.asset_issuer, bal.asset_code);
+                }
                 addToBalance(bal.asset_code, amount);
             }
             account.sequence = acc.sequence;
@@ -195,6 +257,15 @@ angular.module('starter.services', ['starter.services.basic'])
 
         var effectHandler = function (effect, fromStream) {
             console.log(effect);
+
+            if (fromStream){
+                var reload = 
+                    effect.type === 'trustline_updated'
+                 || effect.type === 'trustline_created';
+                if(reload)
+                    Settings.get().onKeysAvailable();
+            }
+
             var isRelevant =
                    effect.type === 'account_created'
                 || effect.type === 'account_debited'
@@ -223,12 +294,12 @@ angular.module('starter.services', ['starter.services.basic'])
             if (opt_startFrom) {
                 futurePayments = futurePayments.cursor(opt_startFrom);
             }
-            if (paymentsEventSource) {
+            if (paymentsCloseHandle) {
                 console.log('close open effects stream')
-                paymentsEventSource.close();
+                paymentsCloseHandle();
             }
             console.log('open effects stream with cursor: ' + opt_startFrom)
-            paymentsEventSource = futurePayments.stream({
+            paymentsCloseHandle = futurePayments.stream({
                 onmessage: function (effect) { effectHandler(effect, true); }
             });
         };
@@ -290,6 +361,8 @@ angular.module('starter.services', ['starter.services.basic'])
 		},
 
 		buildTransaction: buildTransaction,
+
+        changeTrust: changeTrust,
         
 		reload: function () {
 		    Settings.get().onKeysAvailable()

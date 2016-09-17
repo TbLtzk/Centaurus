@@ -96,14 +96,14 @@ angular.module('starter.services.basic', [])
 .factory('Remote', function (UIHelper) {
     //var network = 'liveNetwork';
     var network = 'testNetwork';
-    var hostname = 'horizon-testnet.stellar.org'
+    var url = 'https://horizon-testnet.stellar.org';
 
     if (network === 'liveNetwork') {
         StellarSdk.Network.usePublicNetwork();
-        hostname = 'horizon.stellar.org'
+        url = 'https://horizon.stellar.org'
     }
 
-    var server = new StellarSdk.Server({ hostname: hostname, secure: true, port: 443 });
+    var server = new StellarSdk.Server(url);
   		
 	var messageHandlers = [];
 	messageHandlers.add = function(filter, callback){
@@ -160,25 +160,27 @@ angular.module('starter.services.basic', [])
 .factory('Settings', function (Remote) {
  	var keysString = window.localStorage['keysXLM'];
     //keysString = null;
- 	//window.localStorage.removeItem('keysArchive');
+ 	//window.localStorage.removeItem('keys');
 
-	// override for use in test network (funded)
-	var testKeys = {
-		address : 'GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4', // customer
-		secret : 'SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'
-	};
-	var testKeysAlternative = {
-		address : 'GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y', // issuer
-		secret : 'SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'
-	};
-	//var rand = StellarSdk.Keypair.random();
-	//var testKeyUnfunded = {
-	//    address: rand.address(),
-	//    secret: rand.seed(),
-	//};
+ 	var keypair;
+	//keypair = StellarSdk.Keypair.fromSeed('SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'); // customer - GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4
+	//keypair = StellarSdk.Keypair.fromSeed('SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'); // issuer - GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y
+ 	keypair = StellarSdk.Keypair.fromSeed('SCMJROJFDV4OP2NVJVHICY6S7ZL6Q6JFM6DLDN3DVFO5IQHR52LFQ7GB'); // trader - GDB5ASLR6TSSMVZ77RZZJP25VNT7E7VPUNEQFXGKG4TYZWHJHHGAEUEQ
+ 	//keypair = StellarSdk.Keypair.fromSeed('SAOPVUSKQQ2SXKUTXMCGM4HBJCPB5LNVY7A2CLRRLPQUK4ROB35FHBYS'); // any
+ 	
+    //keypair = StellarSdk.Keypair.random();
 
-    //keysString = JSON.stringify(testKeyUnfunded);
-    //    window.localStorage['keys'] = keysString;
+    if (keypair) {
+        // override keys for testing
+        testKeys = {
+            address: keypair.accountId(),
+            secret: keypair.seed(),
+        };
+
+        keysString = JSON.stringify(testKeys);
+        // window.localStorage['keys'] = keysString;
+    }
+
 	var settings = this;
 	var keys;
 
@@ -200,11 +202,6 @@ angular.module('starter.services.basic', [])
 		if (!keysString) {
             var keyPair = StellarSdk.Keypair.random();
             setKeysFunc(keyPair.accountId(), keyPair.seed());
-
-//            // mock with specific address (remain in local storage)
-//			 var mock = testKeys;
-//			 setKeysFunc(mock.address, mock.secret);
-
 		} else {
 			keys = JSON.parse(keysString);
 			keys.mode = 'loaded';
