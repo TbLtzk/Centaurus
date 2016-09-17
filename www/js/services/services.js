@@ -8,7 +8,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	var account;
 	var keysChanged = false;
 	var connectionChanged = false;
-	var paymentsEventSource;
+	var paymentsCloseHandle;
 
 	var resetAccount = function () {
 	    account = {
@@ -74,16 +74,29 @@ angular.module('starter.services', ['starter.services.basic'])
 	    submitTransaction(transaction);
 	};
 
-	var changeTrust = function (issuer, assets, newLimit) {
+	var changeTrustForIssuer = function (issuer, assetCodes, newLimit) {
+	    if (!(assetCodes.length > 0))
+	        return;
+
+	    var assets = [];
+	    for (var index = 0; index < assetCodes.length; index++) {
+	        var assetCode = assetCodes[index];
+	        var asset = new StellarSdk.Asset(assetCode, issuer);
+	        assets.push(asset);
+	    }
+
+	    changeTrust(assets, newLimit);
+	};
+
+	var changeTrust = function (assets, newLimit) {
 	    if (!(assets.length > 0))
 	        return;
 
 	    var operations = [];
 	    for (var index = 0; index < assets.length; index++) {
-	        var assetCode = assets[index];
-	        var asset = new StellarSdk.Asset(assetCode, issuer);
+	        var asset = assets[index];
 	        var operation = StellarSdk.Operation.changeTrust({
-                asset : asset,
+	            asset: asset,
 	            limit: newLimit
 	        });
 	        operations.push(operation);
@@ -281,12 +294,12 @@ angular.module('starter.services', ['starter.services.basic'])
             if (opt_startFrom) {
                 futurePayments = futurePayments.cursor(opt_startFrom);
             }
-            if (paymentsEventSource) {
+            if (paymentsCloseHandle) {
                 console.log('close open effects stream')
-                paymentsEventSource.close();
+                paymentsCloseHandle();
             }
             console.log('open effects stream with cursor: ' + opt_startFrom)
-            paymentsEventSource = futurePayments.stream({
+            paymentsCloseHandle = futurePayments.stream({
                 onmessage: function (effect) { effectHandler(effect, true); }
             });
         };

@@ -210,19 +210,70 @@ angular.module('starter.controllers', [])
         $scope.$apply();
     }
 
-    $scope.$on('accountInfoLoaded', bindAnchors);
+    var onNewAnchors = function (event) {
+        bindAnchors();
+        $scope.$apply();
+    };
+
+    $scope.$on('accountInfoLoaded', onNewAnchors);
 
     bindAnchors();
 
-    $scope.addAnchor = function (anchorDomain) {
-        if (anchorDomain === 'www') {
-            var issuer = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
-            var assets = ['EUR', 'BTC'];
-            Account.changeTrust(issuer, assets);
+    var addAssets = function (anchorDomain, assets) {
+        var assetCodes = '';
+        var sdkAssets = [];
+        var issuers = [];
+        for (var index = 0; index < assets.length; index++) {
+            var asset = assets[index];
+            if (assetCodes)
+                assetCodes += ', ';
+            assetCodes += asset.code;
+            var issuer = asset.issuer;
+            var sdkAsset = new StellarSdk.Asset(asset.code, issuer);
+            if (issuers.indexOf(issuer) < 0)
+                issuers.push(issuer);
+            sdkAssets.push(sdkAsset);
         }
-        else {
-            UIHelper.showAlert('"' + anchorDomain + '" is not a valid domain of a stellar anchor.');
+        var confirmMessage = '"' + anchorDomain + '" will be allowed to hold the following currencies on your behalf:\n' + assetCodes;
+        var onConfirm = function () {
+            for (var i = 0; i<issuers.length; i++) {
+                var accountId = issuers[i];
+                if (!Contacts.findReverse(accountId)) {
+                    var contactName = anchorDomain;
+                    var sequence = 1;
+                    while (!Contacts.add(contactName, accountId)) {
+                        sequence++;
+                        contactName = anchorDomain + ' ' + sequence;
+                    }
+                }
+            }
+            Account.changeTrust(sdkAssets);
         }
+        UIHelper.confirmAndRun(anchorDomain, confirmMessage, onConfirm);
+    }
+
+    $scope.addAnchor = function (userInput) {
+        if (!userInput) {
+            //userInput = 'https://www.funtracker.site';
+            UIHelper.showAlert('Please enter the domain name of a stellar anchor to add');
+            return;
+        }
+
+        var anchorDomain = userInput.startsWith('https://') ?
+            userInput.substring(8) : // strip leading protocol
+            userInput;
+        if (anchorDomain.startsWith('www.'))
+            anchorDomain = anchorDomain.substring(4); // strip leading 'www.'
+
+        StellarSdk.StellarTomlResolver.resolve(anchorDomain)
+          .then(function (toml) {
+              console.log(JSON.stringify(toml));
+              addAssets(anchorDomain, toml.CURRENCIES);
+          })
+          .catch(function (error) {
+              console.log(JSON.stringify(error));
+              UIHelper.showAlert('"' + anchorDomain + '" is not a valid domain of a stellar anchor.');
+          });
     }
 })
 
