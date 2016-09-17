@@ -1,5 +1,8 @@
 {
   "_meta.version": "0.0.4",
+  "controllers.anchors.add.confirm": "will be allowed to hold the following currencies on your behalf: ",
+  "controllers.anchors.add.error.emptyDomain": "Please enter the domain name of a stellar anchor to add.",
+  "controllers.anchors.add.error.invalidDomain": "is not a valid domain of a stellar anchor.",
   "controllers.contacts.edit.popup.subtitle": "Please edit the contact details.",
   "controllers.contacts.edit.popup.title": "Edit contact",
   "controllers.contacts.remove.caption": "Remove contact",
@@ -102,6 +105,7 @@
   "tabs.wallet.import": "Import",
   "tabs.wallet.secret": "Reveal Account Secret",
   "tabs.wallet.title": "Wallet",
+  "views.anchors.domainName.placeholder": "Anchor domain name",
   "views.anchors.title": "Anchors",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Contacts",

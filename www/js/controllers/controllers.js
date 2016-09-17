@@ -219,62 +219,68 @@ angular.module('starter.controllers', [])
 
     bindAnchors();
 
-    var addAssets = function (anchorDomain, assets) {
-        var assetCodes = '';
-        var sdkAssets = [];
-        var issuers = [];
-        for (var index = 0; index < assets.length; index++) {
-            var asset = assets[index];
-            if (assetCodes)
-                assetCodes += ', ';
-            assetCodes += asset.code;
-            var issuer = asset.issuer;
-            var sdkAsset = new StellarSdk.Asset(asset.code, issuer);
-            if (issuers.indexOf(issuer) < 0)
-                issuers.push(issuer);
-            sdkAssets.push(sdkAsset);
-        }
-        var confirmMessage = '"' + anchorDomain + '" will be allowed to hold the following currencies on your behalf:\n' + assetCodes;
-        var onConfirm = function () {
-            for (var i = 0; i<issuers.length; i++) {
-                var accountId = issuers[i];
-                if (!Contacts.findReverse(accountId)) {
-                    var contactName = anchorDomain;
-                    var sequence = 1;
-                    while (!Contacts.add(contactName, accountId)) {
-                        sequence++;
-                        contactName = anchorDomain + ' ' + sequence;
+    UIHelper.translate(
+        [ 'controllers.anchors.add.confirm'
+        , 'controllers.anchors.add.error.emptyDomain'
+        , 'controllers.anchors.add.error.invalidDomain'
+    ]).then(function (t) {
+        var addAssets = function (anchorDomain, assets) {
+            var assetCodes = '';
+            var sdkAssets = [];
+            var issuers = [];
+            for (var index = 0; index < assets.length; index++) {
+                var asset = assets[index];
+                if (assetCodes)
+                    assetCodes += ', ';
+                assetCodes += asset.code;
+                var issuer = asset.issuer;
+                var sdkAsset = new StellarSdk.Asset(asset.code, issuer);
+                if (issuers.indexOf(issuer) < 0)
+                    issuers.push(issuer);
+                sdkAssets.push(sdkAsset);
+            }
+            var confirmMessage = '"' + anchorDomain + '" ' + t[0] + assetCodes;
+            var onConfirm = function () {
+                for (var i = 0; i < issuers.length; i++) {
+                    var accountId = issuers[i];
+                    if (!Contacts.findReverse(accountId)) {
+                        var contactName = anchorDomain;
+                        var sequence = 1;
+                        while (!Contacts.add(contactName, accountId)) {
+                            sequence++;
+                            contactName = anchorDomain + ' ' + sequence;
+                        }
                     }
                 }
+                Account.changeTrust(sdkAssets);
             }
-            Account.changeTrust(sdkAssets);
-        }
-        UIHelper.confirmAndRun(anchorDomain, confirmMessage, onConfirm);
-    }
-
-    $scope.addAnchor = function (userInput) {
-        if (!userInput) {
-            //userInput = 'https://www.funtracker.site';
-            UIHelper.showAlert('Please enter the domain name of a stellar anchor to add');
-            return;
+            UIHelper.confirmAndRun(anchorDomain, confirmMessage, onConfirm);
         }
 
-        var anchorDomain = userInput.startsWith('https://') ?
-            userInput.substring(8) : // strip leading protocol
-            userInput;
-        if (anchorDomain.startsWith('www.'))
-            anchorDomain = anchorDomain.substring(4); // strip leading 'www.'
+        $scope.addAnchor = function (userInput) {
+            if (!userInput) {
+                //userInput = 'https://www.funtracker.site';
+                UIHelper.showAlert(t[1]);
+                return;
+            }
 
-        StellarSdk.StellarTomlResolver.resolve(anchorDomain)
-          .then(function (toml) {
-              console.log(JSON.stringify(toml));
-              addAssets(anchorDomain, toml.CURRENCIES);
-          })
-          .catch(function (error) {
-              console.log(JSON.stringify(error));
-              UIHelper.showAlert('"' + anchorDomain + '" is not a valid domain of a stellar anchor.');
-          });
-    }
+            var anchorDomain = userInput.startsWith('https://') ?
+                userInput.substring(8) : // strip leading protocol
+                userInput;
+            if (anchorDomain.startsWith('www.'))
+                anchorDomain = anchorDomain.substring(4); // strip leading 'www.'
+
+            StellarSdk.StellarTomlResolver.resolve(anchorDomain)
+              .then(function (toml) {
+                  console.log(JSON.stringify(toml));
+                  addAssets(anchorDomain, toml.CURRENCIES);
+              })
+              .catch(function (error) {
+                  console.log(JSON.stringify(error));
+                  UIHelper.showAlert('"' + anchorDomain + '" ' + t[2]);
+              });
+        }
+    });
 })
 
 .controller('ContactsCtrl', function ($scope, $location, $ionicPopup, Contacts, UIHelper) {

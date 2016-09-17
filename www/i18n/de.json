@@ -1,5 +1,8 @@
 ﻿{
   "_meta.version": "0.0.4",
+  "controllers.anchors.add.confirm": "darf folgende Währungen für dich in Verwahrung nehmen: ",
+  "controllers.anchors.add.error.emptyDomain": "Bitte gib den Domain-Namen eines Stellar-Ankers ein.",
+  "controllers.anchors.add.error.invalidDomain": "ist keine gültige Domain eines Stellar-Ankers.",
   "controllers.contacts.edit.popup.subtitle": "Bitte die Details bearbeiten.",
   "controllers.contacts.edit.popup.title": "Kontakt bearbeiten",
   "controllers.contacts.remove.caption": "Kontakt löschen",
@@ -101,6 +104,7 @@
   "tabs.wallet.import": "Import",
   "tabs.wallet.secret": "Privaten Schlüssel anzeigen",
   "tabs.wallet.title": "Konto",
+  "views.anchors.domainName.placeholder": "Domain-Name eines Ankers",
   "views.anchors.title": "Anker",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Kontakte",

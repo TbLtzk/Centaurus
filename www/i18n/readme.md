@@ -51,8 +51,12 @@ views.contact.memo.placeholder: **new**
 views.contacts.title: **new**
 
 ### 0.0.4
+controllers.anchors.add.confirm: **new**
+controllers.anchors.add.error.emptyDomain: **new**
+controllers.anchors.add.error.invalidDomain: **new**
 navigation.anchors.title: **new**
 navigation.trx.title: **modified**
+views.anchors.domainName.placeholder: **new**
 views.anchors.title: **new**
 
 ### pending
