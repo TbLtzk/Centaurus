@@ -206,8 +206,8 @@ angular.module('starter.controllers', [])
     var bindAnchors = function (event) {
         var account = Account.get();
         augmentAnchors(account.anchors);
-        $scope.account = account;
-        $scope.$apply();
+        $scope.account = account;        
+        $scope.readOnly = Account.getAvailableLumen() < 10;
     }
 
     var onNewAnchors = function (event) {

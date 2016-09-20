@@ -3,9 +3,9 @@
         <div class="bar bar-header item-input-inset">
             <label class="item-input-wrapper">
                 <i class="icon ion-search placeholder-icon"></i>
-                <input type="search" ng-model="anchorDomain" placeholder="{{'views.anchors.domainName.placeholder' | translate}}">
+                <input type="search" ng-model="anchorDomain" ng-disabled="{{readOnly}}" placeholder="{{readOnly ? 'views.anchors.needLumen.placeholder' : 'views.anchors.domainName.placeholder' | translate}}">
             </label>
-            <button class="button icon ion-plus-round" style="margin-bottom:5px" on-tap="addAnchor(anchorDomain)"></button>
+            <button class="button icon ion-plus-round" ng-disabled="{{readOnly}}" style="margin-bottom:5px" on-tap="addAnchor(anchorDomain)"></button>
         </div>
        <ion-list ng-repeat="item in account.anchors | orderBy:'name' as results track by item.name">
             <ion-item class="narrow">

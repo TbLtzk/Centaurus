@@ -105,6 +105,7 @@
   "tabs.wallet.secret": "Privaten Schlüssel anzeigen",
   "tabs.wallet.title": "Konto",
   "views.anchors.domainName.placeholder": "Domain-Name eines Ankers",
+  "views.anchors.needLumen.placeholder": "Zu wening Lumen für neue Anker",
   "views.anchors.title": "Anker",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Kontakte",

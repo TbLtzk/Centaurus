@@ -360,6 +360,10 @@ angular.module('starter.services', ['starter.services.basic'])
 			return account;
 		},
 
+		getAvailableLumen : function (){
+		    return account.balance - account.reserve;
+		},
+
 		buildTransaction: buildTransaction,
 
         changeTrust: changeTrust,

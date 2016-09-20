@@ -100,7 +100,7 @@ angular.module('starter.services.basic', [])
 
     if (network === 'liveNetwork') {
         StellarSdk.Network.usePublicNetwork();
-        url = 'https://horizon.stellar.org'
+        url = 'https://horizon.stellar.org';
     }
 
     var server = new StellarSdk.Server(url);
@@ -247,7 +247,8 @@ angular.module('starter.services.basic', [])
 				// mock scan for dev purposes
 			    //var mockResult = { cancelled: false, text: 'centaurus\\:backup001eyJhZGRyZXNzIjoiZzN2Ynl1azJyYnZMTkVkRGVrY3JFaE1xUWl4bVExUThWeiIsInNlY3JldCI6InNmRXBtMzlwdEJjWFc4c21zUnlCRnZKaWVXVGQ0WG05MUc4bkh0cGVrV2Z3UnpvZTFUUCIsIm1vZGUiOiJsb2FkZWQifQ==' }; 
 			    //var mockResult = { cancelled: false, text: 'centaurus:backup002U2FsdGVkX193Y6v8tRURhD7dfYhdJ7IS6h94qj5xWMwGNYRANdA8NBm6xHfz1mzP+oVStbyzXP46osbM2r1V6cE5QzlZb3LFEQfVyYbuvet6EVgvIBkjMu2lIqFSlvgQNbuxPbppkKp1g7RIA41Qbw5fUlHP2uFLJ+v9Syhc1OICl8K80BXah+07rjOZcL8z' }; // käse
-			    var mockResult = { cancelled: false, text: 'centaurus:backup003U2FsdGVkX18DZkB6ZdF8a7vl8/k2SRasAbbG2bojaQOqGGhLL4ea/gA6YY6XNXrrMd8XX0L9NunvYCDhNaKGc/W14GPpDJrNWBg4zpkjT/9ICQsCoSiuY8CtvTvgqAONnql/va6k/hqzsVZBnl7UzK9bngIxDQVWuMqgLTO+mwpmTciax/7RHngYoLT2/KSa8sCPF8QhItN6eeVMygr1048ywDEgVJb/3fmJOrJBvmM=' }; // käse
+			    //var mockResult = { cancelled: false, text: 'centaurus:backup003U2FsdGVkX18DZkB6ZdF8a7vl8/k2SRasAbbG2bojaQOqGGhLL4ea/gA6YY6XNXrrMd8XX0L9NunvYCDhNaKGc/W14GPpDJrNWBg4zpkjT/9ICQsCoSiuY8CtvTvgqAONnql/va6k/hqzsVZBnl7UzK9bngIxDQVWuMqgLTO+mwpmTciax/7RHngYoLT2/KSa8sCPF8QhItN6eeVMygr1048ywDEgVJb/3fmJOrJBvmM=' }; // käse
+			    var mockResult = { cancelled: false, text: 'centaurus:backup003U2FsdGVkX1+zcdLBQ1gJBsV5Jo/LV3S35Y4mZnm536r5immhYStQd6EHf2l3IQXk8kRD1JyfI5yac2XAyinq2A4j7XMN0J+9pjBkcdr4YLIyT8XRUH+rGl6NTAOfdDq+R+CNlFdb21f3tnm1p4Yljn2Fm+vRAXesQ3ZQXWmP7aYlC3G1B86uF2rl7JHasR2SYbvY21pM0qCbaWvUc6QEcfw7e82/UAstREd4qrBCGcA=' }; // LiveBackup PIN
 			    //var mockResult = { cancelled: false, text: 'GDPXFOKFCMPKLRYHL7UTFD2JNTLT26GXKT5LS6CAMBP6L2U3SKL3YIIG' }; 
 			    //var mockResult = { cancelled: false, text: 'centaurus\\:redeemSTR001sfmB34AMuAPrgbgeFJ7iXxi14NaKxQfcXoEex3p4TqekAgvinha' };
 				success(mockResult);

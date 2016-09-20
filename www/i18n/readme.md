@@ -57,6 +57,7 @@ controllers.anchors.add.error.invalidDomain: **new**
 navigation.anchors.title: **new**
 navigation.trx.title: **modified**
 views.anchors.domainName.placeholder: **new**
+views.anchors.needLumen.placeholder: **new**
 views.anchors.title: **new**
 
 ### pending

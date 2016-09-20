@@ -106,6 +106,7 @@
   "tabs.wallet.secret": "Reveal Account Secret",
   "tabs.wallet.title": "Wallet",
   "views.anchors.domainName.placeholder": "Anchor domain name",
+  "views.anchors.needLumen.placeholder": "Not enough Lumen for new anchor",
   "views.anchors.title": "Anchors",
   "views.contact.memo.placeholder": "Memo (optional)",
   "views.contacts.title": "Contacts",
