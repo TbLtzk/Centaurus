@@ -255,6 +255,28 @@ angular.module('starter.services', ['starter.services.basic'])
             return promise;
         };
 
+        var detachFromPaymentsStream = function () {
+            if (!paymentsCloseHandle)
+                return;
+
+            console.log('close open effects stream')
+            paymentsCloseHandle();
+            paymentsCloseHandle = undefined;            
+        };
+
+        var attachToPaymentsStream = function (opt_startFrom) {
+            var futurePayments = Remote.getServer().effects().forAccount(keys.address);
+            if (opt_startFrom) {
+                futurePayments = futurePayments.cursor(opt_startFrom);
+            }
+            if (paymentsCloseHandle)
+                detachFromPaymentsStream();
+
+            paymentsCloseHandle = futurePayments.stream({
+                onmessage: function (effect) { effectHandler(effect, true); }
+            });
+        };
+
         var effectHandler = function (effect, fromStream) {
             console.log(effect);
 
@@ -262,8 +284,10 @@ angular.module('starter.services', ['starter.services.basic'])
                 var reload = 
                     effect.type === 'trustline_updated'
                  || effect.type === 'trustline_created';
-                if(reload)
+                if (reload) {
+                    detachFromPaymentsStream();
                     Settings.get().onKeysAvailable();
+                }
             }
 
             var isRelevant =
@@ -287,21 +311,6 @@ angular.module('starter.services', ['starter.services.basic'])
                 });
 
             }
-        };
-
-        var attachToPaymentsStream = function (opt_startFrom) {
-            var futurePayments = Remote.getServer().effects().forAccount(keys.address);
-            if (opt_startFrom) {
-                futurePayments = futurePayments.cursor(opt_startFrom);
-            }
-            if (paymentsCloseHandle) {
-                console.log('close open effects stream')
-                paymentsCloseHandle();
-            }
-            console.log('open effects stream with cursor: ' + opt_startFrom)
-            paymentsCloseHandle = futurePayments.stream({
-                onmessage: function (effect) { effectHandler(effect, true); }
-            });
         };
 
 	    Remote.getServer().effects()
@@ -472,7 +481,7 @@ angular.module('starter.services', ['starter.services.basic'])
 		else {
 			var doOverwrite = function(){
 				Settings.setKeys(newKeys.address, newKeys.secret);
-				UIHelper.showAlert('The keys have been restored');
+				UIHelper.showAlert('services.commands.importKeys.ok');
 			};
 
 			if(Account.get().balance > 0) {

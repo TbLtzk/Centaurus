@@ -56,6 +56,7 @@ controllers.anchors.add.error.emptyDomain: **new**
 controllers.anchors.add.error.invalidDomain: **new**
 navigation.anchors.title: **new**
 navigation.trx.title: **modified**
+services.commands.importKeys.ok: **new**
 views.anchors.domainName.placeholder: **new**
 views.anchors.needLumen.placeholder: **new**
 views.anchors.title: **new**

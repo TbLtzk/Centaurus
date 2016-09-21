@@ -58,6 +58,7 @@
   "service.commands.importKeys.overwrite.text": "This will overwrite your existing keys. If you do not have a backup, the remaining funds on the old address are lost!",
   "services.commands.backup.incorrectPwd": "Incorrect password!",
   "services.commands.importKeys.noChange": "The keys have been restored correctly but did not change since your last backup.",
+  "services.commands.importKeys.ok": "The keys have been restored.",
   "services.uiHelper.password.placeholder.choose": "Choose password",
   "services.uiHelper.password.placeholder.enter": "Your password",
   "services.uiHelper.password.title.choose": "Please Choose a Password",

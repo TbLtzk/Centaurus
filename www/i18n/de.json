@@ -58,6 +58,7 @@
   "service.commands.importKeys.overwrite.text": "Dies überschreibt die vorhandenen Schlüssel. Wenn du keine Sicherung hast, geht das übrige Guthaben auf der alten Adresse verloren!",
   "services.commands.backup.incorrectPwd": "Falsches Passwort!",
   "services.commands.importKeys.noChange": "Die Schlüssel wurden korrekt wiederhergestellt, haben sich jedoch seit der letzten Wiederherstellung nicht geändert.",
+  "services.commands.importKeys.ok": "Die Schlüssel wurden wiederhergestellt.",
   "services.uiHelper.password.placeholder.choose": "Wähle ein Passwort",
   "services.uiHelper.password.placeholder.enter": "Dein Passwort",
   "services.uiHelper.password.title.choose": "Bitte wähle ein Passwort",
