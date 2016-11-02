@@ -8,6 +8,7 @@
         $scope.$apply();
     });
 
+    $scope.pathSequence = 0;
     $scope.available = account.balance - account.reserve;
     $scope.account = account;
     $scope.showDestinationTag = false;
@@ -107,9 +108,13 @@
                 return path;
             }
 
+            $scope.pathSequence++;
+            var pathSequence = $scope.pathSequence;
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
-                .then(function (response) {                    
+                .then(function (response) {
+                    if(pathSequence < $scope.pathSequence)
+                        return; // a more recent request is pending. Wait for that instead.                    
                     alternatives = [];
                     for (var i = 0; i < response.records.length; i++) {
                         var record =  response.records[i];
