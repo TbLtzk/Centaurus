@@ -1,4 +1,4 @@
-const reserveChunkCost = 10;
+const reserveChunkCost = 5;
 const inflationDestBalanceBuffer = 10;
 const centaurusAddress = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
 

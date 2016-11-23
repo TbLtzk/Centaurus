@@ -73,7 +73,10 @@ angular.module('starter.controllers', [])
                           if (cmd.isCommand) {
                               return Commands.execute(cmd.rawCommand);
                           }
-                          else if ($scope.data.address && $scope.data.secret) {
+                          else if ($scope.data.secret) {
+                              var derivedAddress = StellarSdk.Keypair.fromSeed($scope.data.secret).accountId();
+                              $scope.data.address = derivedAddress;
+
                               // TODO: validate address and secret
                               return Commands.importAddressAndSecret($scope.data.address, $scope.data.secret);
                           }

@@ -54,6 +54,63 @@
     $scope.$on('$destroy', function() {
         $scope.currencyPopover.remove();
     });
+
+
+    var toAsset = function (type, code, issuer) {
+        if (type == "native")
+            return StellarSdk.Asset.native();
+        else
+            return new StellarSdk.Asset(code, issuer)
+    };
+
+    var convertPath = function (rawPath) {
+        var path = [];
+        for (var i = 0; i < rawPath.length; i++) {
+            var rawAsset = rawPath[i];
+            path[i] = toAsset(rawAsset.asset_type, rawAsset.asset_code, rawAsset.asset_issuer);
+        }
+        return path;
+    }
+
+    var onNewPaths = function (records) {
+        var context = $scope.transactionContext;
+        var cheapestPerAsset = {};
+
+        for (var i = 0; i < records.length; i++) {
+            var record = records[i];
+
+            var alternative = {
+                destination_amount: record.destination_amount,
+                sendAsset: toAsset(record.source_asset_type, record.source_asset_code, record.source_asset_issuer),
+                destAsset: toAsset(record.destination_asset_type, record.destination_asset_code, record.destination_asset_issuer),
+                path: convertPath(record.path)
+            }
+
+            var assetHops;
+            if (alternative.path.length > 0)
+                assetHops = alternative.path.length + 1;
+            else if (!alternative.sendAsset.equals(alternative.destAsset))
+                assetHops = 1;
+            else
+                assetHops = 0;
+
+            const slipageBufferPerHop = 0.002;
+            alternative.bufferedAmount = parseFloat(record.source_amount) * (1 + assetHops * slipageBufferPerHop);
+
+            if (!cheapestPerAsset[alternative.sendAsset.code])
+                cheapestPerAsset[alternative.sendAsset.code] = alternative;
+            else if(alternative.bufferedAmount < cheapestPerAsset[alternative.sendAsset.code].bufferedAmount)
+                cheapestPerAsset[alternative.sendAsset.code] = alternative;
+        }
+
+        var alternatives = [];
+        for (var code in cheapestPerAsset) {
+            if (cheapestPerAsset.hasOwnProperty(code)) {
+                alternatives.push(cheapestPerAsset[code]);
+            }
+        }
+        context.alternatives = alternatives;
+    }
     
     $scope.$watch('transactionContext.isDirty', function(isDirty) {
         if(!isDirty)
@@ -93,59 +150,14 @@
             }           
             
             var keys = Settings.getKeys();
-            var toAsset = function(type, code, issuer){
-                if (type == "native")
-                    return StellarSdk.Asset.native();
-                else
-                    return new StellarSdk.Asset(code, issuer)
-            };
-            var convertPath = function (rawPath) {
-                var path = [];
-                for (var i = 0; i < rawPath.length; i++) {
-                    var rawAsset = rawPath[i];
-                    path[i] = toAsset(rawAsset.asset_type, rawAsset.asset_code, rawAsset.asset_issuer);
-                }
-                return path;
-            }
-
             $scope.pathSequence++;
             var pathSequence = $scope.pathSequence;
             Remote.getServer().paths(keys.address, $scope.destinationInfo.accountId, asset, context.amount)
                 .call()
                 .then(function (response) {
                     if(pathSequence < $scope.pathSequence)
-                        return; // a more recent request is pending. Wait for that instead.                    
-                    alternatives = [];
-                    for (var i = 0; i < response.records.length; i++) {
-                        var record =  response.records[i];
-
-                       var alternative = {
-                            destination_amount: record.destination_amount,
-                            sendAsset: toAsset(record.source_asset_type, record.source_asset_code, record.source_asset_issuer),
-                            destAsset: toAsset(record.destination_asset_type, record.destination_asset_code, record.destination_asset_issuer),
-                            path: convertPath(record.path)
-                        }
-
-                        var assetHops;
-                        if (alternative.path.length > 0)
-                            assetHops = alternative.path.length + 1;
-                        else if (!alternative.sendAsset.equals(alternative.destAsset))
-                            assetHops = 1;
-                        else
-                            assetHops = 0;
-
-                        var isReasonablePath = true;
-                        if (alternative.sendAsset.equals(alternative.destAsset) && assetHops > 0)
-                            isReasonablePath = false; // skip options with unnecessary hops
-
-                        if (isReasonablePath) {
-                            const slipageBufferPerHop = 0.002;
-                            alternative.bufferedAmount = parseFloat(record.source_amount) * (1 + assetHops * slipageBufferPerHop);
-
-                            alternatives.push(alternative);
-                        }
-                        context.alternatives = alternatives;
-                    }
+                        return; // a more recent request is pending. Wait for that instead.
+                    onNewPaths(response.records);
                 })
             .catch(function (err) {
                 console.log(err);
@@ -314,8 +326,13 @@
                         Account.reload();
                         UIHelper.showAlert('controllers.send.outOfSync');
                     }
-                    else
-                        UIHelper.showAlert('controllers.send.failed ', ' ' + errorCode);
+                    else {
+                        var suffix = ' ' + errorCode;
+                        var opCode = err.extras && err.extras.result_codes.operations[0];
+                        if (opCode)
+                            suffix += ', ' + opCode
+                        UIHelper.showAlert('controllers.send.failed ', suffix);
+                    }
                 }
                 else {
                     var msg = err.title;
@@ -336,8 +353,8 @@
         }
 
         var chooseAlternative = function (t) {
-            var promise = new Promise(function (resolve, reject) {
-                if (context.alternatives.length == 1 && context.alternatives[0].path.length == 0)
+            var promise = new Promise(function (resolve, reject) {                
+                if (context.alternatives.length == 1 && context.alternatives[0].sendAsset.equals(context.alternatives[0].destAsset))
                     resolve(context.alternatives[0]); // single possible payment without currency conversion is selected immediately
                 else {
                     var sheet = {
