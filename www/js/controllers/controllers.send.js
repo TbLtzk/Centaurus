@@ -317,6 +317,7 @@
             .then(function (transactionResult) {
                 console.log(transactionResult);
                 $scope.paymentData.amount = 0;
+                $scope.destinationInfo.needFunding = false;
                 UIHelper.blockScreen('controllers.send.success', 2);
             })
             .catch(function (err) {
