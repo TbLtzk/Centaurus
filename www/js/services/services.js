@@ -179,11 +179,11 @@ angular.module('starter.services', ['starter.services.basic'])
 
         var applyToBalance = function (effect) {
             if (effect.type === 'account_created')
-                addToBalance(effect.asset_type, parseFloat(effect.starting_balance));
+                addToBalance(effect.asset_code, parseFloat(effect.starting_balance));
             else if (effect.type === 'account_debited')
-                addToBalance(effect.asset_type, -parseFloat(effect.amount));
+                addToBalance(effect.asset_code, -parseFloat(effect.amount));
             else if (effect.type === 'account_credited')
-                addToBalance(effect.asset_type, parseFloat(effect.amount));                        
+                addToBalance(effect.asset_code, parseFloat(effect.amount));                        
         };
 
         var insertTransaction = function (trx, op, effect, fromStream) {
