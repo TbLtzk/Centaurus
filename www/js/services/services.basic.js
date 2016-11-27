@@ -131,28 +131,14 @@ angular.module('starter.services.basic', [])
 		UIHelper.showAlert(msg.result.engine_result_message);
 	};	
 	messageHandlers.add(engineErrorFilter, engineErrorCallback);
-		
+
 	return {
         getServer : function(){
             return server;
         },
-		isConnected : function(){
-			return true;
-		},
-		init : function(){
-		},
-		send : function (data) {
-			try	{
-				if(this.isConnected()) {
-                    var msg = JSON.stringify(data);
-                    console.log(msg);
-					ws.send(msg);
-                }
-			}
-			catch(ex){
-				UIHelper.showAlert('Network communication failed: ' + ex.message);
-			}
-		},
+        isConnected : function(){
+            return true;
+        },
 		addMessageHandler: messageHandlers.add
 	}
 })

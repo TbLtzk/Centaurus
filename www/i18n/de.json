@@ -3,6 +3,8 @@
   "controllers.anchors.add.confirm": "darf folgende Währungen für dich in Verwahrung nehmen: ",
   "controllers.anchors.add.error.emptyDomain": "Bitte gib den Domain-Namen eines Stellar-Ankers ein.",
   "controllers.anchors.add.error.invalidDomain": "ist keine gültige Domain eines Stellar-Ankers.",
+  "controllers.anchors.remove.caption": "Anker löschen",
+  "controllers.anchors.remove.text": "Bitte das Löschen des Ankers bestätigen",
   "controllers.contacts.edit.popup.subtitle": "Bitte die Details bearbeiten.",
   "controllers.contacts.edit.popup.title": "Kontakt bearbeiten",
   "controllers.contacts.remove.caption": "Kontakt löschen",

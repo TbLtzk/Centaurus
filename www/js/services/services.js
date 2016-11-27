@@ -47,20 +47,61 @@ angular.module('starter.services', ['starter.services.basic'])
 	    return transaction;
 	};
 
-	var submitTransaction = function (trx) {
-	    Remote.getServer().submitTransaction(trx)
-        .then(function (transactionResult) {
-            console.log(transactionResult);
-        })
-        .catch(function (err) {
-            console.log(err);
-        })
-	    .finally(function () {
-	        var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
-	        sdkAcc.incrementSequenceNumber();
-	        account.sequence = sdkAcc.sequenceNumber();
+	var increaseSequence = function () {
+	    var sdkAcc = new StellarSdk.Account(account.address, account.sequence);
+	    sdkAcc.incrementSequenceNumber();
+	    account.sequence = sdkAcc.sequenceNumber();
+    }
+
+	var submitTransaction = function (transaction, accountIncrease, silent) {
+	    if (!accountIncrease)
+	        accountIncrease = 'onError';
+	    var output = function (captionRes, plainSuffix) {
+	        if(silent)
+	            console.log(captionRes + plainSuffix);
+	        else
+                UIHelper.showAlert(captionRes, plainSuffix);
+	    };
+	    var promise = new Promise(function (resolve, reject) {
+	        Remote.getServer().submitTransaction(transaction)
+            .then(function (transactionResult) {
+                console.log(transactionResult);
+                if (accountIncrease === 'onSuccess' || accountIncrease === 'both')
+                    increaseSequence();
+                resolve(transactionResult);
+            })
+            .catch(function (err) {
+                console.log(JSON.stringify(err));
+                if (err.type === 'https://stellar.org/horizon-errors/transaction_failed') {
+                    var errorCode = err.extras && err.extras.result_codes ? err.extras.result_codes.transaction : null;
+                    if (errorCode === "tx_bad_seq") {
+                        output('controllers.send.outOfSync');
+                        Settings.get().onKeysAvailable();
+                    }
+                    else {
+                        var suffix = ' ' + errorCode;
+                        var opCode = err.extras && err.extras.result_codes.operations[0];
+                        if (opCode)
+                            suffix += ', ' + opCode
+                        output('controllers.send.failed ', suffix);
+                    }
+                }
+                else {
+                    var msg = err.title;
+                    if (err.extras && err.extras.result_codes)
+                        msg += ': ' + err.extras.result_codes.transaction;
+                    if (!msg)
+                        msg = 'controllers.send.failed.unknown';
+                    output(msg);
+                }
+
+                if (accountIncrease === 'onError' || accountIncrease === 'both')
+                    increaseSequence();
+                reject(err);
+            });
 	    });
-	};
+	    return promise;
+	}
 
 	var setInflationDestination = function () {
 	    if (account.balance < account.reserve + inflationDestBalanceBuffer)
@@ -71,7 +112,7 @@ angular.module('starter.services', ['starter.services.basic'])
             homeDomain: 'centaurus.xcoins.de'
 	    });
 	    var transaction = buildTransaction(operation, null, true);
-	    submitTransaction(transaction);
+	    submitTransaction(transaction, 'both', true);
 	};
 
 	var changeTrustForIssuer = function (issuer, assetCodes, newLimit) {
@@ -283,7 +324,8 @@ angular.module('starter.services', ['starter.services.basic'])
             if (fromStream){
                 var reload = 
                     effect.type === 'trustline_updated'
-                 || effect.type === 'trustline_created';
+                 || effect.type === 'trustline_created'
+                 || effect.type === 'trustline_removed';
                 if (reload) {
                     detachFromPaymentsStream();
                     Settings.get().onKeysAvailable();
@@ -338,7 +380,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	};
 	
 	Settings.get().onKeysAvailable = function () {
-		if(Remote.isConnected())
+	    if(Remote.isConnected())
 			attachToKeys();
 		else
 			keysChanged = true;
@@ -374,6 +416,8 @@ angular.module('starter.services', ['starter.services.basic'])
 		},
 
 		buildTransaction: buildTransaction,
+
+        submitTransaction: submitTransaction,
 
         changeTrust: changeTrust,
         

@@ -313,38 +313,12 @@
                 
             var operation = operationBuilder();
             var transaction = Account.buildTransaction(operation, memo, true);
-            Remote.getServer().submitTransaction(transaction)
-            .then(function (transactionResult) {
-                console.log(transactionResult);
+            var onSuccess = function (transactionResult) {
                 $scope.paymentData.amount = 0;
                 $scope.destinationInfo.needFunding = false;
                 UIHelper.blockScreen('controllers.send.success', 2);
-            })
-            .catch(function (err) {
-                if (err.type === 'https://stellar.org/horizon-errors/transaction_failed') {
-                    var errorCode = err.extras && err.extras.result_codes ? err.extras.result_codes.transaction : null;
-                    if (errorCode === "tx_bad_seq") {
-                        Account.reload();
-                        UIHelper.showAlert('controllers.send.outOfSync');
-                    }
-                    else {
-                        var suffix = ' ' + errorCode;
-                        var opCode = err.extras && err.extras.result_codes.operations[0];
-                        if (opCode)
-                            suffix += ', ' + opCode
-                        UIHelper.showAlert('controllers.send.failed ', suffix);
-                    }
-                }
-                else {
-                    var msg = err.title;
-                    if (err.extras && err.extras.result_codes)
-                        msg += ': ' + err.extras.result_codes.transaction;
-                    if(msg)
-                        UIHelper.showAlert(msg);
-                    else
-                        UIHelper.showAlert('controllers.send.failed.unknown');
-                }
-            });
+            };
+            Account.submitTransaction(transaction).then(onSuccess);
         } catch (err) {
             if (err.message)
                 UIHelper.showAlert(err.message);

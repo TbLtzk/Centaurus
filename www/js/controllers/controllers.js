@@ -283,6 +283,33 @@ angular.module('starter.controllers', [])
                   UIHelper.showAlert('"' + anchorDomain + '" ' + t[2]);
               });
         }
+        $scope.remove = function (anchorName) {
+            var anchors = Account.get().anchors;
+            for (var i = 0; i < anchors.length; i++) {
+                var anchor = anchors[i];
+                if (anchor.name === anchorName) {
+                    var assetCodes = '';
+                    var sdkAssets = [];
+                    for (var index = 0; index < anchor.assets.length; index++) {
+                        var assetCode = anchor.assets[index];
+                        if (assetCodes)
+                            assetCodes += ', ';
+                        assetCodes += assetCode;
+                        var issuer = anchor.accountId;
+                        var sdkAsset = new StellarSdk.Asset(assetCode, issuer);
+                        sdkAssets.push(sdkAsset);
+                    }
+                    var onConfirm = function () {
+                        Account.changeTrust(sdkAssets, '0');
+                        //anchors.splice(i,1);
+                    }
+                    UIHelper.confirmAndRun('controllers.anchors.remove.caption',
+                    'controllers.anchors.remove.text',
+                    onConfirm);
+                    break;
+                }
+            }
+        };
     });
 })
 

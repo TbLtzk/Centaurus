@@ -3,6 +3,8 @@
   "controllers.anchors.add.confirm": "will be allowed to hold the following currencies on your behalf: ",
   "controllers.anchors.add.error.emptyDomain": "Please enter the domain name of a stellar anchor to add.",
   "controllers.anchors.add.error.invalidDomain": "is not a valid domain of a stellar anchor.",
+  "controllers.anchors.remove.caption": "Remove anchor",
+  "controllers.anchors.remove.text": "Please confirm to remove this anchor.",
   "controllers.contacts.edit.popup.subtitle": "Please edit the contact details.",
   "controllers.contacts.edit.popup.title": "Edit contact",
   "controllers.contacts.remove.caption": "Remove contact",

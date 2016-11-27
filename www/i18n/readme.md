@@ -54,6 +54,8 @@ views.contacts.title: **new**
 controllers.anchors.add.confirm: **new**
 controllers.anchors.add.error.emptyDomain: **new**
 controllers.anchors.add.error.invalidDomain: **new**
+controllers.anchors.remove.caption": **new**,
+controllers.anchors.remove.text": **new**,
 navigation.anchors.title: **new**
 navigation.trx.title: **modified**
 services.commands.importKeys.ok: **new**
