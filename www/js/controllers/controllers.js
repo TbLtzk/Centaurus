@@ -270,8 +270,6 @@ angular.module('starter.controllers', [])
             var anchorDomain = userInput.startsWith('https://') ?
                 userInput.substring(8) : // strip leading protocol
                 userInput;
-            if (anchorDomain.startsWith('www.'))
-                anchorDomain = anchorDomain.substring(4); // strip leading 'www.'
 
             StellarSdk.StellarTomlResolver.resolve(anchorDomain)
               .then(function (toml) {
