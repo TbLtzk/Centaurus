@@ -175,7 +175,7 @@
             $scope.destinationInfo.memo = memo;
             $scope.destinationInfo.memoType = type;
         };
-        
+
         var isValidAddress = StellarSdk.Account.isValidAccountId(newAddress);
         if (isValidAddress)
             fillDestinationInfo(newAddress);
@@ -185,9 +185,10 @@
                 fillDestinationInfo(contact.address, contact.memo, contact.memoType);
             else {
                 StellarSdk.FederationServer.resolve(newAddress)
-                 .then(function(federationRecord) {
-                     fillDestinationInfo(federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
-                     Contacts.add(newAddress, federationRecord.account_id, federationRecord.memo, federationRecord.memo_type);
+                 .then(function (federationRecord) {
+                     var address = federationRecord.account_id.trim();
+                     fillDestinationInfo(address, federationRecord.memo, federationRecord.memo_type);
+                     Contacts.add(newAddress, address, federationRecord.memo, federationRecord.memo_type);
                  })
                 .catch(function(err) {
                     fillDestinationInfo('');
