@@ -17,7 +17,7 @@ angular.module('starter.controllers', [])
 		};
 		UIHelper.promptForPassword(function(pwd){
 			if(pwd == ''){
-				UIHelper.confirmAndRun('controllers.wallet.shareKeys.unencrypted.caption', 
+				UIHelper.confirmAndRun('controllers.wallet.shareKeys.unencrypted.caption',
 					'controllers.wallet.shareKeys.unencrypted.text',
 					function(){
 						onPassword(pwd);
@@ -27,13 +27,13 @@ angular.module('starter.controllers', [])
 				onPassword(pwd);
 		}, true);
 	};
-	
+
 	$scope.scanCommand = function(){
 		QR.scan(
 			function (result) {
 				if (!result.cancelled) {
-					
-					var cmd = Commands.parse(result.text);					
+
+					var cmd = Commands.parse(result.text);
 					if(cmd.isCommand){
 						Commands.execute(cmd.rawCommand);
 						$scope.myPopup.close();
@@ -49,7 +49,7 @@ angular.module('starter.controllers', [])
 		);
 	}
 
-	$scope.importKeys = function () {        
+	$scope.importKeys = function () {
 	    $scope.data = {};
 	    UIHelper.translate(
             [ 'controllers.wallet.importKeys.popup.title'
@@ -209,7 +209,7 @@ angular.module('starter.controllers', [])
     var bindAnchors = function (event) {
         var account = Account.get();
         augmentAnchors(account.anchors);
-        $scope.account = account;        
+        $scope.account = account;
         $scope.readOnly = Account.getAvailableLumen() < 10;
     }
 
@@ -395,7 +395,7 @@ angular.module('starter.controllers', [])
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
     $scope.languages = {
-        available: ['de', 'en', 'fr', 'nl', 'zh'],
+        available: ['de', 'en', 'fr', 'nl', 'ru', 'zh'],
         selected: UIHelper.getCurrentLanguage()
     }
     $scope.$watch('languages.selected', function (newLang) {
