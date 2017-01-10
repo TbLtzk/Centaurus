@@ -65,12 +65,12 @@ Bitte seid also nachsichtig mit euren Bewertungen und kontaktiert uns, wenn Prob
 * Angabe von Zuordnungshinweis möglich (destination tag)
 * Указание destination tag
 * Verbessertes Layout, eigenes Tab für kürzlich durchgeführte Transakionen
-* Улучшенный лэйаут
+* Улучшенный дизайн 
 * Addresse über beliebige App versenden (nicht nur Email)
 * Передача адреса через любое приложение (не только электронная почта)
 * Verschlüsselter Export der Kontoschlüssel
 * Шифрование ключей при экспорте
 * Import der Schlüssel von vorherigem Export oder durch manuelle Eingabe
-* Импорт ключей экспортированных ранее, или мануальный ввод.
+* Импорт ранее експортированных ключей, или мануальный ввод.
 * Mehrere Sprachausgaben
 * Поддержка разных языков интерфейса.
