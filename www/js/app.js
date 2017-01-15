@@ -122,10 +122,11 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	    suffix: '.json'
 	});
 	$translateProvider
-    .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl', 'zh'], {
+    .registerAvailableLanguageKeys(['en', 'de', 'fr', 'nl', 'ru', 'zh'], {
         'de_*': 'de',
         'fr_*': 'fr',
         'nl_*': 'nl',
+        'ru_*': 'ru',
         'zh_*': 'zh',
         '*': 'en'
     });
@@ -133,7 +134,7 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 	var lang = window.localStorage['language'];
 	if (lang)
 	    $translateProvider.preferredLanguage(lang);
-	else 
+	else
 	    $translateProvider.determinePreferredLanguage();
 
 	$translateProvider.fallbackLanguage("en");

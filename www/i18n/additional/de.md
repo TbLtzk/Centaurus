@@ -20,7 +20,7 @@ Erforderliche Rechte:
 
 * Internet:Um mit dem Stellar-Netzwerk zu kommunizieren
 * Camera/Microphone: Um QR-codes zu scannen. Das Micro wird NICHT benutzt, diese Berechtigung wird nur vom Play store in derselben Berechtigungsgruppe angezeigt.
-* Medien/Dateien: Um Adresse oder backup dateien ins Dateisystem zu exportieren.
+* Medien/Dateien: Um Adresse oder backup Dateien ins Dateisystem zu exportieren.
 
 Abschließende Worte:
 Centaurus ist ein sehr junges Projekt. Stellt euch darauf ein, dass nicht alles sofort auf jedem Gerät funktioniert. Wir haben versucht den größtmöglichen Nutzen für so viele Leute wie möglich zu bieten und hoffen, uns stetig zu verbessern.
