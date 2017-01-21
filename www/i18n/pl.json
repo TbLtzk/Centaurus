@@ -14,7 +14,7 @@
   "controllers.receive.share.title": "Mój Adres Stellar",
   "controllers.send.failed": "Transakcja nie powiodła się:",
   "controllers.send.failed.unknown": "Transakcja nie powiodła się z nieznanych przyczyn",
-  "controllers.send.options.title": "You can send",
+  "controllers.send.options.title": "Możesz wysłać",
   "controllers.send.outOfSync": "Łączność z siecią Stellar została utracona. Spróbuj ponownie.",
   "controllers.send.pending": "Wysyłanie płatności...",
   "controllers.send.scan.failed": "Skanowanie nie powiodło się:",
