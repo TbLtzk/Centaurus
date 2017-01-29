@@ -314,7 +314,12 @@ angular.module('starter.services', ['starter.services.basic'])
                 detachFromPaymentsStream();
 
             paymentsCloseHandle = futurePayments.stream({
-                onmessage: function (effect) { effectHandler(effect, true); }
+                onmessage: function (effect) {
+                    effectHandler(effect, true);
+                },
+                onerror: function (error) {
+                    console.log(JSON.stringify(error));
+                }
             });
         };
 
