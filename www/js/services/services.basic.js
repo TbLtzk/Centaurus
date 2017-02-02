@@ -96,11 +96,15 @@ angular.module('starter.services.basic', [])
 .factory('Remote', function (UIHelper) {
     //var network = 'liveNetwork';
     var network = 'testNetwork';
-    var url = 'https://horizon-testnet.stellar.org';
+    var url;
 
     if (network === 'liveNetwork') {
         StellarSdk.Network.usePublicNetwork();
         url = 'https://horizon.stellar.org';
+    }
+    else {
+        StellarSdk.Network.useTestNetwork();
+        url = 'https://horizon-testnet.stellar.org';
     }
 
     var server = new StellarSdk.Server(url);
@@ -149,10 +153,10 @@ angular.module('starter.services.basic', [])
  	//window.localStorage.removeItem('keys');
 
  	var keypair;
-	//keypair = StellarSdk.Keypair.fromSeed('SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'); // customer - GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4
-	//keypair = StellarSdk.Keypair.fromSeed('SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'); // issuer - GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y
- 	//keypair = StellarSdk.Keypair.fromSeed('SCMJROJFDV4OP2NVJVHICY6S7ZL6Q6JFM6DLDN3DVFO5IQHR52LFQ7GB'); // trader - GDB5ASLR6TSSMVZ77RZZJP25VNT7E7VPUNEQFXGKG4TYZWHJHHGAEUEQ
- 	//keypair = StellarSdk.Keypair.fromSeed('SAOPVUSKQQ2SXKUTXMCGM4HBJCPB5LNVY7A2CLRRLPQUK4ROB35FHBYS'); // any
+    //keypair = StellarSdk.Keypair.fromSecret('SDL3VTYAPQCOJDKA34WGXOIJA4RRQ6TAF5NJSVI77KEKP22L2GLIM6GN'); // customer - GALYYRH5XCRLVQ3W56PNEZHRV37GY3VFRRFUYU4NNDKOGUAB22OQPUX4
+    //keypair = StellarSdk.Keypair.fromSecret('SCYSM54HM3DAFLD4RCB6KXKWGPYTD7LYESTLTTVH5ER5T3BMN4I67QKY'); // issuer - GC7DJUFVMD5BYXS67MWAAQSJF6UASF47RY2AUCKOR5J2YTWS6ZNIGS6Y
+    //keypair = StellarSdk.Keypair.fromSecret('SCMJROJFDV4OP2NVJVHICY6S7ZL6Q6JFM6DLDN3DVFO5IQHR52LFQ7GB'); // trader - GDB5ASLR6TSSMVZ77RZZJP25VNT7E7VPUNEQFXGKG4TYZWHJHHGAEUEQ
+    //keypair = StellarSdk.Keypair.fromSecret('SAOPVUSKQQ2SXKUTXMCGM4HBJCPB5LNVY7A2CLRRLPQUK4ROB35FHBYS'); // any
  	
     //keypair = StellarSdk.Keypair.random();
 
@@ -201,7 +205,7 @@ angular.module('starter.services.basic', [])
 		},
 
 		getKeyPair: function() {
-		    return StellarSdk.Keypair.fromSeed(keys.secret);
+		    return StellarSdk.Keypair.fromSecret(keys.secret);
 		},
 
 		setKeys : function (addr, s) {

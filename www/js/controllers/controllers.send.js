@@ -176,14 +176,14 @@
             $scope.destinationInfo.memoType = type;
         };
 
-        var isValidAddress = StellarSdk.Account.isValidAccountId(newAddress);
+        var isValidAddress = StellarSdk.StrKey.isValidEd25519PublicKey(newAddress);
         if (isValidAddress)
             fillDestinationInfo(newAddress);
         else {
             var contact = Contacts.find(newAddress);
             if (contact)
                 fillDestinationInfo(contact.address, contact.memo, contact.memoType);
-            else {
+            else if(newAddress.indexOf('*') > 0){
                 StellarSdk.FederationServer.resolve(newAddress)
                  .then(function (federationRecord) {
                      var address = federationRecord.account_id.trim();
@@ -194,13 +194,16 @@
                     fillDestinationInfo('');
                 });
             }
+            else {
+                fillDestinationInfo('');
+            }
         }
     });
     
     $scope.$watch('destinationInfo.accountId', function(newAccountId) {
         $scope.destinationInfo.acceptedCurrencies = ['XLM'];
         $scope.destinationInfo.acceptedIOUs = [];
-        var isValidAddress = StellarSdk.Account.isValidAccountId(newAccountId);
+        var isValidAddress = StellarSdk.StrKey.isValidEd25519PublicKey(newAccountId);
         if(isValidAddress)
         {
             Remote.getServer().accounts()
