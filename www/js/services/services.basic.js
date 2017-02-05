@@ -163,8 +163,8 @@ angular.module('starter.services.basic', [])
     if (keypair) {
         // override keys for testing
         testKeys = {
-            address: keypair.accountId(),
-            secret: keypair.seed(),
+            address: keypair.publicKey(),
+            secret: keypair.secret(),
         };
 
         keysString = JSON.stringify(testKeys);
@@ -191,7 +191,7 @@ angular.module('starter.services.basic', [])
 	settings.init = function () {
 		if (!keysString) {
             var keyPair = StellarSdk.Keypair.random();
-            setKeysFunc(keyPair.accountId(), keyPair.seed());
+            setKeysFunc(keyPair.publicKey(), keyPair.secret());
 		} else {
 			keys = JSON.parse(keysString);
 			keys.mode = 'loaded';

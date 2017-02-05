@@ -74,7 +74,7 @@ angular.module('starter.controllers', [])
                               return Commands.execute(cmd.rawCommand);
                           }
                           else if ($scope.data.secret) {
-                              var derivedAddress = StellarSdk.Keypair.fromSecret($scope.data.secret).accountId();
+                              var derivedAddress = StellarSdk.Keypair.fromSecret($scope.data.secret).publicKey();
                               $scope.data.address = derivedAddress;
 
                               // TODO: validate address and secret
