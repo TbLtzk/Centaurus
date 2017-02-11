@@ -79,6 +79,9 @@
         for (var i = 0; i < records.length; i++) {
             var record = records[i];
 
+            if (record.source_amount == 0) 
+                continue; // workaround for horizon bug
+
             var alternative = {
                 destination_amount: record.destination_amount,
                 sendAsset: toAsset(record.source_asset_type, record.source_asset_code, record.source_asset_issuer),
