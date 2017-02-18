@@ -227,7 +227,7 @@ angular.module('starter.controllers', [])
         , 'controllers.anchors.add.error.emptyDomain'
         , 'controllers.anchors.add.error.invalidDomain'
     ]).then(function (t) {
-        var addAssets = function (anchorDomain, assets) {
+        var addAssets = function (anchorDomain, assets, aliases) {
             var assetCodes = '';
             var sdkAssets = [];
             var issuers = [];
@@ -236,7 +236,8 @@ angular.module('starter.controllers', [])
                 if (assetCodes)
                     assetCodes += ', ';
                 assetCodes += asset.code;
-                var issuer = asset.issuer;
+                var issuer = aliases[asset.issuer] || asset.issuer;
+
                 var sdkAsset = new StellarSdk.Asset(asset.code, issuer);
                 if (issuers.indexOf(issuer) < 0)
                     issuers.push(issuer);
@@ -274,11 +275,21 @@ angular.module('starter.controllers', [])
             StellarSdk.StellarTomlResolver.resolve(anchorDomain)
               .then(function (toml) {
                   console.log(JSON.stringify(toml));
-                  addAssets(anchorDomain, toml.CURRENCIES);
+                  var aliases = {}
+                  if (toml.NODE_NAMES) {
+                      toml.NODE_NAMES.forEach(function (item) {
+                          var split = item.split(/[ ]+/);
+                          aliases['$' + split[1]] = split[0];
+                      });
+                  }
+                  addAssets(anchorDomain, toml.CURRENCIES, aliases);
               })
               .catch(function (error) {
                   console.log(JSON.stringify(error));
-                  UIHelper.showAlert('"' + anchorDomain + '" ' + t[2]);
+                  var msg = '"' + anchorDomain + '" ' + t[2];
+                  if (error.message)
+                      msg += '\n' + error.message;
+                  UIHelper.showAlert(msg);
               });
         }
         $scope.remove = function (anchorName) {
