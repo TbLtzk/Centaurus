@@ -406,7 +406,7 @@ angular.module('starter.controllers', [])
 
 .controller('AboutCtrl', function ($scope, $ionicPopover, UIHelper) {
     $scope.languages = {
-        available: ['de', 'en', 'fr', 'nl', 'pl', 'ru', 'zh'],
+        available: ['de', 'en', 'fr', 'ja', 'nl', 'pl', 'ru', 'zh'],
         selected: UIHelper.getCurrentLanguage()
     }
     $scope.$watch('languages.selected', function (newLang) {
