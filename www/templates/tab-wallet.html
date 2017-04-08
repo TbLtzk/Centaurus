@@ -2,7 +2,8 @@
   <ion-content class="has-header padding">
     <ion-item class="item-icon-right" style="{{account.isLive ? '' : 'color:lightgray'}}">
         <font size="+2">{{account.balance.toFixed(1)}}</font> (XLM)
-        <i ng-if="connected" class="icon ion-connection-bars"></i>
+        <i ng-if="connected" class="icon ion-earth"></i>
+        <i ng-if="!connected" class="icon ion-android-cancel"></i>
     </ion-item>
     <ion-list ng-repeat="item in account.otherCurrencies">
 	    <ion-item class="" style="{{account.isLive ? '' : 'color:lightgray'}}" ng-if="Math.abs(item.amount) > 0.00001">
