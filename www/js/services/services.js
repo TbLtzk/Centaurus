@@ -13,6 +13,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	var resetAccount = function () {
 	    account = {
 	        address: 'loading',
+            isLive: false,
 	        balance: 0,
 	        reserve: 0,
 	        sequence: "0",
@@ -22,7 +23,11 @@ angular.module('starter.services', ['starter.services.basic'])
 	    };
 	};
 
-	resetAccount();
+	var snapshot = window.localStorage['accountInfo'];
+	if (snapshot)
+	    account = JSON.parse(snapshot);
+	else
+	    resetAccount();
 
 	var buildTransaction = function (operation, memo, bSign) {
 	    return buildBatchTransaction([operation], memo, bSign);
@@ -178,8 +183,6 @@ angular.module('starter.services', ['starter.services.basic'])
 	
 	var attachToKeys = function () {
 	    var keys = Settings.getKeys();
-	    resetAccount();
-		account.address = keys.address;
 
 	    // initial balances
 	    Remote.getServer().accounts()
@@ -187,6 +190,8 @@ angular.module('starter.services', ['starter.services.basic'])
         .call()
         .then(function (acc) {
             console.log(JSON.stringify(acc));
+            resetAccount();
+            account.address = keys.address;
             var reserveChunks = 1 + acc.signers.length; // minimum reserve
             for (i = 0; i < acc.balances.length; i++){
                 var bal = acc.balances[i];
@@ -208,6 +213,9 @@ angular.module('starter.services', ['starter.services.basic'])
             account.reserve = reserveChunks * reserveChunkCost;
             if(!acc.inflation_destination || !acc.home_domain)
                 setInflationDestination();
+
+            window.localStorage['accountInfo'] = JSON.stringify(account);
+            account.isLive = true;
             $rootScope.$broadcast('accountInfoLoaded');
         })
         .catch(StellarSdk.NotFoundError, function (err) {
@@ -216,6 +224,12 @@ angular.module('starter.services', ['starter.services.basic'])
         })
         .catch(function (err) {
            console.log(err.stack || err);
+        })
+        .then(function () {
+            if (account.address !== key.address) {
+                resetAccount();
+                account.address = keys.address;
+            }
         })
 
         var applyToBalance = function (effect) {
@@ -318,6 +332,7 @@ angular.module('starter.services', ['starter.services.basic'])
                     effectHandler(effect, true);
                 },
                 onerror: function (error) {
+                    account.isLive = false;
                     console.log(JSON.stringify(error));
                 }
             });
@@ -385,10 +400,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	};
 	
 	Settings.get().onKeysAvailable = function () {
-	    if(Remote.isConnected())
-			attachToKeys();
-		else
-			keysChanged = true;
+		keysChanged = true;
 	};
 
 	var healthCheck = function(){
@@ -397,7 +409,6 @@ angular.module('starter.services', ['starter.services.basic'])
 			Settings.get().init();
 		if(!Remote.isConnected())
 		{
-			Remote.init();
 			connectionChanged = true;
 		}
 		if((keysChanged || connectionChanged) && Remote.isConnected())

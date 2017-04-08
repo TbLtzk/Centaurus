@@ -12,6 +12,7 @@ var pluginlist = [
     "cordova-plugin-globalization",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-file",
+    "cordova-plugin-network-information",
     "cordova-plugin-whitelist"
 ];
 

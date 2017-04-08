@@ -6,7 +6,7 @@
 angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
    , 'starter.services', 'starter.controllers', 'starter.controllers.send', 'starter.directives', 'starter.filters'])
 
-.run(function ($ionicPlatform, $translate) {
+.run(function ($ionicPlatform, $translate, Remote) {
 	$ionicPlatform.ready(function () {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
@@ -17,7 +17,9 @@ angular.module('starter', ['ionic', 'ng-cordova', 'pascalprecht.translate',
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
-    });
+		document.addEventListener("offline", Remote.onOffline, false);
+		document.addEventListener("online", Remote.onOnline, false);
+	});
 })
 
 .config(function ($ionicConfigProvider) {

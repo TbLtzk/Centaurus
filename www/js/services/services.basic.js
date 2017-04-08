@@ -94,6 +94,7 @@ angular.module('starter.services.basic', [])
 })
 
 .factory('Remote', function (UIHelper) {
+    var isOnline = true;
     //var network = 'liveNetwork';
     var network = 'testNetwork';
     var url;
@@ -140,8 +141,16 @@ angular.module('starter.services.basic', [])
         getServer : function(){
             return server;
         },
+        onOffline: function () {
+            isOnline = false;
+            console.log('Remote: you are offline');
+        },
+        onOnline: function () {
+            isOnline = true;
+    	    console.log('Remote: you are online');
+    	},
         isConnected : function(){
-            return true;
+            return isOnline;
         },
 		addMessageHandler: messageHandlers.add
 	}

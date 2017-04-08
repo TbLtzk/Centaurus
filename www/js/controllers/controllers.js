@@ -1,11 +1,31 @@
 angular.module('starter.controllers', [])
-.controller('WalletCtrl', function ($scope, $ionicPopup, $http, UIHelper, Account, QR, Commands, Settings) {
-	$scope.$on('accountInfoLoaded', function (event) {
-		$scope.account = Account.get();
+.controller('WalletCtrl', function ($scope, $ionicPopup, $http, UIHelper, Account, QR, Commands, Settings, Remote) {
+
+    
+    $scope.$on('accountInfoLoaded', function (event) {
+	    $scope.account = Account.get();
 		$scope.$apply();
-	});
+    });
 	$scope.account = Account.get();
 	$scope.Math = window.Math;
+	$scope.connected = Remote.isConnected();
+
+    ////// Check for network connection
+
+	function onOffline() {
+	    console.log('wallet: you are offline');
+	    $scope.connected = false;
+	    $scope.account.isLive = false;
+	    $scope.$apply();
+    }
+	document.addEventListener("offline", onOffline, false);
+
+    function onOnline() {
+        console.log('wallet: you are online');
+        $scope.connected = true;
+        $scope.$apply();
+    }
+	document.addEventListener("online", onOnline, false);
 
 	$scope.shareKeys = function () {
 		var onPassword = function(pwd){
