@@ -1,6 +1,6 @@
-﻿#Store Entry
+﻿# Store Entry
 
-_meta.version: 0.0.1
+_meta.version: 0.0.2
 
 ### Title (max 30)
 
@@ -16,14 +16,7 @@ Stellar aims for the stars. And the nearest star system to us is Alpha Centauri!
 
 On first startup the app creates a stellar address for you and you can immediately receive Lumens on this address. As soon as you have some Lumens you can start spending them, e.g. by scanning a friend's QR code. Furthermore you can enter the keys of an existing stellar account to access it with your mobile device. Have fun and spread stellar and its generous philosophy among your friends!
 
-Access required:
-
-* Internet: for communication with the stellar network
-* Camera/Microphone: for scanning QR code. Microphone is NOT used, it is only shown by play store within the same access group.
-* Media/Files: for sharing your Address or backup to a file
-
-Some final words:
-Centaurus is just starting, so get prepared to things not working right away on all devices. We tried to provide most value for most users and hope to improve continuously.
+Centaurus is a private side project, so get prepared to things not working right away on all devices. We tried to provide most value for most users and hope to improve continuously.
 
 Don't hold more Lumens in this app than you need for every day purpose and you can afford to lose in worst case! Use at own Risk.
 

@@ -1,6 +1,6 @@
-﻿#Store Entry
+﻿# Store Entry
 
-_meta.version: 0.0.1
+_meta.version: 0.0.2
 
 ### Title (max 30)
 
@@ -16,14 +16,7 @@ Stellar greift nach den Sternen. Und das uns nächstgelegene Sternsystem ist Alp
 
 Beim ersten Start legt die App eine Stellar-Adresse an, auf der du sofort Lumen empfangen kannst. Sobald du ein paar Lumen hast, kannst du damit anfangen sie auszugeben, z.B. indem du den QR-Code eines Freundes einscannst. Darüber hinaus kannst du auch die Schlüssel eines bestehenden Stellar-Accounts eingeben um mobil darauf zuzugreifen. Viel Spaß damit und verbreitet Stellar und die Idee dahinter unter euren Freunden!
 
-Erforderliche Rechte:
-
-* Internet:Um mit dem Stellar-Netzwerk zu kommunizieren
-* Camera/Microphone: Um QR-codes zu scannen. Das Micro wird NICHT benutzt, diese Berechtigung wird nur vom Play store in derselben Berechtigungsgruppe angezeigt.
-* Medien/Dateien: Um Adresse oder backup Dateien ins Dateisystem zu exportieren.
-
-Abschließende Worte:
-Centaurus ist ein sehr junges Projekt. Stellt euch darauf ein, dass nicht alles sofort auf jedem Gerät funktioniert. Wir haben versucht den größtmöglichen Nutzen für so viele Leute wie möglich zu bieten und hoffen, uns stetig zu verbessern.
+Centaurus ist ein privates Nebenprojekt. Stellt euch darauf ein, dass nicht alles sofort auf jedem Gerät funktioniert. Wir haben versucht den größtmöglichen Nutzen für so viele Leute wie möglich zu bieten und hoffen, uns stetig zu verbessern.
 
 Haltet nicht mehr Lumen in dieser App, als ihr für den alltäglichen Bedarf braucht und als ihr schlimmstenfalls verlieren könntet. Benutzung auf eigene Gefahr!
 

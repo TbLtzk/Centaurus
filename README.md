@@ -1,4 +1,4 @@
-#Centaurus
+# Centaurus
 
 ## The First Stellar Wallet for Android!
 
