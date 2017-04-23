@@ -220,13 +220,19 @@ angular.module('starter.services', ['starter.services.basic'])
         })
         .catch(StellarSdk.NotFoundError, function (err) {
             console.log("account not found");
+            resetAccount();
+            account.address = keys.address;
+
+            window.localStorage['accountInfo'] = JSON.stringify(account);
+            account.isLive = true;
+            $rootScope.$broadcast('accountInfoLoaded');
             //Remote.getServer().friendbot(keys.address).call();
         })
         .catch(function (err) {
            console.log(err.stack || err);
         })
         .then(function () {
-            if (account.address !== key.address) {
+            if (account.address !== keys.address) {
                 resetAccount();
                 account.address = keys.address;
             }
@@ -411,7 +417,7 @@ angular.module('starter.services', ['starter.services.basic'])
 		{
 			connectionChanged = true;
 		}
-		if((keysChanged || connectionChanged) && Remote.isConnected())
+		if((keysChanged || connectionChanged) && keys && Remote.isConnected())
 		{
 			attachToKeys();
 			keysChanged = false;
