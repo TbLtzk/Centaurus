@@ -285,14 +285,22 @@
             else {
                 var choice = context.choice;
 
-                operation = StellarSdk.Operation.pathPayment({
-                    sendAsset   : choice.sendAsset,
-                    sendMax     : choice.bufferedAmount.toFixed(7),
-                    destination : $scope.destinationInfo.accountId,
-                    destAsset   : choice.destAsset,
-                    destAmount  : choice.destination_amount,
-                    path        : choice.path,
-                });
+                if (choice.path && choice.path.length > 0) {
+                    operation = StellarSdk.Operation.pathPayment({
+                        sendAsset: choice.sendAsset,
+                        sendMax: choice.bufferedAmount.toFixed(7),
+                        destination: $scope.destinationInfo.accountId,
+                        destAsset: choice.destAsset,
+                        destAmount: choice.destination_amount,
+                        path: choice.path,
+                    });
+                } else {
+                    operation = StellarSdk.Operation.payment({
+                        destination: $scope.destinationInfo.accountId,
+                        asset: choice.destAsset,
+                        amount: choice.destination_amount,
+                    });
+                }
             }
             return operation;
         }
