@@ -215,6 +215,11 @@ angular.module('starter.controllers', [])
                 });
             });
     };
+
+    $scope.openTrxInBrowser = function (trxId) {
+        var url = 'https://stellarchain.io/tx/' + trxId;
+        window.open(url, "_system");
+    }
 })
 
 .controller('AnchorsCtrl', function ($scope, Account, Contacts, UIHelper) {

@@ -1,4 +1,4 @@
-const reserveChunkCost = 5;
+const reserveChunkCost = 10;
 const inflationDestBalanceBuffer = 10;
 const centaurusAddress = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
 
@@ -23,7 +23,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	    };
 	};
 
-	var snapshot = window.localStorage['accountInfo'];
+    var snapshot = window.localStorage['accountInfo'];
 	if (snapshot)
 	    account = JSON.parse(snapshot);
 	else
@@ -256,6 +256,7 @@ angular.module('starter.services', ['starter.services.basic'])
 
             var date = new Date(trx.created_at)
             var displayEffect = {
+                trxId : trx.id,
                 effectId : effect.paging_token,
                 creationDate: date,
                 creationTimestamp : date.getTime(),

@@ -1,7 +1,7 @@
 <ion-view cache-view="false"  title="{{'tabs.trx.title' | translate}} (T)">
     <ion-content class="has-header">
         <ion-list ng-repeat="item in account.transactions">
-            <div class="row item narrow" style="color:#20E000" ng-if="!item.debit" on-hold="createContact(item)">
+            <div class="row item narrow" style="color:#20E000" ng-if="!item.debit" on-hold="createContact(item)" on-swipe-right="openTrxInBrowser(item.trxId)">
                 <div class="my-ellipsis no-padding">
                     <font size="-1"><i class="icon ion-plus"></i> {{item.amount}}</font>
                     <font size="-1">{{item.asset_code}}</font>
@@ -11,7 +11,7 @@
                 </div>
                 <div class="col text-right no-padding"><font size="-2">{{item.creationDate | fromnow}}</font></div>
             </div>
-            <div class="row item narrow" style="color:#FF2000" ng-if="item.debit" on-hold="createContact(item)">
+            <div class="row item narrow" style="color:#FF2000" ng-if="item.debit" on-hold="createContact(item)" on-swipe-right="openTrxInBrowser(item.trxId)">
                 <div class="my-ellipsis no-padding">
                     <font size="-1"><i class="icon ion-minus"></i> {{item.amount}}</font>
                     <font size="-1">{{item.asset_code}}</font>
