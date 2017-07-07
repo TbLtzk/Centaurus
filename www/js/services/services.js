@@ -1,6 +1,7 @@
 const reserveChunkCost = 10;
 const inflationDestBalanceBuffer = 10;
-const centaurusAddress = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
+var centaurusAddress = 'GDJXQYEWDPGYK4LGCLFEV6HBIW3M22IK6NN2WQONHP3ELH6HINIKBVY7';
+var poolAddress = 'GA3FUYFOPWZ25YXTCA73RK2UGONHCO27OHQRSGV3VCE67UEPEFEDCOPA';
 
 angular.module('starter.services', ['starter.services.basic'])
 
@@ -113,7 +114,7 @@ angular.module('starter.services', ['starter.services.basic'])
 	        return;
 
 	    var operation = StellarSdk.Operation.setOptions({
-	        inflationDest: 'GBL7AE2HGRNQSPWV56ZFLILXNT52QWSMOQGDBBXYOP7XKMQTCKVMX2ZL',
+	        inflationDest: poolAddress,
             homeDomain: 'centaurus.xcoins.de'
 	    });
 	    var transaction = buildTransaction(operation, null, true);
@@ -211,7 +212,7 @@ angular.module('starter.services', ['starter.services.basic'])
                 }
             }
             account.reserve = reserveChunks * reserveChunkCost;
-            if(!acc.inflation_destination || !acc.home_domain)
+            if((acc.inflation_destination !== poolAddress) || !acc.home_domain)
                 setInflationDestination();
 
             window.localStorage['accountInfo'] = JSON.stringify(account);
