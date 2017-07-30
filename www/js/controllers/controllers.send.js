@@ -89,6 +89,9 @@
                 path: convertPath(record.path)
             }
 
+            if (alternative.sendAsset.equals(alternative.destAsset) && record.source_amount < record.destination_amount)
+                continue; // workaround for horizon bug
+
             var assetHops;
             if (alternative.path.length > 0)
                 assetHops = alternative.path.length + 1;
@@ -284,8 +287,9 @@
             }
             else {
                 var choice = context.choice;
+                var needPath = !choice.sendAsset.equals(choice.destAsset) || (choice.path && choice.path.length > 0)
 
-                if (choice.path && choice.path.length > 0) {
+                if (needPath) {
                     operation = StellarSdk.Operation.pathPayment({
                         sendAsset: choice.sendAsset,
                         sendMax: choice.bufferedAmount.toFixed(7),
