@@ -454,7 +454,7 @@ angular.module('starter.services', ['starter.services.basic'])
 .factory('Contacts', function () {
     // contact names are considered an id and have to be unique
     var contacts = [
-        { name: 'Centaurus', address: centaurusAddress, memo: null, memoType: null }
+        { name: 'Centaurus donation address', address: centaurusAddress, memo: null, memoType: null }
     ];
 
     var contactsString = window.localStorage['contacts001'];
